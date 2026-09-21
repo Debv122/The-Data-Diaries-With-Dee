@@ -116,7 +116,7 @@
     font-weight: 500;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
+    color: rgba(255,255,255,0.95);
     text-decoration: none;
     transition: color 0.2s;
   }
@@ -1546,6 +1546,18 @@
     .voices-copy{padding:30px 24px}
     .flyer-grid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
   }
+
+  .dash-head { font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:#fff; line-height:1.2; margin-bottom:4px; }
+  .dash-sub { font-size:11px; color:rgba(255,255,255,0.38); }
+  .bars { align-items: flex-end; }
+  .bar-axis { display:flex; justify-content:space-between; font-family:'DM Mono',monospace;
+    font-size:9px; letter-spacing:.08em; color:rgba(255,255,255,0.3); margin:-4px 0 14px;
+    padding-top:7px; border-top:1px solid rgba(255,255,255,0.07); }
+  .chip-row { display:flex; gap:7px; flex-wrap:wrap; }
+  .chip { flex:1; text-align:center; background:rgba(255,255,255,0.05); border-radius:6px;
+    padding:9px 6px; font-family:'DM Mono',monospace; font-size:9.5px; letter-spacing:.06em;
+    text-transform:uppercase; color:rgba(255,255,255,0.62); white-space:nowrap; }
+  .bar:nth-child(1){animation-delay:.07s} .bar:nth-child(2){animation-delay:.14s} .bar:nth-child(3){animation-delay:.21s} .bar:nth-child(4){animation-delay:.28s} .bar:nth-child(5){animation-delay:.35s} .bar:nth-child(6){animation-delay:.42s} .bar:nth-child(7){animation-delay:.49s} .bar:nth-child(8){animation-delay:.56s} .bar:nth-child(9){animation-delay:.63s} .bar:nth-child(10){animation-delay:.70s} .bar:nth-child(11){animation-delay:.77s} .bar:nth-child(12){animation-delay:.84s}
 </style>
 </head>
 <body>
@@ -1594,7 +1606,7 @@
   <div class="hero-left">
     <h1>Turning Raw Data<br>Into Real Business Decisions</h1>
     <p class="hero-desc">
-      Data With Dee helps professionals, freelancers, and corporate teams across Ghana build practical, job-ready data skills. Based in Accra, I teach Excel, SQL, Python, and Power BI through hands-on training, plus freelance data analysis and dashboard support, so you can turn everyday numbers into decisions you can act on.
+      An innovative digital learning platform that bridges Africa's data and AI skills gap by providing practical digital and AI skills training, content and career development opportunities.
     </p>
     <div class="cta-row">
       <a href="#contact" class="btn-primary">Book a Discovery Call</a>
@@ -1625,36 +1637,34 @@
           <div class="dot dot-g"></div>
         </div>
         <div class="dash-body">
-          <div class="dash-label">Total revenue</div>
-          <div class="dash-num">₵ 84,230</div>
-          <div class="dash-delta">↑ 18.4% vs last quarter</div>
-          <div class="bars">
-            <div class="bar" style="height:38%"></div>
-            <div class="bar" style="height:52%"></div>
-            <div class="bar" style="height:44%"></div>
-            <div class="bar hi" style="height:70%"></div>
-            <div class="bar" style="height:58%"></div>
-            <div class="bar sky" style="height:88%"></div>
-            <div class="bar hi" style="height:76%"></div>
+          <div class="dash-label">The Data Diaries With Dee community</div>
+          <div class="dash-head">Growing every month</div>
+          <div class="dash-sub">Community members, cumulative</div>
+          <div class="bars" role="img" aria-label="Bar chart showing the community growing steadily month on month from February 2025 to June 2026.">
+            <div class="bar" style="height:14%;background:rgba(37,99,235,0.28)" title="Feb 2025"></div>
+            <div class="bar" style="height:21%;background:rgba(37,99,235,0.35)" title="Mar 2025"></div>
+            <div class="bar" style="height:27%;background:rgba(37,99,235,0.41)" title="Apr 2025"></div>
+            <div class="bar" style="height:33%;background:rgba(37,99,235,0.48)" title="May 2025"></div>
+            <div class="bar" style="height:41%;background:rgba(37,99,235,0.54)" title="Jun 2025"></div>
+            <div class="bar" style="height:47%;background:rgba(37,99,235,0.61)" title="Aug 2025"></div>
+            <div class="bar" style="height:54%;background:rgba(37,99,235,0.67)" title="Oct 2025"></div>
+            <div class="bar" style="height:63%;background:rgba(37,99,235,0.74)" title="Dec 2025"></div>
+            <div class="bar" style="height:71%;background:rgba(37,99,235,0.80)" title="Feb 2026"></div>
+            <div class="bar" style="height:80%;background:rgba(37,99,235,0.87)" title="Mar 2026"></div>
+            <div class="bar" style="height:90%;background:rgba(37,99,235,0.93)" title="Apr 2026"></div>
+            <div class="bar" style="height:100%;background:rgba(37,99,235,1.00)" title="Jun 2026"></div>
           </div>
-          <div class="mini-row">
-            <div class="mini">
-              <div class="mini-l">Avg. order</div>
-              <div class="mini-v">₵ 1,240</div>
-            </div>
-            <div class="mini">
-              <div class="mini-l">Conversion</div>
-              <div class="mini-v">4.7%</div>
-            </div>
-            <div class="mini">
-              <div class="mini-l">Churn rate</div>
-              <div class="mini-v">2.1%</div>
-            </div>
+          <div class="bar-axis"><span>Feb 2025</span><span>Jun 2026</span></div>
+          <div class="chip-row">
+            <div class="chip">Live sessions</div>
+            <div class="chip">Mentorship</div>
+            <div class="chip">Courses</div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
 </section>
 
 <!-- TRUST STRIP -->
@@ -1773,7 +1783,7 @@
 
   <div class="flyer-grid">
       <div class="flyer-card" onclick="openLightbox('t1')">
-        <div class="flyer-shot"><img src="/training-01.jpg" alt="Securing Your Digital Love Life — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-shot"><img src="training-01.jpg" alt="Securing Your Digital Love Life — The Data Diaries With Dee community session flyer" loading="lazy"></div>
         <div class="flyer-body">
           <div class="flyer-tag">Cybersecurity</div>
           <div class="flyer-title">Securing Your Digital Love Life</div>
@@ -1781,7 +1791,7 @@
         </div>
       </div>
       <div class="flyer-card" onclick="openLightbox('t2')">
-        <div class="flyer-shot"><img src="/training-02.jpg" alt="How Data Analytics Transforms Business Decisions — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-shot"><img src="training-02.jpg" alt="How Data Analytics Transforms Business Decisions — The Data Diaries With Dee community session flyer" loading="lazy"></div>
         <div class="flyer-body">
           <div class="flyer-tag">Data Analytics</div>
           <div class="flyer-title">How Data Analytics Transforms Business Decisions</div>
@@ -1789,7 +1799,7 @@
         </div>
       </div>
       <div class="flyer-card" onclick="openLightbox('t3')">
-        <div class="flyer-shot"><img src="/training-03.jpg" alt="Ethical Challenges in AI, Data Analytics &amp; Cybersecurity — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-shot"><img src="training-03.jpg" alt="Ethical Challenges in AI, Data Analytics &amp; Cybersecurity — The Data Diaries With Dee community session flyer" loading="lazy"></div>
         <div class="flyer-body">
           <div class="flyer-tag">Panel</div>
           <div class="flyer-title">Ethical Challenges in AI, Data Analytics &amp; Cybersecurity</div>
@@ -1797,7 +1807,7 @@
         </div>
       </div>
       <div class="flyer-card" onclick="openLightbox('t4')">
-        <div class="flyer-shot"><img src="/training-04.jpg" alt="Building Dashboards for Impact — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-shot"><img src="training-04.jpg" alt="Building Dashboards for Impact — The Data Diaries With Dee community session flyer" loading="lazy"></div>
         <div class="flyer-body">
           <div class="flyer-tag">Data Analytics</div>
           <div class="flyer-title">Building Dashboards for Impact</div>
@@ -1805,7 +1815,7 @@
         </div>
       </div>
       <div class="flyer-card" onclick="openLightbox('t5')">
-        <div class="flyer-shot"><img src="/training-05.jpg" alt="The Role of Data in Content Creation &amp; Journalism — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-shot"><img src="training-05.jpg" alt="The Role of Data in Content Creation &amp; Journalism — The Data Diaries With Dee community session flyer" loading="lazy"></div>
         <div class="flyer-body">
           <div class="flyer-tag">Data Storytelling</div>
           <div class="flyer-title">The Role of Data in Content Creation &amp; Journalism</div>
@@ -1813,7 +1823,7 @@
         </div>
       </div>
       <div class="flyer-card" onclick="openLightbox('t6')">
-        <div class="flyer-shot"><img src="/training-06.jpg" alt="Using AI Responsibly in Data Analysis — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-shot"><img src="training-06.jpg" alt="Using AI Responsibly in Data Analysis — The Data Diaries With Dee community session flyer" loading="lazy"></div>
         <div class="flyer-body">
           <div class="flyer-tag">AI</div>
           <div class="flyer-title">Using AI Responsibly in Data Analysis</div>
@@ -1821,7 +1831,7 @@
         </div>
       </div>
       <div class="flyer-card" onclick="openLightbox('t7')">
-        <div class="flyer-shot"><img src="/training-07.jpg" alt="Think Before You Click — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-shot"><img src="training-07.jpg" alt="Think Before You Click — The Data Diaries With Dee community session flyer" loading="lazy"></div>
         <div class="flyer-body">
           <div class="flyer-tag">Cybersecurity</div>
           <div class="flyer-title">Think Before You Click</div>
@@ -1829,7 +1839,7 @@
         </div>
       </div>
       <div class="flyer-card" onclick="openLightbox('t8')">
-        <div class="flyer-shot"><img src="/training-08.jpg" alt="AI Agents Applied to Cloud Infrastructure Management — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-shot"><img src="training-08.jpg" alt="AI Agents Applied to Cloud Infrastructure Management — The Data Diaries With Dee community session flyer" loading="lazy"></div>
         <div class="flyer-body">
           <div class="flyer-tag">AI</div>
           <div class="flyer-title">AI Agents Applied to Cloud Infrastructure Management</div>
@@ -1837,7 +1847,7 @@
         </div>
       </div>
       <div class="flyer-card" onclick="openLightbox('t9')">
-        <div class="flyer-shot"><img src="/training-09.jpg" alt="Data Modeling in the Age of AI — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-shot"><img src="training-09.jpg" alt="Data Modeling in the Age of AI — The Data Diaries With Dee community session flyer" loading="lazy"></div>
         <div class="flyer-body">
           <div class="flyer-tag">Data Analytics</div>
           <div class="flyer-title">Data Modeling in the Age of AI</div>
@@ -1845,7 +1855,7 @@
         </div>
       </div>
       <div class="flyer-card" onclick="openLightbox('t10')">
-        <div class="flyer-shot"><img src="/training-10.jpg" alt="Agentic AI &amp; What It Means for Data Teams — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-shot"><img src="training-10.jpg" alt="Agentic AI &amp; What It Means for Data Teams — The Data Diaries With Dee community session flyer" loading="lazy"></div>
         <div class="flyer-body">
           <div class="flyer-tag">AI</div>
           <div class="flyer-title">Agentic AI &amp; What It Means for Data Teams</div>
@@ -2120,7 +2130,7 @@
 
   <div class="mentor-grid">
       <div class="mentor-card" onclick="openLightbox('m1')">
-        <div class="mentor-shot"><img src="/mentor-01.jpg" alt="Dumevi Bright Selorm — mentor, The Data Diaries With Dee" loading="lazy"></div>
+        <div class="mentor-shot"><img src="mentor-01.jpg" alt="Dumevi Bright Selorm — mentor, The Data Diaries With Dee" loading="lazy"></div>
         <div class="mentor-body">
           <div class="mentor-name">Dumevi Bright Selorm</div>
           <div class="mentor-role">Founder &amp; CEO, BeSTEM Innovation Hub · Co-founder, Payva Payment Cards</div>
@@ -2128,7 +2138,7 @@
         </div>
       </div>
       <div class="mentor-card" onclick="openLightbox('m2')">
-        <div class="mentor-shot"><img src="/mentor-02.jpg" alt="Lydia Quayson — mentor, The Data Diaries With Dee" loading="lazy"></div>
+        <div class="mentor-shot"><img src="mentor-02.jpg" alt="Lydia Quayson — mentor, The Data Diaries With Dee" loading="lazy"></div>
         <div class="mentor-body">
           <div class="mentor-name">Lydia Quayson</div>
           <div class="mentor-role">Strategic Leadership &amp; HR Consultant</div>
@@ -2136,7 +2146,7 @@
         </div>
       </div>
       <div class="mentor-card" onclick="openLightbox('m3')">
-        <div class="mentor-shot"><img src="/mentor-03.jpg" alt="Wendy Akushika Dogbegah — mentor, The Data Diaries With Dee" loading="lazy"></div>
+        <div class="mentor-shot"><img src="mentor-03.jpg" alt="Wendy Akushika Dogbegah — mentor, The Data Diaries With Dee" loading="lazy"></div>
         <div class="mentor-body">
           <div class="mentor-name">Wendy Akushika Dogbegah</div>
           <div class="mentor-role">President, Women in Synthetic Biology Africa</div>
@@ -2144,7 +2154,7 @@
         </div>
       </div>
       <div class="mentor-card" onclick="openLightbox('m4')">
-        <div class="mentor-shot"><img src="/mentor-04.jpg" alt="Sarah Ajekwe — mentor, The Data Diaries With Dee" loading="lazy"></div>
+        <div class="mentor-shot"><img src="mentor-04.jpg" alt="Sarah Ajekwe — mentor, The Data Diaries With Dee" loading="lazy"></div>
         <div class="mentor-body">
           <div class="mentor-name">Sarah Ajekwe</div>
           <div class="mentor-role">Chief Marketing Officer, ShelHer · Tech MBA Candidate</div>
@@ -2161,7 +2171,7 @@
 
   <div class="mentor-grid">
       <div class="mentor-card" onclick="openLightbox('e1')">
-        <div class="mentor-shot" style="background:#f0f4fc;height:210px"><img src="/mentee-01.jpg" alt="Anita Nsiah Donkor — mentee growth &amp; goals tracker" loading="lazy"></div>
+        <div class="mentor-shot" style="background:#f0f4fc;height:210px"><img src="mentee-01.jpg" alt="Anita Nsiah Donkor — mentee growth &amp; goals tracker" loading="lazy"></div>
         <div class="mentor-body">
           <div class="mentor-name">Anita Nsiah Donkor</div>
           <div class="mentor-role">Diagnostic Radiographer</div>
@@ -2169,7 +2179,7 @@
         </div>
       </div>
       <div class="mentor-card" onclick="openLightbox('e2')">
-        <div class="mentor-shot" style="background:#f0f4fc;height:210px"><img src="/mentee-02.jpg" alt="Bright Asani — mentee growth &amp; goals tracker" loading="lazy"></div>
+        <div class="mentor-shot" style="background:#f0f4fc;height:210px"><img src="mentee-02.jpg" alt="Bright Asani — mentee growth &amp; goals tracker" loading="lazy"></div>
         <div class="mentor-body">
           <div class="mentor-name">Bright Asani</div>
           <div class="mentor-role">Data Analyst</div>
@@ -2177,7 +2187,7 @@
         </div>
       </div>
       <div class="mentor-card" onclick="openLightbox('e3')">
-        <div class="mentor-shot" style="background:#f0f4fc;height:210px"><img src="/mentee-03.jpg" alt="Tayyaba Noor Ansari — mentee growth &amp; goals tracker" loading="lazy"></div>
+        <div class="mentor-shot" style="background:#f0f4fc;height:210px"><img src="mentee-03.jpg" alt="Tayyaba Noor Ansari — mentee growth &amp; goals tracker" loading="lazy"></div>
         <div class="mentor-body">
           <div class="mentor-name">Tayyaba Noor Ansari</div>
           <div class="mentor-role">B.Tech Electronics &amp; Communication Engineering with AI</div>
@@ -2185,7 +2195,7 @@
         </div>
       </div>
       <div class="mentor-card" onclick="openLightbox('e4')">
-        <div class="mentor-shot" style="background:#f0f4fc;height:210px"><img src="/mentee-04.jpg" alt="Precious Adzo Mawunya Gatsey — mentee growth &amp; goals tracker" loading="lazy"></div>
+        <div class="mentor-shot" style="background:#f0f4fc;height:210px"><img src="mentee-04.jpg" alt="Precious Adzo Mawunya Gatsey — mentee growth &amp; goals tracker" loading="lazy"></div>
         <div class="mentor-body">
           <div class="mentor-name">Precious Adzo Mawunya Gatsey</div>
           <div class="mentor-role">Data Analytics Enthusiast</div>
@@ -2193,7 +2203,7 @@
         </div>
       </div>
       <div class="mentor-card" onclick="openLightbox('e5')">
-        <div class="mentor-shot" style="background:#f0f4fc;height:210px"><img src="/mentee-05.jpg" alt="Samuel Yirenkyi Mensah — mentee growth &amp; goals tracker" loading="lazy"></div>
+        <div class="mentor-shot" style="background:#f0f4fc;height:210px"><img src="mentee-05.jpg" alt="Samuel Yirenkyi Mensah — mentee growth &amp; goals tracker" loading="lazy"></div>
         <div class="mentor-body">
           <div class="mentor-name">Samuel Yirenkyi Mensah</div>
           <div class="mentor-role">Data Analytics Enthusiast</div>
@@ -2201,7 +2211,7 @@
         </div>
       </div>
       <div class="mentor-card" onclick="openLightbox('e6')">
-        <div class="mentor-shot" style="background:#f0f4fc;height:210px"><img src="/mentee-06.jpg" alt="Florence Owusu Aduomi — mentee growth &amp; goals tracker" loading="lazy"></div>
+        <div class="mentor-shot" style="background:#f0f4fc;height:210px"><img src="mentee-06.jpg" alt="Florence Owusu Aduomi — mentee growth &amp; goals tracker" loading="lazy"></div>
         <div class="mentor-body">
           <div class="mentor-name">Florence Owusu Aduomi</div>
           <div class="mentor-role">Information Studies &amp; Philosophy Student</div>
@@ -2211,7 +2221,7 @@
   </div>
 
   <div class="voices">
-    <img src="/community-voices.jpg" alt="Messages from community members" loading="lazy" onclick="openLightbox('v1')">
+    <img src="community-voices.jpg" alt="Messages from community members" loading="lazy" onclick="openLightbox('v1')">
     <div class="voices-copy">
       <h3>What the community says</h3>
       <p>&ldquo;You really inspire me. Thank you for the mentorship opportunity when I was at my lowest.&rdquo;</p>
@@ -2233,43 +2243,43 @@
   <div class="marquee-wrap">
     <div class="marquee-track">
 <div class="gal-photo" onclick="openLightbox(1)" style="width:240px;height:300px">
-      <img src="/gallery-1.jpg" width="240" height="300" alt="Teaching session" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-1.jpg" width="240" height="300" alt="Teaching session" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">Teaching session</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(4)" style="width:300px;height:240px">
-      <img src="/gallery-4.jpg" width="300" height="240" alt="Google Developer Event" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-4.jpg" width="300" height="240" alt="Google Developer Event" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">Google Developer Event</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(11)" style="width:380px;height:240px">
-      <img src="/gallery-11.jpg" width="380" height="240" alt="STEMinist Graduation" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-11.jpg" width="380" height="240" alt="STEMinist Graduation" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">STEMinist Graduation</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(3)" style="width:240px;height:300px">
-      <img src="/gallery-3.jpg" width="240" height="300" alt="AI4Startups Datathon" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-3.jpg" width="240" height="300" alt="AI4Startups Datathon" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">AI4Startups Datathon</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(13)" style="width:300px;height:300px">
-      <img src="/gallery-13.jpg" width="300" height="300" alt="Absa ReadytoWork — Panel" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-13.jpg" width="300" height="300" alt="Absa ReadytoWork — Panel" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">Absa ReadytoWork — Panel</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(1)" style="width:240px;height:300px">
-      <img src="/gallery-1.jpg" width="240" height="300" alt="Teaching session" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-1.jpg" width="240" height="300" alt="Teaching session" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">Teaching session</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(4)" style="width:300px;height:240px">
-      <img src="/gallery-4.jpg" width="300" height="240" alt="Google Developer Event" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-4.jpg" width="300" height="240" alt="Google Developer Event" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">Google Developer Event</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(11)" style="width:380px;height:240px">
-      <img src="/gallery-11.jpg" width="380" height="240" alt="STEMinist Graduation" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-11.jpg" width="380" height="240" alt="STEMinist Graduation" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">STEMinist Graduation</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(3)" style="width:240px;height:300px">
-      <img src="/gallery-3.jpg" width="240" height="300" alt="AI4Startups Datathon" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-3.jpg" width="240" height="300" alt="AI4Startups Datathon" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">AI4Startups Datathon</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(13)" style="width:300px;height:300px">
-      <img src="/gallery-13.jpg" width="300" height="300" alt="Absa ReadytoWork — Panel" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-13.jpg" width="300" height="300" alt="Absa ReadytoWork — Panel" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">Absa ReadytoWork — Panel</div>
     </div>
     </div>
@@ -2278,67 +2288,67 @@
   <div class="marquee-wrap">
     <div class="marquee-track" style="animation-direction:reverse;animation-duration:44s">
 <div class="gal-photo" onclick="openLightbox(2)" style="width:240px;height:300px">
-      <img src="/gallery-2.jpg" width="240" height="300" alt="Global Azure 2025" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-2.jpg" width="240" height="300" alt="Global Azure 2025" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">Global Azure 2025</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(5)" style="width:240px;height:300px">
-      <img src="/gallery-5.jpg" width="240" height="300" alt="MindShift 101" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-5.jpg" width="240" height="300" alt="MindShift 101" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">MindShift 101</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(6)" style="width:280px;height:280px">
-      <img src="/gallery-6.jpg" width="280" height="280" alt="Mastercard Foundation" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-6.jpg" width="280" height="280" alt="Mastercard Foundation" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">Mastercard Foundation</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(7)" style="width:240px;height:300px">
-      <img src="/gallery-7.jpg" width="240" height="300" alt="Women Techsters" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-7.jpg" width="240" height="300" alt="Women Techsters" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">Women Techsters</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(8)" style="width:240px;height:300px">
-      <img src="/gallery-8.jpg" width="240" height="300" alt="STEMinist Training" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-8.jpg" width="240" height="300" alt="STEMinist Training" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">STEMinist Training</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(9)" style="width:240px;height:300px">
-      <img src="/gallery-9.jpg" width="240" height="300" alt="AI Agents Live" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-9.jpg" width="240" height="300" alt="AI Agents Live" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">AI Agents Live</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(10)" style="width:240px;height:300px">
-      <img src="/gallery-10.jpg" width="240" height="300" alt="IoTWoman 2026" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-10.jpg" width="240" height="300" alt="IoTWoman 2026" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">IoTWoman 2026</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(12)" style="width:300px;height:300px">
-      <img src="/gallery-12.jpg" width="300" height="300" alt="Absa ReadytoWork — Panelist" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-12.jpg" width="300" height="300" alt="Absa ReadytoWork — Panelist" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">Absa ReadytoWork — Panelist</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(2)" style="width:240px;height:300px">
-      <img src="/gallery-2.jpg" width="240" height="300" alt="Global Azure 2025" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-2.jpg" width="240" height="300" alt="Global Azure 2025" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">Global Azure 2025</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(5)" style="width:240px;height:300px">
-      <img src="/gallery-5.jpg" width="240" height="300" alt="MindShift 101" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-5.jpg" width="240" height="300" alt="MindShift 101" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">MindShift 101</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(6)" style="width:280px;height:280px">
-      <img src="/gallery-6.jpg" width="280" height="280" alt="Mastercard Foundation" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-6.jpg" width="280" height="280" alt="Mastercard Foundation" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">Mastercard Foundation</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(7)" style="width:240px;height:300px">
-      <img src="/gallery-7.jpg" width="240" height="300" alt="Women Techsters" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-7.jpg" width="240" height="300" alt="Women Techsters" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">Women Techsters</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(8)" style="width:240px;height:300px">
-      <img src="/gallery-8.jpg" width="240" height="300" alt="STEMinist Training" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-8.jpg" width="240" height="300" alt="STEMinist Training" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">STEMinist Training</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(9)" style="width:240px;height:300px">
-      <img src="/gallery-9.jpg" width="240" height="300" alt="AI Agents Live" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-9.jpg" width="240" height="300" alt="AI Agents Live" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">AI Agents Live</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(10)" style="width:240px;height:300px">
-      <img src="/gallery-10.jpg" width="240" height="300" alt="IoTWoman 2026" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-10.jpg" width="240" height="300" alt="IoTWoman 2026" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">IoTWoman 2026</div>
     </div>
 <div class="gal-photo" onclick="openLightbox(12)" style="width:300px;height:300px">
-      <img src="/gallery-12.jpg" width="300" height="300" alt="Absa ReadytoWork — Panelist" loading="lazy" style="width:100%;height:100%">
+      <img src="gallery-12.jpg" width="300" height="300" alt="Absa ReadytoWork — Panelist" loading="lazy" style="width:100%;height:100%">
       <div class="gal-caption">Absa ReadytoWork — Panelist</div>
     </div>
     </div>
@@ -2687,40 +2697,40 @@
 
 // Gallery lightbox
 const galleryImgs = {
-  't1': '/training-01.jpg',
-  't2': '/training-02.jpg',
-  't3': '/training-03.jpg',
-  't4': '/training-04.jpg',
-  't5': '/training-05.jpg',
-  't6': '/training-06.jpg',
-  't7': '/training-07.jpg',
-  't8': '/training-08.jpg',
-  't9': '/training-09.jpg',
-  't10': '/training-10.jpg',
-  'm1': '/mentor-01.jpg',
-  'm2': '/mentor-02.jpg',
-  'm3': '/mentor-03.jpg',
-  'm4': '/mentor-04.jpg',
-  'e1': '/mentee-01.jpg',
-  'e2': '/mentee-02.jpg',
-  'e3': '/mentee-03.jpg',
-  'e4': '/mentee-04.jpg',
-  'e5': '/mentee-05.jpg',
-  'e6': '/mentee-06.jpg',
-  'v1': '/community-voices.jpg',
-  1: '/gallery-1.jpg',
-  2: '/gallery-2.jpg',
-  3: '/gallery-3.jpg',
-  4: '/gallery-4.jpg',
-  5: '/gallery-5.jpg',
-  6: '/gallery-6.jpg',
-  7: '/gallery-7.jpg',
-  8: '/gallery-8.jpg',
-  9: '/gallery-9.jpg',
-  10: '/gallery-10.jpg',
-  11: '/gallery-11.jpg',
-  12: '/gallery-12.jpg',
-  13: '/gallery-13.jpg'
+  't1': 'training-01.jpg',
+  't2': 'training-02.jpg',
+  't3': 'training-03.jpg',
+  't4': 'training-04.jpg',
+  't5': 'training-05.jpg',
+  't6': 'training-06.jpg',
+  't7': 'training-07.jpg',
+  't8': 'training-08.jpg',
+  't9': 'training-09.jpg',
+  't10': 'training-10.jpg',
+  'm1': 'mentor-01.jpg',
+  'm2': 'mentor-02.jpg',
+  'm3': 'mentor-03.jpg',
+  'm4': 'mentor-04.jpg',
+  'e1': 'mentee-01.jpg',
+  'e2': 'mentee-02.jpg',
+  'e3': 'mentee-03.jpg',
+  'e4': 'mentee-04.jpg',
+  'e5': 'mentee-05.jpg',
+  'e6': 'mentee-06.jpg',
+  'v1': 'community-voices.jpg',
+  1: 'gallery-1.jpg',
+  2: 'gallery-2.jpg',
+  3: 'gallery-3.jpg',
+  4: 'gallery-4.jpg',
+  5: 'gallery-5.jpg',
+  6: 'gallery-6.jpg',
+  7: 'gallery-7.jpg',
+  8: 'gallery-8.jpg',
+  9: 'gallery-9.jpg',
+  10: 'gallery-10.jpg',
+  11: 'gallery-11.jpg',
+  12: 'gallery-12.jpg',
+  13: 'gallery-13.jpg'
 };
 function openLightbox(n) {
   document.getElementById('lightbox-img').src = galleryImgs[n];
