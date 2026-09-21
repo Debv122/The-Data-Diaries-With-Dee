@@ -1463,6 +1463,90 @@
   }
 }
 </script>
+
+<style>
+  /* ===== Community training flyer wall ===== */
+  .train-stats{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:34px auto 6px;max-width:960px}
+  .train-stat{border:1px solid var(--border);border-radius:999px;padding:10px 20px;background:var(--white);
+    font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--blue);font-weight:700}
+  .train-stat b{color:var(--accent);font-size:15px}
+  .flyer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:22px;
+    max-width:1280px;margin:46px auto 0}
+  .flyer-card{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--white);
+    display:flex;flex-direction:column;cursor:pointer;transition:transform .25s ease,box-shadow .25s ease}
+  .flyer-card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(10,22,40,.13)}
+  .flyer-shot{background:var(--off-white);height:262px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .flyer-shot img{width:100%;height:100%;object-fit:contain;display:block}
+  .flyer-body{padding:18px 18px 20px;display:flex;flex-direction:column;gap:9px;flex:1}
+  .flyer-tag{align-self:flex-start;font-size:10.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;
+    color:var(--accent);background:rgba(37,99,235,.09);border-radius:999px;padding:5px 11px}
+  .flyer-title{font-size:16.5px;line-height:1.35;font-weight:700;color:var(--navy)}
+  .flyer-meta{font-size:13px;color:var(--muted);line-height:1.5;margin-top:auto}
+  .flyer-date{font-weight:700;color:var(--blue)}
+  .train-note{text-align:center;max-width:720px;margin:44px auto 0;color:var(--muted);font-size:15.5px;line-height:1.7}
+  .train-note a{color:var(--accent);font-weight:700}
+
+  /* ===== Mentorship ===== */
+  .mentorship{padding:96px 60px;background:var(--off-white);border-top:1px solid var(--border)}
+  .mentor-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px;max-width:1160px;margin:44px auto 0}
+  .mentor-card{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;
+    cursor:pointer;transition:transform .25s ease,box-shadow .25s ease}
+  .mentor-card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(10,22,40,.13)}
+  .mentor-shot{background:#eef3fb;height:250px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .mentor-shot img{width:100%;height:100%;object-fit:contain}
+  .mentor-body{padding:16px 18px 20px}
+  .mentor-name{font-size:17px;font-weight:700;color:var(--navy);margin-bottom:5px}
+  .mentor-role{font-size:12.5px;color:var(--accent);font-weight:700;line-height:1.45;margin-bottom:9px}
+  .mentor-focus{font-size:13px;color:var(--muted);line-height:1.55}
+  .sub-head{max-width:1160px;margin:72px auto 0;text-align:center}
+  .sub-head .sh-kick{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+  .sub-head .sh-title{font-size:26px;font-weight:700;color:var(--navy);margin-top:10px}
+  .sub-head .sh-sub{font-size:15px;color:var(--muted);margin-top:8px;line-height:1.65}
+  .voices{max-width:1160px;margin:60px auto 0;border-radius:16px;overflow:hidden;border:1px solid var(--border);
+    display:grid;grid-template-columns:1.25fr 1fr;background:var(--white)}
+  .voices img{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer}
+  .voices-copy{padding:40px 38px;display:flex;flex-direction:column;justify-content:center;gap:14px}
+  .voices-copy h3{font-size:24px;color:var(--navy);line-height:1.3}
+  .voices-copy p{font-size:15px;color:var(--muted);line-height:1.7}
+
+  /* ===== Emberlern courses ===== */
+  .courses-sec{padding:100px 60px;background:var(--navy);color:#fff}
+  .courses-inner{max-width:1240px;margin:0 auto;text-align:center}
+  .courses-sec h2{color:#fff}
+  .courses-sec .section-sub{color:rgba(255,255,255,.55)}
+  .ember-badge{display:inline-flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,.18);
+    border-radius:999px;padding:9px 18px;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;
+    font-weight:800;color:#93c5fd;margin-bottom:24px}
+  .ember-badge span{width:7px;height:7px;border-radius:50%;background:#3b82f6}
+  .course-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:22px;margin-top:52px;text-align:left}
+  .course-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.1);border-radius:16px;
+    padding:30px 28px 26px;display:flex;flex-direction:column;gap:14px;transition:background .25s ease,transform .25s ease}
+  .course-card:hover{background:rgba(255,255,255,.07);transform:translateY(-4px)}
+  .course-pain{font-size:15px;font-style:italic;color:#93c5fd;line-height:1.55}
+  .course-name{font-size:21px;font-weight:700;color:#fff;line-height:1.3}
+  .course-desc{font-size:14.5px;color:rgba(255,255,255,.58);line-height:1.68}
+  .course-pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}
+  .course-pill{font-size:11.5px;font-weight:700;letter-spacing:.05em;color:rgba(255,255,255,.75);
+    border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:5px 11px}
+  .course-cta{margin-top:auto;padding-top:14px;font-size:14px;font-weight:800;color:#60a5fa;text-decoration:none;
+    display:inline-flex;align-items:center;gap:7px}
+  .course-cta:hover{color:#fff}
+  .courses-foot{margin-top:52px;display:flex;flex-wrap:wrap;gap:16px;justify-content:center;align-items:center}
+  .ember-btn{background:var(--accent);color:#fff;text-decoration:none;font-weight:800;font-size:15px;
+    padding:16px 32px;border-radius:10px;display:inline-block;transition:background .2s ease}
+  .ember-btn:hover{background:#1d4ed8}
+  .ember-btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.22)}
+  .ember-btn.ghost:hover{background:rgba(255,255,255,.08)}
+  .courses-note{margin-top:22px;font-size:13.5px;color:rgba(255,255,255,.4)}
+
+  @media (max-width:860px){
+    .mentorship{padding:72px 22px}
+    .courses-sec{padding:72px 22px}
+    .voices{grid-template-columns:1fr}
+    .voices-copy{padding:30px 24px}
+    .flyer-grid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+  }
+</style>
 </head>
 <body>
 
@@ -1473,9 +1557,10 @@
     <li><a href="#about">About</a></li>
     <li><a href="#services">Services</a></li>
     <li><a href="#workshops">Training</a></li>
+    <li><a href="#mentorship">Mentorship</a></li>
     <li><a href="#speaking">Speaking</a></li>
     <li><a href="#gallery">Gallery</a></li>
-    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#courses">Courses</a></li>
     <li><a href="#outcomes">Outcomes</a></li>
     <li><a href="/faq">FAQ</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -1491,9 +1576,10 @@
   <a href="#about" class="mobile-link">About</a>
   <a href="#services" class="mobile-link">Services</a>
   <a href="#workshops" class="mobile-link">Training</a>
+  <a href="#mentorship" class="mobile-link">Mentorship</a>
   <a href="#speaking" class="mobile-link">Speaking</a>
   <a href="#gallery" class="mobile-link">Gallery</a>
-  <a href="#pricing" class="mobile-link">Pricing</a>
+  <a href="#courses" class="mobile-link">Courses</a>
   <a href="#outcomes" class="mobile-link">Outcomes</a>
   <a href="/faq" class="mobile-link">FAQ</a>
   <a href="#contact" class="mobile-link">Contact</a>
@@ -1670,59 +1756,105 @@
   </div>
 </section>
 
-<!-- WORKSHOPS -->
-<section class="workshops" id="workshops">
-  <div class="section-kicker">Workshop Catalogue</div>
+<!-- COMMUNITY TRAINING -->
+<section class="workshops" id="workshops" style="padding-bottom:90px">
+  <div class="section-kicker">The Data Diaries With Dee Community</div>
   <div class="rule"></div>
-  <h2>Training that fits your team</h2>
-  <p class="section-sub">Each workshop is tailored to your industry, your data, and your team's starting point, not a generic course off the shelf.</p>
+  <h2>A year of training, run in public</h2>
+  <p class="section-sub">Free, live, monthly sessions for a community bridging data analytics, cybersecurity and AI. Every flyer below is a session that actually ran, with a named speaker and a registration link — not a plan, a track record.</p>
 
-  <div class="ws-grid">
-    <div class="ws-card full">
-      <div>
-        <div class="ws-tag">Flagship Programme</div>
-        <div class="ws-title">Data Literacy for the Whole Team</div>
-        <div class="ws-desc">The complete data programme, from reading a spreadsheet confidently to building dashboards and writing basic Python scripts. Designed for mixed-skill teams who all need to work with data better.</div>
-        <div class="ws-pills">
-          <div class="ws-pill">2 to 3 days</div>
-          <div class="ws-pill">Up to 20 people</div>
-          <div class="ws-pill">In person or online</div>
-          <div class="ws-pill">All skill levels</div>
-        </div>
-        <a href="#contact" class="ws-link">Enquire about this programme</a>
-      </div>
-      <ul class="topic-list">
-        <li>Excel foundations, formulas, data types, and thinking in tables</li>
-        <li>Pivot tables and dashboards, turning raw data into visual stories</li>
-        <li>Introduction to Python for automating repetitive tasks</li>
-        <li>Asking the right data questions for your business</li>
-        <li>Hands-on project using your company's actual data</li>
-        <li>Certificate of completion for each participant</li>
-      </ul>
-    </div>
-
-    <div class="ws-card">
-      <div class="ws-tag">Specialist</div>
-      <div class="ws-title">Excel Mastery for Analysts</div>
-      <div class="ws-desc">Advanced Excel for team members who already use spreadsheets but want to work faster, smarter, and produce cleaner outputs for management.</div>
-      <div class="ws-pills">
-        <div class="ws-pill">1 day</div>
-        <div class="ws-pill">Flexible group size</div>
-      </div>
-      <a href="#contact" class="ws-link">Enquire</a>
-    </div>
-
-    <div class="ws-card">
-      <div class="ws-tag">Technical Focus</div>
-      <div class="ws-title">Python for Non-Developers</div>
-      <div class="ws-desc">Practical Python skills for business users who want to automate reports, clean data, and do analysis with no coding background required.</div>
-      <div class="ws-pills">
-        <div class="ws-pill">1 to 2 days</div>
-        <div class="ws-pill">Flexible</div>
-      </div>
-      <a href="#contact" class="ws-link">Enquire</a>
-    </div>
+  <div class="train-stats">
+    <div class="train-stat"><b>10+</b> live sessions</div>
+    <div class="train-stat"><b>12</b> months, unbroken</div>
+    <div class="train-stat"><b>15+</b> guest speakers</div>
+    <div class="train-stat"><b>3</b> pillars: Data · Cyber · AI</div>
+    <div class="train-stat"><b>Free</b> to attend</div>
   </div>
+
+  <div class="flyer-grid">
+      <div class="flyer-card" onclick="openLightbox('t1')">
+        <div class="flyer-shot"><img src="/training-01.jpg" alt="Securing Your Digital Love Life — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-body">
+          <div class="flyer-tag">Cybersecurity</div>
+          <div class="flyer-title">Securing Your Digital Love Life</div>
+          <div class="flyer-meta"><span class="flyer-date">08 Feb 2025</span><br>Deborah Boluwatife &amp; Joy Tari-Bagshaw</div>
+        </div>
+      </div>
+      <div class="flyer-card" onclick="openLightbox('t2')">
+        <div class="flyer-shot"><img src="/training-02.jpg" alt="How Data Analytics Transforms Business Decisions — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-body">
+          <div class="flyer-tag">Data Analytics</div>
+          <div class="flyer-title">How Data Analytics Transforms Business Decisions</div>
+          <div class="flyer-meta"><span class="flyer-date">08 Mar 2025</span><br>Angelica Adjei-Kwarteng, Data Analyst</div>
+        </div>
+      </div>
+      <div class="flyer-card" onclick="openLightbox('t3')">
+        <div class="flyer-shot"><img src="/training-03.jpg" alt="Ethical Challenges in AI, Data Analytics &amp; Cybersecurity — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-body">
+          <div class="flyer-tag">Panel</div>
+          <div class="flyer-title">Ethical Challenges in AI, Data Analytics &amp; Cybersecurity</div>
+          <div class="flyer-meta"><span class="flyer-date">05 Apr 2025</span><br>Panel — Dumevi Bright, Nathaniel Nash Bobbie, Yakubu Ama Dorcas, Bright Asani</div>
+        </div>
+      </div>
+      <div class="flyer-card" onclick="openLightbox('t4')">
+        <div class="flyer-shot"><img src="/training-04.jpg" alt="Building Dashboards for Impact — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-body">
+          <div class="flyer-tag">Data Analytics</div>
+          <div class="flyer-title">Building Dashboards for Impact</div>
+          <div class="flyer-meta"><span class="flyer-date">17 May 2025</span><br>Francisca Mailiana Zonky, The Tech Circle</div>
+        </div>
+      </div>
+      <div class="flyer-card" onclick="openLightbox('t5')">
+        <div class="flyer-shot"><img src="/training-05.jpg" alt="The Role of Data in Content Creation &amp; Journalism — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-body">
+          <div class="flyer-tag">Data Storytelling</div>
+          <div class="flyer-title">The Role of Data in Content Creation &amp; Journalism</div>
+          <div class="flyer-meta"><span class="flyer-date">17 May 2025</span><br>Vanessa Naa Okialey Vanderpuye</div>
+        </div>
+      </div>
+      <div class="flyer-card" onclick="openLightbox('t6')">
+        <div class="flyer-shot"><img src="/training-06.jpg" alt="Using AI Responsibly in Data Analysis — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-body">
+          <div class="flyer-tag">AI</div>
+          <div class="flyer-title">Using AI Responsibly in Data Analysis</div>
+          <div class="flyer-meta"><span class="flyer-date">16 Aug 2025</span><br>Kelvin Awuku-Boateng, Data Scientist</div>
+        </div>
+      </div>
+      <div class="flyer-card" onclick="openLightbox('t7')">
+        <div class="flyer-shot"><img src="/training-07.jpg" alt="Think Before You Click — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-body">
+          <div class="flyer-tag">Cybersecurity</div>
+          <div class="flyer-title">Think Before You Click</div>
+          <div class="flyer-meta"><span class="flyer-date">25 Oct 2025</span><br>Alex Agyei, Cybersecurity Analyst</div>
+        </div>
+      </div>
+      <div class="flyer-card" onclick="openLightbox('t8')">
+        <div class="flyer-shot"><img src="/training-08.jpg" alt="AI Agents Applied to Cloud Infrastructure Management — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-body">
+          <div class="flyer-tag">AI</div>
+          <div class="flyer-title">AI Agents Applied to Cloud Infrastructure Management</div>
+          <div class="flyer-meta"><span class="flyer-date">28 Mar 2026</span><br>Tarak, Co-founder, Infracodebase</div>
+        </div>
+      </div>
+      <div class="flyer-card" onclick="openLightbox('t9')">
+        <div class="flyer-shot"><img src="/training-09.jpg" alt="Data Modeling in the Age of AI — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-body">
+          <div class="flyer-tag">Data Analytics</div>
+          <div class="flyer-title">Data Modeling in the Age of AI</div>
+          <div class="flyer-meta"><span class="flyer-date">25 Apr 2026</span><br>Bright Asani, KFC Ghana</div>
+        </div>
+      </div>
+      <div class="flyer-card" onclick="openLightbox('t10')">
+        <div class="flyer-shot"><img src="/training-10.jpg" alt="Agentic AI &amp; What It Means for Data Teams — The Data Diaries With Dee community session flyer" loading="lazy"></div>
+        <div class="flyer-body">
+          <div class="flyer-tag">AI</div>
+          <div class="flyer-title">Agentic AI &amp; What It Means for Data Teams</div>
+          <div class="flyer-meta"><span class="flyer-date">13 Jun 2026</span><br>Isaac Kofi Maafo, CEO, DigiTransact Ltd</div>
+        </div>
+      </div>
+  </div>
+
+  <p class="train-note">Every session is hosted on LinkedIn Live and open to anyone. Want a version of this programme run inside your organisation? <a href="#contact">Let's talk</a>.</p>
 </section>
 
 <!-- FORMAT -->
@@ -1976,6 +2108,118 @@
   </div>
 </section>
 
+
+<!-- MENTORSHIP -->
+<section class="mentorship" id="mentorship">
+  <div style="max-width:1160px;margin:0 auto;text-align:center">
+    <div class="section-kicker">Mentorship</div>
+    <div class="rule"></div>
+    <h2>Mentors who show up, mentees who grow</h2>
+    <p class="section-sub">The community isn't only webinars. Mentees are matched with working professionals, set written goals, and are tracked against them — across data, AI, cybersecurity, operations and leadership.</p>
+  </div>
+
+  <div class="mentor-grid">
+      <div class="mentor-card" onclick="openLightbox('m1')">
+        <div class="mentor-shot"><img src="/mentor-01.jpg" alt="Dumevi Bright Selorm — mentor, The Data Diaries With Dee" loading="lazy"></div>
+        <div class="mentor-body">
+          <div class="mentor-name">Dumevi Bright Selorm</div>
+          <div class="mentor-role">Founder &amp; CEO, BeSTEM Innovation Hub · Co-founder, Payva Payment Cards</div>
+          <div class="mentor-focus">Entrepreneurship, product development, strategic leadership</div>
+        </div>
+      </div>
+      <div class="mentor-card" onclick="openLightbox('m2')">
+        <div class="mentor-shot"><img src="/mentor-02.jpg" alt="Lydia Quayson — mentor, The Data Diaries With Dee" loading="lazy"></div>
+        <div class="mentor-body">
+          <div class="mentor-name">Lydia Quayson</div>
+          <div class="mentor-role">Strategic Leadership &amp; HR Consultant</div>
+          <div class="mentor-focus">Career planning, leadership growth, graduate school guidance</div>
+        </div>
+      </div>
+      <div class="mentor-card" onclick="openLightbox('m3')">
+        <div class="mentor-shot"><img src="/mentor-03.jpg" alt="Wendy Akushika Dogbegah — mentor, The Data Diaries With Dee" loading="lazy"></div>
+        <div class="mentor-body">
+          <div class="mentor-name">Wendy Akushika Dogbegah</div>
+          <div class="mentor-role">President, Women in Synthetic Biology Africa</div>
+          <div class="mentor-focus">Biosecurity, research, science policy, global leadership</div>
+        </div>
+      </div>
+      <div class="mentor-card" onclick="openLightbox('m4')">
+        <div class="mentor-shot"><img src="/mentor-04.jpg" alt="Sarah Ajekwe — mentor, The Data Diaries With Dee" loading="lazy"></div>
+        <div class="mentor-body">
+          <div class="mentor-name">Sarah Ajekwe</div>
+          <div class="mentor-role">Chief Marketing Officer, ShelHer · Tech MBA Candidate</div>
+          <div class="mentor-focus">Branding, marketing, career transitions, entrepreneurship</div>
+        </div>
+      </div>
+  </div>
+
+  <div class="sub-head">
+    <div class="sh-kick">The Mentees</div>
+    <div class="sh-title">Every mentee starts with a goal on paper</div>
+    <div class="sh-sub">Name, profession, areas of growth, and what they came to get. It's how progress stops being a feeling and starts being something you can check.</div>
+  </div>
+
+  <div class="mentor-grid">
+      <div class="mentor-card" onclick="openLightbox('e1')">
+        <div class="mentor-shot" style="background:#f0f4fc;height:210px"><img src="/mentee-01.jpg" alt="Anita Nsiah Donkor — mentee growth &amp; goals tracker" loading="lazy"></div>
+        <div class="mentor-body">
+          <div class="mentor-name">Anita Nsiah Donkor</div>
+          <div class="mentor-role">Diagnostic Radiographer</div>
+          <div class="mentor-focus">Marketing, Data, Research, Entrepreneurship</div>
+        </div>
+      </div>
+      <div class="mentor-card" onclick="openLightbox('e2')">
+        <div class="mentor-shot" style="background:#f0f4fc;height:210px"><img src="/mentee-02.jpg" alt="Bright Asani — mentee growth &amp; goals tracker" loading="lazy"></div>
+        <div class="mentor-body">
+          <div class="mentor-name">Bright Asani</div>
+          <div class="mentor-role">Data Analyst</div>
+          <div class="mentor-focus">Data, Operations</div>
+        </div>
+      </div>
+      <div class="mentor-card" onclick="openLightbox('e3')">
+        <div class="mentor-shot" style="background:#f0f4fc;height:210px"><img src="/mentee-03.jpg" alt="Tayyaba Noor Ansari — mentee growth &amp; goals tracker" loading="lazy"></div>
+        <div class="mentor-body">
+          <div class="mentor-name">Tayyaba Noor Ansari</div>
+          <div class="mentor-role">B.Tech Electronics &amp; Communication Engineering with AI</div>
+          <div class="mentor-focus">Machine Learning, Research Engineering</div>
+        </div>
+      </div>
+      <div class="mentor-card" onclick="openLightbox('e4')">
+        <div class="mentor-shot" style="background:#f0f4fc;height:210px"><img src="/mentee-04.jpg" alt="Precious Adzo Mawunya Gatsey — mentee growth &amp; goals tracker" loading="lazy"></div>
+        <div class="mentor-body">
+          <div class="mentor-name">Precious Adzo Mawunya Gatsey</div>
+          <div class="mentor-role">Data Analytics Enthusiast</div>
+          <div class="mentor-focus">Data, Entrepreneurship, Operations</div>
+        </div>
+      </div>
+      <div class="mentor-card" onclick="openLightbox('e5')">
+        <div class="mentor-shot" style="background:#f0f4fc;height:210px"><img src="/mentee-05.jpg" alt="Samuel Yirenkyi Mensah — mentee growth &amp; goals tracker" loading="lazy"></div>
+        <div class="mentor-body">
+          <div class="mentor-name">Samuel Yirenkyi Mensah</div>
+          <div class="mentor-role">Data Analytics Enthusiast</div>
+          <div class="mentor-focus">Marketing, Data, Research, Entrepreneurship</div>
+        </div>
+      </div>
+      <div class="mentor-card" onclick="openLightbox('e6')">
+        <div class="mentor-shot" style="background:#f0f4fc;height:210px"><img src="/mentee-06.jpg" alt="Florence Owusu Aduomi — mentee growth &amp; goals tracker" loading="lazy"></div>
+        <div class="mentor-body">
+          <div class="mentor-name">Florence Owusu Aduomi</div>
+          <div class="mentor-role">Information Studies &amp; Philosophy Student</div>
+          <div class="mentor-focus">Marketing, Data, Research, Entrepreneurship</div>
+        </div>
+      </div>
+  </div>
+
+  <div class="voices">
+    <img src="/community-voices.jpg" alt="Messages from community members" loading="lazy" onclick="openLightbox('v1')">
+    <div class="voices-copy">
+      <h3>What the community says</h3>
+      <p>&ldquo;You really inspire me. Thank you for the mentorship opportunity when I was at my lowest.&rdquo;</p>
+      <p>&ldquo;I never approached any problem in this way. I am doing research for the first time this summer and I will surely apply this rule.&rdquo;</p>
+      <p>&ldquo;I really appreciate your efforts so far. You have done so much for me.&rdquo;</p>
+    </div>
+  </div>
+</section>
 
 <!-- PHOTO GALLERY -->
 <section class="gallery-section" id="gallery">
@@ -2266,94 +2510,50 @@
   </div>
 </section>
 
-<!-- PRICING -->
-<section class="pricing" id="pricing">
-  <div class="pricing-inner">
-    <div class="section-kicker">Pricing</div>
-    <div class="rule"></div>
-    <h2>Simple, transparent packages</h2>
-    <p class="section-sub">Every package is ready to start — choose the level of support that fits your goals and get going straight away.</p>
+<!-- EMBERLERN COURSES -->
+<section class="courses-sec" id="courses">
+  <div class="courses-inner">
+    <div class="ember-badge"><span></span> Emberlern · the learning platform</div>
+    <div class="rule" style="background:#60a5fa;margin:0 auto"></div>
+    <h2>Top courses, built around what young people are actually stuck on</h2>
+    <p class="section-sub">Emberlern starts from the pain point, not the syllabus. Each course answers a sentence we hear from young people every week — and answers it with work you do, not videos you nod along to. First three modules free, no card needed.</p>
 
-    <div class="pricing-grid">
-
-      <!-- Starter -->
-      <div class="price-card">
-        <div class="price-tier">Starter</div>
-        <div class="price-name">Essentials</div>
-        <div class="price-desc">Perfect for individuals who want to build foundational data skills or get a single project across the line.</div>
-        <div class="price-amount">
-          <span class="price-currency">₵</span>
-          <span class="price-num">500</span>
-          <span class="price-per">/ package</span>
-        </div>
-        <div class="price-note">One-time payment · no hidden fees</div>
-        <div class="price-divider"></div>
-        <ul class="price-features">
-          <li>3 one-on-one coaching sessions (1 hr each)</li>
-          <li>Personalised learning plan</li>
-          <li>Excel or Python — your choice of focus</li>
-          <li>Session recordings to revisit anytime</li>
-          <li>Email support between sessions</li>
-          <li>Starter resource pack &amp; templates</li>
-        </ul>
-        <a href="#contact" class="price-cta">Get started</a>
+    <div class="course-grid">
+      <div class="course-card">
+        <div class="course-pain">&ldquo;I&rsquo;ve watched a hundred tutorials and still can&rsquo;t do the job.&rdquo;</div>
+        <div class="course-name">How to Be a Top-Notch Data Analyst</div>
+        <div class="course-desc">Excel, SQL, Power BI and Python, taught in the order employers actually ask for them &mdash; built backwards from an analysis of 328 real analyst job descriptions.</div>
+        <div class="course-pills"><div class="course-pill">10 modules</div><div class="course-pill">58 lessons</div><div class="course-pill">~11h + capstone</div><div class="course-pill">No prerequisites</div></div>
+        <a class="course-cta" href="emberlern/index.html#courses">View the full curriculum <span>&rarr;</span></a>
       </div>
-
-      <!-- Growth — popular -->
-      <div class="price-card popular">
-        <div class="popular-badge">Most popular</div>
-        <div class="price-tier">Growth</div>
-        <div class="price-name">Professional</div>
-        <div class="price-desc">For professionals who want deeper skills and hands-on project support to level up at work.</div>
-        <div class="price-amount">
-          <span class="price-currency">₵</span>
-          <span class="price-num">1,500</span>
-          <span class="price-per">/ package</span>
-        </div>
-        <div class="price-note">One-time payment · ready to book immediately</div>
-        <div class="price-divider"></div>
-        <ul class="price-features">
-          <li>8 one-on-one sessions (1 hr each)</li>
-          <li>Multi-tool curriculum: Excel, SQL &amp; Python</li>
-          <li>Real project built with your own data</li>
-          <li>Dashboard or report delivered to you</li>
-          <li>Priority WhatsApp support</li>
-          <li>Session recordings + resource library</li>
-          <li>Certificate of completion</li>
-        </ul>
-        <a href="#contact" class="price-cta">Book this package</a>
+      <div class="course-card">
+        <div class="course-pain">&ldquo;Everyone says AI will take my job.&rdquo;</div>
+        <div class="course-name">AI for Business Operations</div>
+        <div class="course-desc">Gartner expects over 40% of agentic AI projects to be cancelled by 2027. This course is about not being in that 40%: pick the right process, take a baseline, put the human where the risk is, prove the saving.</div>
+        <div class="course-pills"><div class="course-pill">8 modules</div><div class="course-pill">42 lessons</div><div class="course-pill">~7h 30m + capstone</div><div class="course-pill">No coding required</div></div>
+        <a class="course-cta" href="emberlern/index.html#courses">View the full curriculum <span>&rarr;</span></a>
       </div>
-
-      <!-- Team -->
-      <div class="price-card">
-        <div class="price-tier">Corporate</div>
-        <div class="price-name">Team Training</div>
-        <div class="price-desc">For organisations ready to upskill a team with a fully custom, hands-on data training programme.</div>
-        <div class="price-amount">
-          <span class="price-currency">₵</span>
-          <span class="price-num">2,500</span>
-          <span class="price-per">/ programme</span>
-        </div>
-        <div class="price-note">Up to 15 participants · on-site or virtual</div>
-        <div class="price-divider"></div>
-        <ul class="price-features">
-          <li>Full 2-day custom workshop</li>
-          <li>Needs assessment &amp; custom curriculum</li>
-          <li>Hands-on with your company's real data</li>
-          <li>Excel, Power BI, Python — tailored mix</li>
-          <li>Post-training support (30 days)</li>
-          <li>Certificates for all participants</li>
-          <li>Training materials &amp; slides included</li>
-        </ul>
-        <a href="#contact" class="price-cta">Request a proposal</a>
+      <div class="course-card">
+        <div class="course-pain">&ldquo;I need to earn online but I don&rsquo;t know what to sell.&rdquo;</div>
+        <div class="course-name">The Assistant They Can&rsquo;t Replace</div>
+        <div class="course-desc">Virtual assistance built for what AI has already automated and what it hasn&rsquo;t &mdash; inbox, calendar, files, research, and running it as a real business, through one running client start to finish.</div>
+        <div class="course-pills"><div class="course-pill">10 modules</div><div class="course-pill">50 lessons</div><div class="course-pill">~10h + capstone</div><div class="course-pill">No prerequisites</div></div>
+        <a class="course-cta" href="emberlern/course-01.html">View the full curriculum <span>&rarr;</span></a>
       </div>
-
+      <div class="course-card">
+        <div class="course-pain">&ldquo;I want to start in tech but I can&rsquo;t code.&rdquo;</div>
+        <div class="course-name">The Ticket That Doesn&rsquo;t Come Back</div>
+        <div class="course-desc">Customer support built around the judgement AI can&rsquo;t fake: reading a policy, de-escalating a real complaint, and knowing when to bend the rules and when not to.</div>
+        <div class="course-pills"><div class="course-pill">10 modules</div><div class="course-pill">50 lessons</div><div class="course-pill">~10h + capstone</div><div class="course-pill">No prerequisites</div></div>
+        <a class="course-cta" href="emberlern/course-02.html">View the full curriculum <span>&rarr;</span></a>
+      </div>
     </div>
 
-    <p class="pricing-footer-note">
-      Prices shown are starting rates and may vary based on scope and requirements.
-      Not sure which package fits? <a href="#contact">Let's talk</a> — I'll help you figure it out.
-    </p>
+    <div class="courses-foot">
+      <a class="ember-btn" href="emberlern/index.html">Explore Emberlern</a>
+      <a class="ember-btn ghost" href="emberlern/index.html#inside">See inside a course</a>
+    </div>
+    <div class="courses-note">Anyone can watch a tutorial. You came here to get good.</div>
   </div>
 </section>
 
@@ -2381,7 +2581,7 @@
         <a href="#services">Freelance Projects</a>
         <a href="#services">Personal Coaching</a>
         <a href="#workshops">Corporate Training</a>
-        <a href="#pricing">Pricing</a>
+        <a href="#courses">Courses</a>
         <a href="#workshops">Excel Workshops</a>
         <a href="#workshops">Python for Business</a>
       </div>
@@ -2487,6 +2687,27 @@
 
 // Gallery lightbox
 const galleryImgs = {
+  't1': '/training-01.jpg',
+  't2': '/training-02.jpg',
+  't3': '/training-03.jpg',
+  't4': '/training-04.jpg',
+  't5': '/training-05.jpg',
+  't6': '/training-06.jpg',
+  't7': '/training-07.jpg',
+  't8': '/training-08.jpg',
+  't9': '/training-09.jpg',
+  't10': '/training-10.jpg',
+  'm1': '/mentor-01.jpg',
+  'm2': '/mentor-02.jpg',
+  'm3': '/mentor-03.jpg',
+  'm4': '/mentor-04.jpg',
+  'e1': '/mentee-01.jpg',
+  'e2': '/mentee-02.jpg',
+  'e3': '/mentee-03.jpg',
+  'e4': '/mentee-04.jpg',
+  'e5': '/mentee-05.jpg',
+  'e6': '/mentee-06.jpg',
+  'v1': '/community-voices.jpg',
   1: '/gallery-1.jpg',
   2: '/gallery-2.jpg',
   3: '/gallery-3.jpg',
