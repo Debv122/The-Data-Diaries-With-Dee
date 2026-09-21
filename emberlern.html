@@ -1,0 +1,1641 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Emberlern, data analysis, AI operations, virtual assistance and customer support courses taught in the order employers and clients ask for them.">
+<title>Emberlern</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --ink:#000000;
+    --ink-soft:#0B0D10;
+    --slab:#12151A;
+    --card:rgba(16,17,20,.78);
+    --card-hi:rgba(255,243,240,.055);
+    --line:rgba(255,243,240,.10);
+    --line-strong:rgba(255,243,240,.20);
+    --text:#FFF3F0;
+    --muted:rgba(255,243,240,.62);
+    --faint:rgba(255,243,240,.38);
+    --ember:#E0876B;
+    --ember-soft:rgba(224,135,107,.16);
+    --dusk:#7A6480;
+
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+
+    --col:1120px;
+    --pad:clamp(20px,5vw,40px);
+    --r-lg:24px;
+    --r-md:16px;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  ::selection{background:var(--ember);color:#150C09}
+
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%}
+
+  :focus-visible{
+    outline:2px solid var(--ember);
+    outline-offset:3px;
+    border-radius:6px;
+  }
+
+  .wrap{
+    width:100%;
+    max-width:var(--col);
+    margin-inline:auto;
+    padding-inline:var(--pad);
+  }
+
+  /* ---------- type ---------- */
+
+  h1,h2,h3,h4{
+    margin:0;
+    font-weight:400;
+    letter-spacing:-.035em;
+    text-wrap:balance;
+  }
+
+  .display{
+    font-size:clamp(2.5rem,6.2vw,4.5rem);
+    line-height:1.04;
+    letter-spacing:-.045em;
+  }
+  .display .dim{color:var(--faint);display:block}
+
+  .h2{
+    font-size:clamp(1.9rem,3.9vw,2.9rem);
+    line-height:1.1;
+  }
+  .h2 .dim{color:var(--faint)}
+
+  .h3{font-size:1.2rem;font-weight:500;letter-spacing:-.02em;line-height:1.35}
+
+  .lede{
+    font-size:clamp(1.02rem,1.5vw,1.15rem);
+    color:var(--muted);
+    line-height:1.62;
+    max-width:60ch;
+    margin:0;
+  }
+
+  p{margin:0}
+
+  .eyebrow{
+    display:inline-flex;
+    align-self:flex-start;
+    width:fit-content;
+    align-items:center;
+    gap:9px;
+    font-family:var(--mono);
+    font-size:.7rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--muted);
+    background:var(--card-hi);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:7px 16px 7px 12px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:5px;height:5px;border-radius:50%;
+    background:var(--ember);
+    box-shadow:0 0 10px var(--ember);
+  }
+
+  .mono{font-family:var(--mono);font-size:.78rem;letter-spacing:.04em}
+
+  /* ---------- buttons ---------- */
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    height:46px;
+    padding:0 26px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:var(--card-hi);
+    color:var(--text);
+    font-size:.94rem;
+    letter-spacing:-.01em;
+    cursor:pointer;
+    transition:background .25s ease,border-color .25s ease,transform .25s ease;
+  }
+  .btn:hover{background:rgba(255,243,240,.11);border-color:var(--line-strong);transform:translateY(-1px)}
+
+  .btn-primary{
+    background:var(--ember);
+    border-color:var(--ember);
+    color:#160C08;
+    font-weight:500;
+  }
+  .btn-primary:hover{background:#EE9679;border-color:#EE9679}
+
+  .btn-lg{height:52px;padding:0 32px;font-size:1rem}
+
+  /* ---------- nav ---------- */
+
+  header.nav{
+    position:sticky;
+    top:0;
+    z-index:60;
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    background:rgba(0,0,0,.55);
+    border-bottom:1px solid transparent;
+    transition:border-color .3s ease;
+  }
+  header.nav.stuck{border-bottom-color:var(--line)}
+
+  .nav-in{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+    height:70px;
+  }
+
+  .brand{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font-size:1.22rem;
+    letter-spacing:-.045em;
+    font-weight:500;
+  }
+  .mark{
+    width:28px;height:28px;
+    flex:none;
+    border-radius:9px;
+    border:1px solid rgba(255,243,240,.14);
+    background:
+      radial-gradient(58% 58% at 50% 64%,#FFDCC8 0%,#F09A76 32%,#B9563F 60%,rgba(0,0,0,0) 80%),
+      linear-gradient(150deg,#2A1D1F,#100E13);
+    box-shadow:0 0 14px rgba(224,135,107,.42),inset 0 0 10px rgba(224,135,107,.30);
+  }
+
+  .nav-links{
+    display:flex;
+    align-items:center;
+    gap:30px;
+    font-size:.92rem;
+    color:var(--muted);
+  }
+  .nav-links a:hover{color:var(--text)}
+
+  .nav-cta{display:flex;align-items:center;gap:14px}
+  .nav-cta .btn{height:38px;padding:0 20px;font-size:.88rem}
+
+  .menu-btn{
+    display:none;
+    width:40px;height:40px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    background:var(--card-hi);
+    color:var(--text);
+    cursor:pointer;
+    align-items:center;
+    justify-content:center;
+  }
+  .menu-btn span{
+    display:block;width:16px;height:1.5px;background:currentColor;
+    box-shadow:0 -5px 0 currentColor,0 5px 0 currentColor;
+  }
+
+  /* ---------- hero ---------- */
+
+  .hero{
+    position:relative;
+    padding:clamp(66px,10vw,116px) 0 clamp(60px,8vw,92px);
+    text-align:center;
+    isolation:isolate;
+  }
+  .hero::before{
+    content:"";
+    position:absolute;
+    inset:-70px 0 0;
+    z-index:-1;
+    background:
+      radial-gradient(96% 68% at 50% 96%,rgba(224,135,107,.60) 0%,rgba(224,135,107,0) 64%),
+      radial-gradient(80% 62% at 16% 88%,rgba(122,100,128,.58) 0%,rgba(122,100,128,0) 68%),
+      radial-gradient(76% 56% at 88% 82%,rgba(176,132,120,.46) 0%,rgba(176,132,120,0) 70%);
+    filter:blur(8px);
+    animation:drift 26s ease-in-out infinite alternate;
+  }
+  @keyframes drift{
+    from{transform:translate3d(-1.5%,0,0) scale(1)}
+    to{transform:translate3d(1.5%,-2%,0) scale(1.06)}
+  }
+
+  .hero-stack{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:26px;
+  }
+  .hero .lede{text-align:center;max-width:54ch}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+  .hero-note{font-family:var(--mono);font-size:.74rem;color:var(--faint);letter-spacing:.06em}
+
+  /* ---------- lesson player mock ---------- */
+
+  .player{
+    margin-top:clamp(44px,6vw,64px);
+    border:1px solid var(--line);
+    border-radius:var(--r-lg);
+    background:linear-gradient(180deg,rgba(22,24,28,.92),rgba(9,10,12,.92));
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+    overflow:hidden;
+    text-align:left;
+    box-shadow:0 40px 90px -50px rgba(0,0,0,.9);
+  }
+  .player-bar{
+    display:flex;align-items:center;gap:8px;
+    padding:14px 18px;
+    border-bottom:1px solid var(--line);
+  }
+  .dot{width:9px;height:9px;border-radius:50%;background:rgba(255,243,240,.16)}
+  .player-bar .tag{
+    margin-left:auto;
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  .player-body{
+    display:grid;
+    grid-template-columns:272px 1fr;
+    min-height:340px;
+  }
+  .player-side{
+    border-right:1px solid var(--line);
+    padding:20px 16px;
+    display:flex;flex-direction:column;gap:6px;
+  }
+  .side-h{
+    font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--faint);
+    padding:0 10px 10px;
+  }
+  .side-item{
+    display:flex;align-items:center;gap:11px;
+    padding:9px 10px;border-radius:10px;
+    font-size:.84rem;color:var(--muted);
+  }
+  .side-item.on{background:var(--card-hi);color:var(--text)}
+  .side-item .n{font-family:var(--mono);font-size:.68rem;color:var(--faint)}
+  .side-item.on .n{color:var(--ember)}
+  .side-item .t{
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .check{
+    margin-left:auto;width:14px;height:14px;border-radius:50%;
+    border:1px solid var(--line-strong);flex:none;
+  }
+  .side-item.done .check{background:var(--ember);border-color:var(--ember)}
+
+  .player-main{padding:clamp(20px,3vw,30px);display:flex;flex-direction:column;gap:18px}
+  .frame{
+    flex:1;
+    min-height:170px;
+    border-radius:var(--r-md);
+    border:1px solid var(--line);
+    background:
+      radial-gradient(90% 120% at 20% 0%,rgba(224,135,107,.22),transparent 60%),
+      radial-gradient(80% 110% at 90% 100%,rgba(122,100,128,.26),transparent 62%),
+      #0C0E11;
+    display:grid;place-items:center;
+  }
+  .play{
+    width:52px;height:52px;border-radius:50%;
+    background:rgba(255,243,240,.92);
+    display:grid;place-items:center;
+  }
+  .play::after{
+    content:"";
+    width:0;height:0;
+    border-left:13px solid #14100E;
+    border-top:8px solid transparent;
+    border-bottom:8px solid transparent;
+    margin-left:3px;
+  }
+  .progress{height:3px;border-radius:99px;background:rgba(255,243,240,.12);overflow:hidden}
+  .progress i{display:block;height:100%;width:38%;background:var(--ember);border-radius:99px}
+  .player-meta{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:baseline}
+  .player-meta .k{font-family:var(--mono);font-size:.7rem;color:var(--faint);letter-spacing:.1em;text-transform:uppercase}
+
+  /* ---------- sections ---------- */
+
+  section{position:relative}
+
+  .band{padding:clamp(70px,9vw,116px) 0}
+  .band-slab{background:linear-gradient(180deg,#000 0%,var(--slab) 100%)}
+  .band-slab-rev{background:linear-gradient(180deg,var(--slab) 0%,#000 100%)}
+
+  .rule{height:1px;background:var(--line);border:0;margin:0}
+
+  .sec-head{display:flex;flex-direction:column;align-items:flex-start;gap:20px;max-width:44ch}
+  .sec-head.wide{max-width:56ch}
+
+  /* ---------- intro prose ---------- */
+
+  .prose{
+    display:grid;
+    grid-template-columns:minmax(0,180px) minmax(0,1fr);
+    gap:clamp(24px,5vw,64px);
+    align-items:start;
+  }
+  .prose p{color:var(--muted);font-size:1.06rem;line-height:1.7}
+  .prose .col{display:flex;flex-direction:column;gap:20px;max-width:64ch}
+  .prose strong{color:var(--text);font-weight:500}
+
+  /* ---------- evidence strip ---------- */
+
+  .evidence{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-radius:var(--r-md);
+    overflow:hidden;
+    margin-top:10px;
+  }
+  .stat{background:#050607;padding:16px 16px 14px;display:flex;flex-direction:column;gap:3px}
+  .stat b{font-size:1.6rem;font-weight:400;letter-spacing:-.04em;line-height:1.1;font-variant-numeric:tabular-nums}
+  .stat span{font-size:.82rem;color:var(--muted)}
+  .stat i{
+    font-family:var(--mono);font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--faint);font-style:normal;
+  }
+  .evidence-note{font-size:.88rem;color:var(--faint);max-width:60ch}
+
+  /* ---------- feature grid ---------- */
+
+  .grid-2{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-radius:var(--r-lg);
+    overflow:hidden;
+    margin-top:clamp(36px,5vw,54px);
+  }
+  .feat{
+    background:#040506;
+    padding:clamp(26px,3.4vw,38px);
+    display:flex;flex-direction:column;gap:12px;
+    transition:background .3s ease;
+  }
+  .feat:hover{background:#0B0C0F}
+  .feat .num{
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;
+    color:var(--ember);
+  }
+  .feat p{color:var(--muted);font-size:.98rem;max-width:42ch}
+
+  /* ---------- courses ---------- */
+
+  .courses{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
+    gap:18px;
+    margin-top:clamp(36px,5vw,54px);
+  }
+  .course{
+    display:flex;flex-direction:column;
+    border:1px solid var(--line);
+    border-radius:var(--r-lg);
+    background:var(--card);
+    overflow:hidden;
+    transition:border-color .3s ease,transform .3s ease;
+  }
+  .course:hover{border-color:var(--line-strong);transform:translateY(-3px)}
+  .course-top{
+    height:120px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .course:nth-child(1) .course-top{background:radial-gradient(120% 140% at 15% 0%,rgba(224,135,107,.5),transparent 62%),#0A0B0D}
+  .course:nth-child(2) .course-top{background:radial-gradient(120% 140% at 50% 10%,rgba(122,100,128,.5),transparent 62%),#0A0B0D}
+  .course:nth-child(3) .course-top{background:radial-gradient(120% 140% at 85% 0%,rgba(120,140,150,.45),transparent 62%),#0A0B0D}
+  .level{
+    position:absolute;left:18px;bottom:16px;
+    font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
+    background:rgba(0,0,0,.5);
+    border:1px solid var(--line);
+    border-radius:999px;padding:5px 12px;
+    backdrop-filter:blur(8px);
+  }
+  .course-body{padding:22px;display:flex;flex-direction:column;gap:12px;flex:1}
+  .course-body p{color:var(--muted);font-size:.95rem;flex:1}
+  .specs{
+    display:flex;flex-wrap:wrap;gap:6px 14px;
+    font-family:var(--mono);font-size:.72rem;color:var(--faint);
+    padding-top:14px;border-top:1px solid var(--line);
+    font-variant-numeric:tabular-nums;
+  }
+  .course-link{
+    display:inline-flex;align-items:center;gap:7px;
+    font-size:.9rem;color:var(--ember);
+  }
+  .course-link span{transition:transform .25s ease;display:inline-block}
+  .course:hover .course-link span{transform:translateX(4px)}
+
+  /* ---------- curriculum ---------- */
+
+  .course-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .ctab{
+    font-family:var(--mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;
+    color:#ffffff;background:var(--card-hi);border:1px solid var(--line);
+    border-radius:999px;padding:8px 16px;cursor:pointer;
+    transition:background .25s ease,border-color .25s ease,color .25s ease;
+  }
+  .ctab:hover{color:var(--text);border-color:var(--line-strong)}
+  .ctab.on{background:var(--ember);border-color:var(--ember);color:#160C08}
+
+  .curric-note{
+    display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;justify-content:space-between;
+    margin-top:clamp(36px,5vw,54px);
+    padding:14px clamp(18px,2.6vw,26px);
+    border:1px solid var(--line);border-radius:var(--r-md);
+    background:var(--card-hi);
+    font-size:.92rem;color:var(--muted);
+  }
+  .curric-note[hidden]{display:none}
+  .curric-note a{color:var(--ember)}
+  .curric-note a:hover{text-decoration:underline}
+
+  .curric{
+    margin-top:clamp(20px,3vw,28px);
+    border:1px solid var(--line);
+    border-radius:var(--r-lg);
+    overflow:hidden;
+    background:var(--card);
+  }
+  .curric[hidden]{display:none}
+  .mod-open{
+    display:inline-flex;align-items:center;gap:7px;
+    margin-top:14px;font-size:.86rem;color:var(--ember);
+  }
+  .mod-open span{transition:transform .25s ease;display:inline-block}
+  .mod-open:hover span{transform:translateX(4px)}
+  .mod{border-bottom:1px solid var(--line)}
+  .mod:last-child{border-bottom:0}
+  .mod > summary{
+    list-style:none;
+    cursor:pointer;
+    display:flex;align-items:center;gap:16px;
+    padding:20px clamp(18px,2.6vw,26px);
+    transition:background .25s ease;
+  }
+  .mod > summary::-webkit-details-marker{display:none}
+  .mod > summary:hover{background:var(--card-hi)}
+  .mod .mnum{font-family:var(--mono);font-size:.74rem;color:var(--ember);width:26px;flex:none}
+  .mod .mtitle{font-size:1.02rem;letter-spacing:-.015em}
+  .mod .mmeta{
+    margin-left:auto;font-family:var(--mono);font-size:.72rem;color:var(--faint);
+    font-variant-numeric:tabular-nums;white-space:nowrap;
+  }
+  .caret{
+    width:9px;height:9px;flex:none;
+    border-right:1.5px solid var(--faint);
+    border-bottom:1.5px solid var(--faint);
+    transform:rotate(45deg);
+    transition:transform .3s ease;
+    margin-left:4px;
+  }
+  .mod[open] .caret{transform:rotate(-135deg)}
+  .lessons{
+    display:flex;flex-direction:column;
+    padding:0 clamp(18px,2.6vw,26px) 20px 60px;
+  }
+  .lesson{
+    display:flex;align-items:center;gap:14px;
+    padding:10px 0;
+    border-top:1px solid var(--line);
+    color:var(--muted);font-size:.94rem;
+  }
+  .lesson .ln{font-family:var(--mono);font-size:.7rem;color:var(--faint);width:34px;flex:none;font-variant-numeric:tabular-nums}
+  .lesson .lt{overflow-wrap:anywhere}
+  .lesson .ld{margin-left:auto;font-family:var(--mono);font-size:.72rem;color:var(--faint);font-variant-numeric:tabular-nums}
+  .drill{
+    display:flex;gap:11px;align-items:flex-start;margin-top:16px;
+    background:rgba(224,135,107,.07);
+    border:1px solid rgba(224,135,107,.22);
+    border-radius:12px;padding:12px 14px;
+    font-size:.9rem;color:var(--muted);
+  }
+  .drill b{
+    font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ember);flex:none;padding-top:3px;font-weight:500;
+  }
+
+  /* ---------- pricing ---------- */
+
+  .plans{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+    gap:18px;
+    margin-top:clamp(36px,5vw,54px);
+    align-items:start;
+  }
+  .plan{
+    border:1px solid var(--line);
+    border-radius:var(--r-lg);
+    background:var(--card);
+    padding:clamp(24px,3vw,32px);
+    display:flex;flex-direction:column;gap:18px;
+  }
+  .plan.feature{
+    border-color:rgba(224,135,107,.42);
+    background:linear-gradient(180deg,rgba(224,135,107,.09),rgba(16,17,20,.82) 42%);
+  }
+  .plan-name{
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted);
+    display:flex;align-items:center;gap:10px;
+  }
+  .plan.feature .plan-name{color:var(--ember)}
+  .price{display:flex;align-items:baseline;gap:7px}
+  .price .amt{font-size:2.5rem;letter-spacing:-.045em;line-height:1;font-variant-numeric:tabular-nums}
+  .price .per{color:var(--faint);font-size:.86rem}
+  .plan > p{color:var(--muted);font-size:.95rem}
+  .plan ul{
+    list-style:none;margin:0;padding:16px 0 0;
+    border-top:1px solid var(--line);
+    display:flex;flex-direction:column;gap:11px;
+    font-size:.94rem;color:var(--muted);
+  }
+  .plan li{display:flex;gap:11px;align-items:flex-start}
+  .plan li::before{
+    content:"";flex:none;margin-top:7px;
+    width:5px;height:5px;border-radius:50%;
+    background:var(--line-strong);
+  }
+  .plan.feature li::before{background:var(--ember)}
+  .plan .btn{width:100%;margin-top:auto}
+
+  /* ---------- faq ---------- */
+
+  .faq{margin-top:clamp(30px,4vw,44px);border-top:1px solid var(--line)}
+  .q{border-bottom:1px solid var(--line)}
+  .q > summary{
+    list-style:none;cursor:pointer;
+    display:flex;align-items:flex-start;gap:18px;
+    padding:22px 4px;
+    font-size:1.04rem;letter-spacing:-.015em;
+  }
+  .q > summary::-webkit-details-marker{display:none}
+  .q > summary:hover{color:var(--ember)}
+  .q .caret{margin-left:auto;margin-top:6px}
+  .q .a{padding:0 4px 24px 0;color:var(--muted);max-width:64ch;font-size:.99rem}
+
+  /* ---------- final cta ---------- */
+
+  .final{
+    position:relative;
+    text-align:center;
+    padding:clamp(80px,11vw,140px) 0;
+    isolation:isolate;
+    overflow:hidden;
+  }
+  .final::before{
+    content:"";position:absolute;inset:0;z-index:-1;
+    background:
+      radial-gradient(70% 100% at 50% 116%,rgba(224,135,107,.40),transparent 64%),
+      radial-gradient(58% 90% at 16% 110%,rgba(122,100,128,.36),transparent 66%),
+      #000;
+  }
+  .final .inner{display:flex;flex-direction:column;align-items:center;gap:24px}
+  .final .lede{text-align:center}
+
+  /* ---------- footer ---------- */
+
+  footer{background:#000;border-top:1px solid var(--line);padding:56px 0 40px}
+  .foot-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1.4fr) repeat(auto-fit,minmax(120px,1fr));
+    gap:36px 24px;
+  }
+  .foot-col{display:flex;flex-direction:column;gap:12px}
+  .foot-col h4{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--faint);font-weight:400;
+  }
+  .foot-col a{color:var(--muted);font-size:.93rem}
+  .foot-col a:hover{color:var(--text)}
+  .foot-bottom{
+    margin-top:44px;padding-top:22px;border-top:1px solid var(--line);
+    display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
+    font-size:.86rem;color:var(--faint);
+  }
+
+  /* ---------- responsive ---------- */
+
+  @media (max-width:760px){
+    .grid-2{grid-template-columns:minmax(0,1fr)}
+    .evidence{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+
+  @media (max-width:860px){
+    .nav-links{display:none}
+    .menu-btn{display:inline-flex}
+    .nav-cta .btn{display:none}
+    .player-body{grid-template-columns:1fr}
+    .player-side{border-right:0;border-bottom:1px solid var(--line)}
+    .prose{grid-template-columns:1fr}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top"><span class="mark" aria-hidden="true"></span>Emberlern.</a>
+    <nav class="nav-links">
+      <a href="#courses">Courses</a>
+      <a href="#inside">Inside a course</a>
+      <a href="#faq">FAQ</a>
+      <a href="index.html">Data With Dee</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn" href="#courses">Start learning</a>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-stack">
+      <span class="eyebrow">Taught by Deola</span>
+      <h1 class="display">
+        <span class="dim">Anyone can watch a tutorial.</span>
+        You came here to get good.
+      </h1>
+      <p class="lede">Four courses in data analysis, AI operations, virtual assistance and customer support, built backwards from what employers and clients actually ask for, and taught through work you do rather than videos you nod along to.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="#courses">See the four courses</a>
+        <a class="btn btn-lg" href="#inside">Read the full curriculum</a>
+      </div>
+      <p class="hero-note">First three modules free · No card needed</p>
+
+      <div class="player">
+        <div class="player-bar">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="tag">Data Analyst · Module 03</span>
+        </div>
+        <div class="player-body">
+          <aside class="player-side">
+            <div class="side-h">Course outline</div>
+            <div class="side-item done"><span class="n">3.1</span><span class="t">Reading a schema first</span><span class="check"></span></div>
+            <div class="side-item done"><span class="n">3.2</span><span class="t">Filtering honestly</span><span class="check"></span></div>
+            <div class="side-item on"><span class="n">3.3</span><span class="t">JOINs and your total</span><span class="check"></span></div>
+            <div class="side-item"><span class="n">3.4</span><span class="t">GROUP BY traps</span><span class="check"></span></div>
+            <div class="side-item"><span class="n">3.5</span><span class="t">Window functions</span><span class="check"></span></div>
+            <div class="side-item"><span class="n">3.6</span><span class="t">CTEs people can read</span><span class="check"></span></div>
+          </aside>
+          <div class="player-main">
+            <div class="frame"><div class="play" aria-hidden="true"></div></div>
+            <div class="progress"><i></i></div>
+            <div class="player-meta">
+              <span class="k">Now playing</span>
+              <span>JOINs, and what a wrong join does to your total</span>
+              <span class="k">11:40</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTRO -->
+  <section class="band band-slab">
+    <div class="wrap prose">
+      <span class="eyebrow">Why this exists</span>
+      <div class="col">
+        <p>I teach the way I wish I'd been taught: <strong>one idea at a time, with a file open in front of you.</strong> Every lesson ends with something you make, not something you watch.</p>
+        <p>The running order isn't my opinion. I took an analysis of 328 real data analyst job descriptions and taught the most-demanded skills first, so if you stop halfway you've still learned the things you're most likely to be asked about in an interview.</p>
+        <p>Everything lives in one place, lessons, exercise files, and the worked solutions, so you can come back to a technique two months later and find it in under a minute.</p>
+
+        <div class="evidence">
+          <div class="stat"><i>Excel</i><b>81%</b><span>of analyst job ads</span></div>
+          <div class="stat"><i>SQL</i><b>60%</b><span>of analyst job ads</span></div>
+          <div class="stat"><i>Power BI</i><b>43%</b><span>of analyst job ads</span></div>
+          <div class="stat"><i>Python</i><b>41%</b><span>of analyst job ads</span></div>
+        </div>
+        <p class="evidence-note">Communication showed up in 27%, more than three times as often as data visualisation. That's why it gets a module of its own rather than a closing lesson.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT YOU GET -->
+  <section class="band band-slab-rev">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">What you get</span>
+        <h2 class="h2"><span class="dim">Built to be used,</span> not just finished.</h2>
+      </div>
+      <div class="grid-2">
+        <article class="feat">
+          <span class="num">01</span>
+          <h3 class="h3">A drill at the end of every module</h3>
+          <p>Not a quiz. A real task with a messy file: nine planted problems to find, eight business questions to answer in SQL, a dashboard to build and then defend.</p>
+        </article>
+        <article class="feat">
+          <span class="num">02</span>
+          <h3 class="h3">One dataset, all the way through</h3>
+          <p>The file you clean in module 02 is the one you query in module 03 and visualise in module 06. You build one thing across the course, not ten disconnected exercises.</p>
+        </article>
+        <article class="feat">
+          <span class="num">03</span>
+          <h3 class="h3">A checklist you keep</h3>
+          <p>Each module closes with a one-page reference, the steps, the shortcuts, the mistakes to watch for. Print it, pin it, use it at work.</p>
+        </article>
+        <article class="feat">
+          <span class="num">04</span>
+          <h3 class="h3">Three paces, one spine</h3>
+          <p>Twelve weeks with primers if you're starting cold, six to eight self-paced if you're working, or an eight-week cohort using your own team's files. Nobody gets a cut-down version.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- COURSES -->
+  <section class="band" id="courses">
+    <div class="wrap">
+      <div class="sec-head wide">
+        <span class="eyebrow">The courses</span>
+        <h2 class="h2"><span class="dim">Four courses.</span> All built backwards from the job.</h2>
+        <p class="lede">Each stands on its own, and none assumes you've done the others. Start with the analyst course if you want the skills employers list, the AI course if you already have a job and a process that's eating your week, the virtual assistance course if you're building a client-services business from nothing, or the customer support course if you'd rather start with the queue almost every small brand needs covered.</p>
+      </div>
+
+      <div class="courses">
+        <article class="course">
+          <div class="course-top"><span class="level">No prerequisites</span></div>
+          <div class="course-body">
+            <h3 class="h3">How to Be a Top-Notch Data Analyst</h3>
+            <p>Excel, SQL, Power BI and Python, taught in the order employers ask for them, inside the loop an analyst actually runs: question, data, answer, decision.</p>
+            <div class="specs"><span>10 modules</span><span>58 lessons</span><span>~11h</span><span>+ capstone</span></div>
+            <a class="course-link" href="#inside" data-tab="analyst">View the full curriculum <span>&rarr;</span></a>
+          </div>
+        </article>
+
+        <article class="course">
+          <div class="course-top"><span class="level">No coding required</span></div>
+          <div class="course-body">
+            <h3 class="h3">AI for Business Operations</h3>
+            <p>Gartner expects over 40% of agentic AI projects to be cancelled by 2027. This course is about not being in that 40%: pick the right process, take a baseline, put the human where the risk is, prove the saving.</p>
+            <div class="specs"><span>8 modules</span><span>42 lessons</span><span>~7h 30m</span><span>+ capstone</span></div>
+            <a class="course-link" href="#inside">View the full curriculum <span>&rarr;</span></a>
+          </div>
+        </article>
+
+        <article class="course">
+          <div class="course-top"><span class="level">No prerequisites</span></div>
+          <div class="course-body">
+            <h3 class="h3">The Assistant They Can't Replace</h3>
+            <p>Virtual assistance built for what AI has already automated and what it hasn't. The inbox, the calendar, the files, research, and running it as a real business — through one running client, start to finish.</p>
+            <div class="specs"><span>10 modules</span><span>50 lessons</span><span>~10h</span><span>+ capstone</span></div>
+            <a class="course-link" href="#inside" data-tab="va">View the full curriculum <span>&rarr;</span></a>
+          </div>
+        </article>
+
+        <article class="course">
+          <div class="course-top"><span class="level">No prerequisites</span></div>
+          <div class="course-body">
+            <h3 class="h3">The Ticket That Doesn't Come Back</h3>
+            <p>Customer support built around the judgement AI can't fake: reading a policy, de-escalating a real complaint, and knowing when to bend the rules and when not to — through one running client, start to finish.</p>
+            <div class="specs"><span>10 modules</span><span>50 lessons</span><span>~10h</span><span>+ capstone</span></div>
+            <a class="course-link" href="#inside" data-tab="cs">View the full curriculum <span>&rarr;</span></a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSIDE A COURSE -->
+  <section class="band band-slab" id="inside">
+    <div class="wrap">
+      <div class="sec-head wide">
+        <span class="eyebrow">Inside a course</span>
+        <h2 class="h2"><span class="dim">Nothing hidden.</span> Here's the whole thing.</h2>
+        <p class="lede">The full outline, every module, every lesson, and the drill that closes it. Open one and see exactly what you'd be paying for.</p>
+        <div class="course-tabs" role="tablist" aria-label="Choose a course">
+          <button class="ctab on" type="button" data-tab="analyst" role="tab" aria-selected="true">Data Analyst</button>
+          <button class="ctab" type="button" data-tab="va" role="tab" aria-selected="false">Virtual Assistant</button>
+          <button class="ctab" type="button" data-tab="cs" role="tab" aria-selected="false">Customer Support</button>
+        </div>
+      </div>
+
+      <div class="curric-note" data-panel-note="analyst">
+        <span>Every lesson below is written out in full and live — this isn't a placeholder outline.</span>
+        <a href="course-03-module-01.html" target="_blank" rel="noopener">Open module 1 to start &rarr;</a>
+      </div>
+
+      <div class="curric-note" data-panel-note="va" hidden>
+        <span>Every lesson below is written out in full and live — this isn't a placeholder outline.</span>
+        <a href="course-01.html" target="_blank" rel="noopener">Open the full course overview &rarr;</a>
+      </div>
+
+      <div class="curric-note" data-panel-note="cs" hidden>
+        <span>Every lesson below is written out in full and live — this isn't a placeholder outline.</span>
+        <a href="course-02.html" target="_blank" rel="noopener">Open the full course overview &rarr;</a>
+      </div>
+
+      <div class="curric" data-panel="analyst">
+        <details class="mod" open>
+          <summary>
+            <span class="mnum">01</span>
+            <span class="mtitle">What the job actually is</span>
+            <span class="mmeta">4 lessons · ~35m</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">1.1</span><span class="lt">What a company is paying an analyst to do</span></div>
+            <div class="lesson"><span class="ln">1.2</span><span class="lt">The four questions every analysis answers: what happened, why, what next, what if</span></div>
+            <div class="lesson"><span class="ln">1.3</span><span class="lt">The request behind the request: how to run an intake conversation</span></div>
+            <div class="lesson"><span class="ln">1.4</span><span class="lt">Scoping: what you will and will not answer, agreed in writing</span></div>
+            <p class="drill"><b>Drill</b><span>Five vague requests from real managers. Rewrite each as a question with a defined metric, a time window, and a decision it will inform.</span></p>
+            <a class="mod-open" href="course-03-module-01.html" target="_blank" rel="noopener">Open module 1 <span>&rarr;</span></a>
+          </div>
+        </details>
+        <details class="mod">
+          <summary>
+            <span class="mnum">02</span>
+            <span class="mtitle">Excel that holds up under pressure</span>
+            <span class="mmeta">7 lessons · ~1h 10m</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">2.1</span><span class="lt">Structuring a sheet so formulas do not break when data grows</span></div>
+            <div class="lesson"><span class="ln">2.2</span><span class="lt">Lookups that survive an inserted column: XLOOKUP and INDEX/MATCH</span></div>
+            <div class="lesson"><span class="ln">2.3</span><span class="lt">Conditional aggregation: SUMIFS, COUNTIFS, and multi-criteria logic</span></div>
+            <div class="lesson"><span class="ln">2.4</span><span class="lt">Pivot tables aimed at a question, not at the data</span></div>
+            <div class="lesson"><span class="ln">2.5</span><span class="lt">Power Query: an import that cleans itself every time</span></div>
+            <div class="lesson"><span class="ln">2.6</span><span class="lt">Error handling, validation, and leaving an audit trail</span></div>
+            <div class="lesson"><span class="ln">2.7</span><span class="lt">Handing a workbook to someone who did not build it</span></div>
+            <p class="drill"><b>Drill</b><span>A 12,000-row sales export with inconsistent regions and text-formatted dates. Produce a weekly summary that refreshes on new data.</span></p>
+            <a class="mod-open" href="course-03-module-02.html" target="_blank" rel="noopener">Open module 2 <span>&rarr;</span></a>
+          </div>
+        </details>
+        <details class="mod">
+          <summary>
+            <span class="mnum">03</span>
+            <span class="mtitle">SQL for answering questions</span>
+            <span class="mmeta">8 lessons · ~1h 30m</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">3.1</span><span class="lt">Reading a schema before writing a single line</span></div>
+            <div class="lesson"><span class="ln">3.2</span><span class="lt">SELECT, WHERE, ORDER BY, and filtering honestly</span></div>
+            <div class="lesson"><span class="ln">3.3</span><span class="lt">JOINs, and what a wrong join quietly does to your total</span></div>
+            <div class="lesson"><span class="ln">3.4</span><span class="lt">GROUP BY and the aggregation traps that pass review</span></div>
+            <div class="lesson"><span class="ln">3.5</span><span class="lt">Window functions: running totals, ranks, period on period</span></div>
+            <div class="lesson"><span class="ln">3.6</span><span class="lt">CTEs: writing a query the next person can read</span></div>
+            <div class="lesson"><span class="ln">3.7</span><span class="lt">Performance basics, and why your query hung the database</span></div>
+            <div class="lesson"><span class="ln">3.8</span><span class="lt">The interview query: thinking out loud under pressure</span></div>
+            <p class="drill"><b>Drill</b><span>Eight business questions against a sample retail database. Every answer comes with the query and a one-line explanation of what it counts.</span></p>
+            <a class="mod-open" href="course-03-module-03.html" target="_blank" rel="noopener">Open module 3 <span>&rarr;</span></a>
+          </div>
+        </details>
+        <details class="mod">
+          <summary>
+            <span class="mnum">04</span>
+            <span class="mtitle">Cleaning data, and knowing when to trust it</span>
+            <span class="mmeta">5 lessons · ~50m</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">4.1</span><span class="lt">Profiling a dataset in ten minutes: row counts, ranges, nulls, oddities</span></div>
+            <div class="lesson"><span class="ln">4.2</span><span class="lt">Duplicates that are not duplicates, and vice versa</span></div>
+            <div class="lesson"><span class="ln">4.3</span><span class="lt">Dates, time zones, and the silent type error</span></div>
+            <div class="lesson"><span class="ln">4.4</span><span class="lt">Deciding what to drop, what to fix, and what to flag</span></div>
+            <div class="lesson"><span class="ln">4.5</span><span class="lt">Writing down your assumptions so the number can be defended later</span></div>
+            <p class="drill"><b>Drill</b><span>A dataset with nine planted problems. Find them, document each decision, and state how the headline number changes.</span></p>
+            <a class="mod-open" href="course-03-module-04.html" target="_blank" rel="noopener">Open module 4 <span>&rarr;</span></a>
+          </div>
+        </details>
+        <details class="mod">
+          <summary>
+            <span class="mnum">05</span>
+            <span class="mtitle">The statistics you actually use</span>
+            <span class="mmeta">5 lessons · ~55m</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">5.1</span><span class="lt">The four ways an average misleads, with examples from real reports</span></div>
+            <div class="lesson"><span class="ln">5.2</span><span class="lt">Spread and distribution: why one number is never enough</span></div>
+            <div class="lesson"><span class="ln">5.3</span><span class="lt">Correlation, causation, and finding the confounder</span></div>
+            <div class="lesson"><span class="ln">5.4</span><span class="lt">Sample size and significance in plain language</span></div>
+            <div class="lesson"><span class="ln">5.5</span><span class="lt">Reading an A/B test result without overclaiming</span></div>
+            <p class="drill"><b>Drill</b><span>Three plausible-sounding claims from company dashboards. Say what is wrong with each and what evidence would settle it.</span></p>
+            <a class="mod-open" href="course-03-module-05.html" target="_blank" rel="noopener">Open module 5 <span>&rarr;</span></a>
+          </div>
+        </details>
+        <details class="mod">
+          <summary>
+            <span class="mnum">06</span>
+            <span class="mtitle">Power BI: from dataset to decision surface</span>
+            <span class="mmeta">7 lessons · ~1h 20m</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">6.1</span><span class="lt">The data model explained without jargon: facts, dimensions, grain</span></div>
+            <div class="lesson"><span class="ln">6.2</span><span class="lt">Relationships, and why your totals are wrong</span></div>
+            <div class="lesson"><span class="ln">6.3</span><span class="lt">DAX: measures versus calculated columns, and when each belongs</span></div>
+            <div class="lesson"><span class="ln">6.4</span><span class="lt">Time intelligence: last month, same period last year, rolling twelve</span></div>
+            <div class="lesson"><span class="ln">6.5</span><span class="lt">Designing one page a manager reads in ten seconds</span></div>
+            <div class="lesson"><span class="ln">6.6</span><span class="lt">Publishing, scheduled refresh, and row-level security basics</span></div>
+            <div class="lesson"><span class="ln">6.7</span><span class="lt">What to do when someone says the dashboard is wrong</span></div>
+            <p class="drill"><b>Drill</b><span>Build a single-page operations dashboard from the module 03 database, then defend every number on it.</span></p>
+            <a class="mod-open" href="course-03-module-06.html" target="_blank" rel="noopener">Open module 6 <span>&rarr;</span></a>
+          </div>
+        </details>
+        <details class="mod">
+          <summary>
+            <span class="mnum">07</span>
+            <span class="mtitle">Python where it beats the alternatives</span>
+            <span class="mmeta">7 lessons · ~1h 15m</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">7.1</span><span class="lt">When Python is the right tool, and when a spreadsheet wins</span></div>
+            <div class="lesson"><span class="ln">7.2</span><span class="lt">pandas: load, filter, group, and the shape of a dataframe</span></div>
+            <div class="lesson"><span class="ln">7.3</span><span class="lt">Joining and reshaping without losing rows</span></div>
+            <div class="lesson"><span class="ln">7.4</span><span class="lt">A cleaning script you can rerun next month</span></div>
+            <div class="lesson"><span class="ln">7.5</span><span class="lt">Quick charts for exploring, not for presenting</span></div>
+            <div class="lesson"><span class="ln">7.6</span><span class="lt">Automating a recurring report end to end</span></div>
+            <div class="lesson"><span class="ln">7.7</span><span class="lt">Version control and file discipline, the minimum that matters</span></div>
+            <p class="drill"><b>Drill</b><span>Take the manual monthly report built in module 02 and turn it into a script that runs in one command.</span></p>
+            <a class="mod-open" href="course-03-module-07.html" target="_blank" rel="noopener">Open module 7 <span>&rarr;</span></a>
+          </div>
+        </details>
+        <details class="mod">
+          <summary>
+            <span class="mnum">08</span>
+            <span class="mtitle">Working with AI without losing the plot</span>
+            <span class="mmeta">5 lessons · ~55m</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">8.1</span><span class="lt">What language models are genuinely good and bad at in analysis</span></div>
+            <div class="lesson"><span class="ln">8.2</span><span class="lt">Drafting SQL and formulas with AI, then proving them correct</span></div>
+            <div class="lesson"><span class="ln">8.3</span><span class="lt">The three-way reconciliation: a habit that catches invented numbers</span></div>
+            <div class="lesson"><span class="ln">8.4</span><span class="lt">Using AI to explain someone else's query, model or macro</span></div>
+            <div class="lesson"><span class="ln">8.5</span><span class="lt">What must never be pasted into a chatbot, and why it is your problem</span></div>
+            <p class="drill"><b>Drill</b><span>An AI-drafted query that returns a believable number. Find its three errors and state the business consequence of each.</span></p>
+            <a class="mod-open" href="course-03-module-08.html" target="_blank" rel="noopener">Open module 8 <span>&rarr;</span></a>
+          </div>
+        </details>
+        <details class="mod">
+          <summary>
+            <span class="mnum">09</span>
+            <span class="mtitle">Communicating the answer</span>
+            <span class="mmeta">6 lessons · ~1h</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">9.1</span><span class="lt">The one-sentence finding, written before the chart exists</span></div>
+            <div class="lesson"><span class="ln">9.2</span><span class="lt">Charts that argue: choosing a form that carries the point</span></div>
+            <div class="lesson"><span class="ln">9.3</span><span class="lt">Structuring an executive summary people finish reading</span></div>
+            <div class="lesson"><span class="ln">9.4</span><span class="lt">Presenting a number you are not fully certain about</span></div>
+            <div class="lesson"><span class="ln">9.5</span><span class="lt">Handling "that doesn't look right" in the room</span></div>
+            <div class="lesson"><span class="ln">9.6</span><span class="lt">Saying no, and offering the smaller question you can answer</span></div>
+            <p class="drill"><b>Drill</b><span>One analysis, three deliverables: a Slack message, a one-page memo, and three slides for a board meeting.</span></p>
+            <a class="mod-open" href="course-03-module-09.html" target="_blank" rel="noopener">Open module 9 <span>&rarr;</span></a>
+          </div>
+        </details>
+        <details class="mod">
+          <summary>
+            <span class="mnum">10</span>
+            <span class="mtitle">The analyst's operating system</span>
+            <span class="mmeta">4 lessons · ~45m</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">10.1</span><span class="lt">Documenting work so future-you can rerun it in five minutes</span></div>
+            <div class="lesson"><span class="ln">10.2</span><span class="lt">A request queue that does not drown you</span></div>
+            <div class="lesson"><span class="ln">10.3</span><span class="lt">Building a portfolio that survives thirty seconds of a recruiter's attention</span></div>
+            <div class="lesson"><span class="ln">10.4</span><span class="lt">The analyst interview: take-homes, case questions, and what they are testing</span></div>
+            <p class="drill"><b>Drill</b><span>Write up the capstone as a portfolio case study: problem, approach, decision it changed, in under 400 words.</span></p>
+            <a class="mod-open" href="course-03-module-10.html" target="_blank" rel="noopener">Open module 10 <span>&rarr;</span></a>
+          </div>
+        </details>
+
+        <details class="mod">
+          <summary>
+            <span class="mnum">11</span>
+            <span class="mtitle">Capstone: six days before the board meeting</span>
+            <span class="mmeta">1 week · assessed</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">·</span><span class="lt">A written scoping note, turning one blunt investor line into answerable questions</span></div>
+            <div class="lesson"><span class="ln">·</span><span class="lt">A cleaned delivery-log workbook with a documented cleaning log</span></div>
+            <div class="lesson"><span class="ln">·</span><span class="lt">A SQL investigation naming the real driver, with a join-trap note</span></div>
+            <div class="lesson"><span class="ln">·</span><span class="lt">A confidence-labelled verdict on a pilot the founder already believes worked</span></div>
+            <div class="lesson"><span class="ln">·</span><span class="lt">A Power BI-ready model, a documented Python script, an AI-review memo, and a five-minute walkthrough</span></div>
+            <p class="drill"><b>Brief</b><span>A three-year-old delivery startup, six days from a funding review, and one line of an investor email as the only brief. You scope it, chase it, and defend what you left unverified.</span></p>
+            <a class="mod-open" href="course-03-capstone.html" target="_blank" rel="noopener">Open the capstone brief <span>&rarr;</span></a>
+          </div>
+        </details>
+      </div>
+
+      <div class="curric" data-panel="va" hidden>
+        <details class="mod" open>
+          <summary>
+            <span class="mnum">01</span>
+            <span class="mtitle">What a client is actually buying</span>
+            <span class="mmeta">5 lessons · 55m</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">1.1</span><span class="lt">Nobody hires a virtual assistant. They hire back their week.</span></div>
+            <div class="lesson"><span class="ln">1.2</span><span class="lt">The four kinds of client, and which two can actually pay you</span></div>
+            <div class="lesson"><span class="ln">1.3</span><span class="lt">What AI already does better than you, and what that leaves</span></div>
+            <div class="lesson"><span class="ln">1.4</span><span class="lt">The trust ladder: from a one-hour test task to a monthly retainer</span></div>
+            <div class="lesson"><span class="ln">1.5</span><span class="lt">Your service, in one sentence a client can repeat to someone else</span></div>
+            <p class="drill"><b>Drill</b><span>Five real VA job posts. Name what the client is actually losing, which parts AI would already handle, and what's left that needs a person. Pick the one you'd apply to and say why the other four are traps.</span></p>
+            <a class="mod-open" href="course-01-module-01.html" target="_blank" rel="noopener">Open module 1 <span>&rarr;</span></a>
+          </div>
+        </details>
+        <details class="mod">
+          <summary>
+            <span class="mnum">02</span>
+            <span class="mtitle">The inbox</span>
+            <span class="mmeta">5 lessons · 1h 10m</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">2.1</span><span class="lt">Getting access without getting your client hacked: delegation, aliases and shared inboxes</span></div>
+            <div class="lesson"><span class="ln">2.2</span><span class="lt">Triage: the four piles and the ten-minute pass</span></div>
+            <div class="lesson"><span class="ln">2.3</span><span class="lt">Writing in someone else's voice, and the file that makes it repeatable</span></div>
+            <div class="lesson"><span class="ln">2.4</span><span class="lt">Which replies need a template, and which need a human decision</span></div>
+            <div class="lesson"><span class="ln">2.5</span><span class="lt">The end-of-day summary that makes a client keep you</span></div>
+            <p class="drill"><b>Drill</b><span>Sixty messy messages, one hour. Clear the inbox, keep a log of every judgement call, and write the summary the client reads at 6pm.</span></p>
+          
+            <a class="mod-open" href="course-01-module-02.html" target="_blank" rel="noopener">Open module 2 <span>&rarr;</span></a>
+</div>
+        </details>
+        <details class="mod">
+          <summary>
+            <span class="mnum">03</span>
+            <span class="mtitle">The calendar</span>
+            <span class="mmeta">5 lessons · 55m</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">3.1</span><span class="lt">Time zones, and the single mistake that costs people the contract</span></div>
+            <div class="lesson"><span class="ln">3.2</span><span class="lt">Booking links, buffers, and protecting someone's focus</span></div>
+            <div class="lesson"><span class="ln">3.3</span><span class="lt">The reschedule chain: cancelling without damaging a relationship</span></div>
+            <div class="lesson"><span class="ln">3.4</span><span class="lt">Travel, prep time, and the day-before brief</span></div>
+            <div class="lesson"><span class="ln">3.5</span><span class="lt">Owning a calendar when you cannot see the reason behind every meeting</span></div>
+            <p class="drill"><b>Drill</b><span>A double-booked week across three time zones with two people who both think they're the priority. Fix it, then write the note explaining what you moved and why.</span></p>
+          
+            <a class="mod-open" href="course-01-module-03.html" target="_blank" rel="noopener">Open module 3 <span>&rarr;</span></a>
+</div>
+        </details>
+        <details class="mod">
+          <summary>
+            <span class="mnum">04</span>
+            <span class="mtitle">Files, documents and the client's second brain</span>
+            <span class="mmeta">5 lessons · 1h</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">4.1</span><span class="lt">A folder structure a stranger can navigate in ten seconds</span></div>
+            <div class="lesson"><span class="ln">4.2</span><span class="lt">Naming things so that search actually finds them</span></div>
+            <div class="lesson"><span class="ln">4.3</span><span class="lt">Documents: templates, formatting, and version control without extra software</span></div>
+            <div class="lesson"><span class="ln">4.4</span><span class="lt">Building the client's process library as you go, one page at a time</span></div>
+            <div class="lesson"><span class="ln">4.5</span><span class="lt">The handover file that makes you hard to lose and easy to trust</span></div>
+            <p class="drill"><b>Drill</b><span>A client's dumped Drive: 400 unsorted files, six near-duplicate contracts, no naming convention. Restructure it and write the one-page map explaining where everything now lives.</span></p>
+          
+            <a class="mod-open" href="course-01-module-04.html" target="_blank" rel="noopener">Open module 4 <span>&rarr;</span></a>
+</div>
+        </details>
+        <details class="mod">
+          <summary>
+            <span class="mnum">05</span>
+            <span class="mtitle">Meetings, and what happens after them</span>
+            <span class="mmeta">5 lessons · 55m</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">5.1</span><span class="lt">The agenda that makes a meeting shorter</span></div>
+            <div class="lesson"><span class="ln">5.2</span><span class="lt">Notes: what to capture, and the 80% you should ignore</span></div>
+            <div class="lesson"><span class="ln">5.3</span><span class="lt">Turning talk into owned actions with names and dates on them</span></div>
+            <div class="lesson"><span class="ln">5.4</span><span class="lt">Transcription tools, and the specific errors they make</span></div>
+            <div class="lesson"><span class="ln">5.5</span><span class="lt">Chasing people without becoming the person they avoid</span></div>
+            <p class="drill"><b>Drill</b><span>A forty-minute recorded call with three people talking over each other. Produce the notes, an action list with owners and dates, and the three follow-up messages.</span></p>
+          
+            <a class="mod-open" href="course-01-module-05.html" target="_blank" rel="noopener">Open module 5 <span>&rarr;</span></a>
+</div>
+        </details>
+        <details class="mod">
+          <summary>
+            <span class="mnum">06</span>
+            <span class="mtitle">Research and data you can be trusted with</span>
+            <span class="mmeta">5 lessons · 1h 5m</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">6.1</span><span class="lt">Turning a vague request into a research question with a stopping point</span></div>
+            <div class="lesson"><span class="ln">6.2</span><span class="lt">Where to look, and how to know when you have enough</span></div>
+            <div class="lesson"><span class="ln">6.3</span><span class="lt">Verification, and labelling how confident you are in each row</span></div>
+            <div class="lesson"><span class="ln">6.4</span><span class="lt">Getting it into a spreadsheet the client can actually use</span></div>
+            <div class="lesson"><span class="ln">6.5</span><span class="lt">Presenting a finding in five lines</span></div>
+            <p class="drill"><b>Drill</b><span>"Find me thirty podcasts I should be a guest on." Deliver the sheet, the criteria you used to include and exclude, and the five-line summary.</span></p>
+          
+            <a class="mod-open" href="course-01-module-06.html" target="_blank" rel="noopener">Open module 6 <span>&rarr;</span></a>
+</div>
+        </details>
+        <details class="mod">
+          <summary>
+            <span class="mnum">07</span>
+            <span class="mtitle">Working with AI as your junior</span>
+            <span class="mmeta">5 lessons · 1h 10m</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">7.1</span><span class="lt">What to hand it, and what must never leave the client's account</span></div>
+            <div class="lesson"><span class="ln">7.2</span><span class="lt">The brief is the skill: prompts that produce a usable first draft</span></div>
+            <div class="lesson"><span class="ln">7.3</span><span class="lt">Checking work you did not do: the three-way check</span></div>
+            <div class="lesson"><span class="ln">7.4</span><span class="lt">No-code automations that save real hours, and the ones that break silently</span></div>
+            <div class="lesson"><span class="ln">7.5</span><span class="lt">Confidentiality, client data, and the line you do not cross even once</span></div>
+            <p class="drill"><b>Drill</b><span>Automate one recurring task end to end and document it so the client could run it without you. Then write the paragraph explaining why you're still worth paying.</span></p>
+          
+            <a class="mod-open" href="course-01-module-07.html" target="_blank" rel="noopener">Open module 7 <span>&rarr;</span></a>
+</div>
+        </details>
+        <details class="mod">
+          <summary>
+            <span class="mnum">08</span>
+            <span class="mtitle">Communication and discretion</span>
+            <span class="mmeta">5 lessons · 1h</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">8.1</span><span class="lt">Writing a message that gets a decision, not a conversation</span></div>
+            <div class="lesson"><span class="ln">8.2</span><span class="lt">Tone across cultures, seniority and time zones</span></div>
+            <div class="lesson"><span class="ln">8.3</span><span class="lt">Saying no, saying "not yet", and offering the smaller thing you can do</span></div>
+            <div class="lesson"><span class="ln">8.4</span><span class="lt">Escalation: what you decide, what you ask, and how fast</span></div>
+            <div class="lesson"><span class="ln">8.5</span><span class="lt">Discretion: what you know, and what you never repeat</span></div>
+            <p class="drill"><b>Drill</b><span>Three situations that could each lose you the client: a mistake you made, a request you cannot meet, and something you were told that you should not have been. Write the message for each.</span></p>
+          
+            <a class="mod-open" href="course-01-module-08.html" target="_blank" rel="noopener">Open module 8 <span>&rarr;</span></a>
+</div>
+        </details>
+        <details class="mod">
+          <summary>
+            <span class="mnum">09</span>
+            <span class="mtitle">Running yourself as a business</span>
+            <span class="mmeta">5 lessons · 1h 5m</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">9.1</span><span class="lt">Hourly, retainer or package: the arithmetic behind each, and when to use which</span></div>
+            <div class="lesson"><span class="ln">9.2</span><span class="lt">What your hour actually costs you: data, power, transport, tax, unpaid admin</span></div>
+            <div class="lesson"><span class="ln">9.3</span><span class="lt">The one-page agreement and the deposit rule</span></div>
+            <div class="lesson"><span class="ln">9.4</span><span class="lt">Getting paid across borders: rails, fees, FX, and surviving the long wait</span></div>
+            <div class="lesson"><span class="ln">9.5</span><span class="lt">Tracking time and invoicing without losing your evening to it</span></div>
+            <p class="drill"><b>Drill</b><span>Build your rate card from your real costs, write your one-page agreement, and set up a payment route end to end — proven with a live test transaction, not a screenshot.</span></p>
+          
+            <a class="mod-open" href="course-01-module-09.html" target="_blank" rel="noopener">Open module 9 <span>&rarr;</span></a>
+</div>
+        </details>
+        <details class="mod">
+          <summary>
+            <span class="mnum">10</span>
+            <span class="mtitle">Getting the first three clients</span>
+            <span class="mmeta">5 lessons · 1h 5m</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">10.1</span><span class="lt">Choosing a niche narrow enough that someone remembers you</span></div>
+            <div class="lesson"><span class="ln">10.2</span><span class="lt">The profile: a LinkedIn page and a one-page service page that do the same job</span></div>
+            <div class="lesson"><span class="ln">10.3</span><span class="lt">Proof of work when you have never had a client</span></div>
+            <div class="lesson"><span class="ln">10.4</span><span class="lt">Outreach: where they actually are, and the message that gets a reply</span></div>
+            <div class="lesson"><span class="ln">10.5</span><span class="lt">The trial task and the interview: how to be the one they choose</span></div>
+            <p class="drill"><b>Drill</b><span>Twenty real prospects, twenty messages sent, all tracked in one sheet. Report what came back, and what you'd change about message twenty-one.</span></p>
+          
+            <a class="mod-open" href="course-01-module-10.html" target="_blank" rel="noopener">Open module 10 <span>&rarr;</span></a>
+</div>
+        </details>
+        <details class="mod capstone">
+          <summary>
+            <span class="mnum">C</span>
+            <span class="mtitle">Capstone: the unreasonable week</span>
+            <span class="mmeta">2 weeks · assessed</span>
+            <span class="caret"></span>
+          </summary>
+          <div class="lessons">
+            <div class="lesson"><span class="ln">·</span><span class="lt">A triaged inbox with a written log of every judgement call</span></div>
+            <div class="lesson"><span class="ln">·</span><span class="lt">A repaired calendar, plus the note explaining what moved and why</span></div>
+            <div class="lesson"><span class="ln">·</span><span class="lt">A restructured drive and its one-page map</span></div>
+            <div class="lesson"><span class="ln">·</span><span class="lt">Meeting notes with owned, dated actions and the follow-ups sent</span></div>
+            <div class="lesson"><span class="ln">·</span><span class="lt">One research deliverable with confidence labels on every row</span></div>
+            <div class="lesson"><span class="ln">·</span><span class="lt">One automation, documented well enough for someone else to run</span></div>
+            <div class="lesson"><span class="ln">·</span><span class="lt">A five-minute walkthrough, marked on how you handle being challenged</span></div>
+            <p class="drill"><b>Brief</b><span>You are dropped into one fictional client's genuinely bad week: ninety emails, a broken calendar, an unsorted drive, a recorded call and a vague research request, all at once, with more arriving than you can finish. Marked on judgement and on what you chose to leave undone — not on tidiness.</span></p>
+          
+            <a class="mod-open" href="course-01-capstone.html" target="_blank" rel="noopener">Open the capstone brief <span>&rarr;</span></a>
+</div>
+        </details>
+      </div>
+
+      <div class="curric" data-panel="cs" hidden>
+<details class="mod" open>
+        <summary>
+          <span class="mnum">01</span>
+          <span class="mtitle">What a support rep is actually paid to keep</span>
+          <span class="mmeta">5 lessons · 55m</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="lessons">
+          <div class="lesson"><span class="ln">1.1</span><span class="lt">Nobody hires a support rep to close tickets. They hire one to keep customers.</span></div>
+          <div class="lesson"><span class="ln">1.2</span><span class="lt">The four kinds of support work, and which two actually pay</span></div>
+          <div class="lesson"><span class="ln">1.3</span><span class="lt">What AI chatbots already do better than you, and what that leaves</span></div>
+          <div class="lesson"><span class="ln">1.4</span><span class="lt">The trust ladder: from a trial shift to owning the whole queue</span></div>
+          <div class="lesson"><span class="ln">1.5</span><span class="lt">Your service, in one sentence a founder can repeat to someone else</span></div>
+          <p class="drill"><b>Drill</b><span>Five real support job posts. For each, name what is actually being protected — a rating, a repeat customer, a refund cost — which parts a chatbot would already handle, and what is left that needs a person. Then pick the one you would apply to and say why the other four are traps.</span></p>
+        
+          <a class="mod-open" href="course-02.html" target="_blank" rel="noopener">Open module 1 (in course overview) <span>&rarr;</span></a>
+</div>
+      </details>
+<details class="mod">
+        <summary>
+          <span class="mnum">02</span>
+          <span class="mtitle">The ticket queue</span>
+          <span class="mmeta">5 lessons · 1h 10m</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="lessons">
+          <div class="lesson"><span class="ln">2.1</span><span class="lt">Getting access without becoming the breach: shared inboxes, permissions, and what never gets shared</span></div>
+          <div class="lesson"><span class="ln">2.2</span><span class="lt">Triage: severity, channel, and the ten-minute pass through a stacked queue</span></div>
+          <div class="lesson"><span class="ln">2.3</span><span class="lt">Writing in the brand's voice, and the file that makes it repeatable</span></div>
+          <div class="lesson"><span class="ln">2.4</span><span class="lt">Macros versus a human reply: when a template is the right call, and when it insults the customer</span></div>
+          <div class="lesson"><span class="ln">2.5</span><span class="lt">The end-of-shift handover that makes the next person's morning easy</span></div>
+          <p class="drill"><b>Drill</b><span>Sixty stacked tickets across email, chat and WhatsApp, one hour. Clear the queue, keep a log of every judgement call you made, and write the handover the next rep reads.</span></p>
+        
+          <a class="mod-open" href="course-02-module-02.html" target="_blank" rel="noopener">Open module 2 <span>&rarr;</span></a>
+</div>
+      </details>
+<details class="mod">
+        <summary>
+          <span class="mnum">03</span>
+          <span class="mtitle">The angry customer</span>
+          <span class="mmeta">5 lessons · 55m</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="lessons">
+          <div class="lesson"><span class="ln">3.1</span><span class="lt">Why customers escalate, and the three complaints that are never really about the product</span></div>
+          <div class="lesson"><span class="ln">3.2</span><span class="lt">The de-escalation script: acknowledge, own, act — without over-promising</span></div>
+          <div class="lesson"><span class="ln">3.3</span><span class="lt">When policy says no and the relationship says be careful</span></div>
+          <div class="lesson"><span class="ln">3.4</span><span class="lt">The public complaint: same fire, different stage</span></div>
+          <div class="lesson"><span class="ln">3.5</span><span class="lt">Knowing when you are the wrong person to keep talking, and handing off well</span></div>
+          <p class="drill"><b>Drill</b><span>Three real angry-customer threads — one email, one live-chat transcript, one public review. Respond to each within policy, and keep the customer.</span></p>
+        
+          <a class="mod-open" href="course-02-module-03.html" target="_blank" rel="noopener">Open module 3 <span>&rarr;</span></a>
+</div>
+      </details>
+<details class="mod">
+        <summary>
+          <span class="mnum">04</span>
+          <span class="mtitle">Channels: one problem, five sets of rules</span>
+          <span class="mmeta">5 lessons · 1h</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="lessons">
+          <div class="lesson"><span class="ln">4.1</span><span class="lt">Email: the paper trail, and writing for someone who will reread it later</span></div>
+          <div class="lesson"><span class="ln">4.2</span><span class="lt">Live chat: speed without sloppiness, and the canned reply that reads canned</span></div>
+          <div class="lesson"><span class="ln">4.3</span><span class="lt">WhatsApp and social DMs: informal tone, real boundaries, still logged</span></div>
+          <div class="lesson"><span class="ln">4.4</span><span class="lt">Voice notes and calls: what changes when there is no undo button</span></div>
+          <div class="lesson"><span class="ln">4.5</span><span class="lt">Choosing the right channel to move a conversation to, and why switching defuses more than it seems</span></div>
+          <p class="drill"><b>Drill</b><span>The same complaint arrives on four channels in one afternoon. Reply appropriately to each without contradicting yourself.</span></p>
+        
+          <a class="mod-open" href="course-02-module-04.html" target="_blank" rel="noopener">Open module 4 <span>&rarr;</span></a>
+</div>
+      </details>
+<details class="mod">
+        <summary>
+          <span class="mnum">05</span>
+          <span class="mtitle">Refunds, returns and judgement under policy</span>
+          <span class="mmeta">5 lessons · 1h 5m</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="lessons">
+          <div class="lesson"><span class="ln">5.1</span><span class="lt">Reading a policy like a lawyer reads a contract — what it actually permits</span></div>
+          <div class="lesson"><span class="ln">5.2</span><span class="lt">The refund conversation: verifying without accusing</span></div>
+          <div class="lesson"><span class="ln">5.3</span><span class="lt">Where discretion lives: the calls you make alone, the calls you escalate</span></div>
+          <div class="lesson"><span class="ln">5.4</span><span class="lt">Goodwill gestures: when they retain a customer, and when they train one to complain</span></div>
+          <div class="lesson"><span class="ln">5.5</span><span class="lt">Documenting the exception so the next rep is not stuck explaining it</span></div>
+          <p class="drill"><b>Drill</b><span>Ten borderline refund requests against a real policy document. Decide, write the reply, and flag which ones needed escalation.</span></p>
+        
+          <a class="mod-open" href="course-02-module-05.html" target="_blank" rel="noopener">Open module 5 <span>&rarr;</span></a>
+</div>
+      </details>
+<details class="mod">
+        <summary>
+          <span class="mnum">06</span>
+          <span class="mtitle">The knowledge base</span>
+          <span class="mmeta">5 lessons · 1h</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="lessons">
+          <div class="lesson"><span class="ln">6.1</span><span class="lt">Turning a repeated question into a documented answer with a stopping point</span></div>
+          <div class="lesson"><span class="ln">6.2</span><span class="lt">Auditing an existing help centre for what is outdated, missing, or wrong</span></div>
+          <div class="lesson"><span class="ln">6.3</span><span class="lt">Writing an article a stressed customer can actually follow</span></div>
+          <div class="lesson"><span class="ln">6.4</span><span class="lt">Keeping macros and docs in sync as policy changes</span></div>
+          <div class="lesson"><span class="ln">6.5</span><span class="lt">Reporting the pattern back: when five tickets are actually one product problem</span></div>
+          <p class="drill"><b>Drill</b><span>An outdated help centre with a stale return policy. Find the gaps, rewrite three articles, and flag the pattern worth escalating to the founder.</span></p>
+        
+          <a class="mod-open" href="course-02-module-06.html" target="_blank" rel="noopener">Open module 6 <span>&rarr;</span></a>
+</div>
+      </details>
+<details class="mod">
+        <summary>
+          <span class="mnum">07</span>
+          <span class="mtitle">Working with AI as your junior</span>
+          <span class="mmeta">5 lessons · 1h 10m</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="lessons">
+          <div class="lesson"><span class="ln">7.1</span><span class="lt">What to hand the chatbot, and what must always route to a human</span></div>
+          <div class="lesson"><span class="ln">7.2</span><span class="lt">Briefing a bot on your knowledge base without letting it invent policy</span></div>
+          <div class="lesson"><span class="ln">7.3</span><span class="lt">The three-way check: catching a hallucinated promise before the customer does</span></div>
+          <div class="lesson"><span class="ln">7.4</span><span class="lt">Reviewing AI-suggested replies at speed without rubber-stamping them</span></div>
+          <div class="lesson"><span class="ln">7.5</span><span class="lt">Confidentiality: what never goes into a prompt</span></div>
+          <p class="drill"><b>Drill</b><span>Ten AI-drafted replies, three of which invent a policy that does not exist. Find them, fix them, and explain the business risk of each.</span></p>
+        
+          <a class="mod-open" href="course-02-module-07.html" target="_blank" rel="noopener">Open module 7 <span>&rarr;</span></a>
+</div>
+      </details>
+<details class="mod">
+        <summary>
+          <span class="mnum">08</span>
+          <span class="mtitle">The metrics, and what they hide</span>
+          <span class="mmeta">5 lessons · 55m</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="lessons">
+          <div class="lesson"><span class="ln">8.1</span><span class="lt">CSAT, first response time, resolution time — what each is actually measuring</span></div>
+          <div class="lesson"><span class="ln">8.2</span><span class="lt">When chasing a metric makes the service worse</span></div>
+          <div class="lesson"><span class="ln">8.3</span><span class="lt">Reporting a bad week honestly, with the reasons, not just the numbers</span></div>
+          <div class="lesson"><span class="ln">8.4</span><span class="lt">Saying no to a target that would mean doing the job badly</span></div>
+          <div class="lesson"><span class="ln">8.5</span><span class="lt">The one-page weekly report a founder actually reads</span></div>
+          <p class="drill"><b>Drill</b><span>A messy week of ticket data. Compute the real numbers, and write the report that explains the dip honestly.</span></p>
+        
+          <a class="mod-open" href="course-02-module-08.html" target="_blank" rel="noopener">Open module 8 <span>&rarr;</span></a>
+</div>
+      </details>
+<details class="mod">
+        <summary>
+          <span class="mnum">09</span>
+          <span class="mtitle">Running yourself as a business</span>
+          <span class="mmeta">5 lessons · 1h 5m</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="lessons">
+          <div class="lesson"><span class="ln">9.1</span><span class="lt">Hourly, retainer or per-ticket: the arithmetic behind each, and when to use which</span></div>
+          <div class="lesson"><span class="ln">9.2</span><span class="lt">What your hour actually costs you: data, power, transport, tax, unpaid admin</span></div>
+          <div class="lesson"><span class="ln">9.3</span><span class="lt">The one-page agreement and the trial-shift rule</span></div>
+          <div class="lesson"><span class="ln">9.4</span><span class="lt">Getting paid across borders: rails, fees, FX, and the wait that makes people quit</span></div>
+          <div class="lesson"><span class="ln">9.5</span><span class="lt">Tracking shifts and invoicing without losing your evening to it</span></div>
+          <p class="drill"><b>Drill</b><span>Build your rate card from your real costs, write your one-page agreement, and set up a payment route end to end — proven with a live test transaction, not a screenshot.</span></p>
+        
+          <a class="mod-open" href="course-02-module-09.html" target="_blank" rel="noopener">Open module 9 <span>&rarr;</span></a>
+</div>
+      </details>
+<details class="mod">
+        <summary>
+          <span class="mnum">10</span>
+          <span class="mtitle">Getting your first three clients</span>
+          <span class="mmeta">5 lessons · 1h 5m</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="lessons">
+          <div class="lesson"><span class="ln">10.1</span><span class="lt">Choosing a niche narrow enough that someone remembers you</span></div>
+          <div class="lesson"><span class="ln">10.2</span><span class="lt">The profile: a LinkedIn page and a one-page service page that do the same job</span></div>
+          <div class="lesson"><span class="ln">10.3</span><span class="lt">Proof of work when you have never had a support role</span></div>
+          <div class="lesson"><span class="ln">10.4</span><span class="lt">Outreach: where small brands actually are, and the message that gets a reply</span></div>
+          <div class="lesson"><span class="ln">10.5</span><span class="lt">The trial shift and the interview: how to be the one they choose</span></div>
+          <p class="drill"><b>Drill</b><span>Twenty real prospects, twenty messages sent, all tracked in one sheet. Report what came back, and what you would change about message twenty-one.</span></p>
+        
+          <a class="mod-open" href="course-02-module-10.html" target="_blank" rel="noopener">Open module 10 <span>&rarr;</span></a>
+</div>
+      </details>
+<details class="mod capstone">
+        <summary>
+          <span class="mnum">C</span>
+          <span class="mtitle">Capstone: the backlog</span>
+          <span class="mmeta">2 weeks · assessed</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="lessons">
+          <div class="lesson"><span class="ln">·</span><span class="lt">A cleared sixty-ticket backlog across three channels, with a written judgement log</span></div>
+          <div class="lesson"><span class="ln">·</span><span class="lt">A de-escalated public complaint thread that kept the customer</span></div>
+          <div class="lesson"><span class="ln">·</span><span class="lt">Three rewritten knowledge-base articles, plus the pattern flagged upward</span></div>
+          <div class="lesson"><span class="ln">·</span><span class="lt">Ten AI-drafted replies reviewed and corrected, with the risk of each explained</span></div>
+          <div class="lesson"><span class="ln">·</span><span class="lt">One honest weekly metrics report</span></div>
+          <div class="lesson"><span class="ln">·</span><span class="lt">A five-minute walkthrough, marked on how you handle being challenged</span></div>
+          <p class="drill"><b>Brief</b><span>You are dropped into one fictional new brand's genuinely bad week: a backlog across three channels, a public complaint gaining replies, a policy grey area, and a chatbot that has been quietly promising a discount that does not exist — all at once, with more arriving than you can finish. Marked on judgement and on what you chose to leave undone — not on tidiness.</span></p>
+          <a class="mod-open" href="course-02-capstone.html" target="_blank" rel="noopener">Open the capstone brief <span>&rarr;</span></a>
+        </div>
+      </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <!-- FAQ -->
+  <section class="band" id="faq">
+    <div class="wrap">
+      <div class="sec-head wide">
+        <span class="eyebrow">Questions</span>
+        <h2 class="h2"><span class="dim">The things</span> people ask before buying.</h2>
+      </div>
+
+      <div class="faq">
+        <details class="q">
+          <summary>Do I need any experience to start?<span class="caret"></span></summary>
+          <div class="a">No. The analyst course assumes you can open a spreadsheet and type in a cell, and nothing beyond that. Every module opens with a short primer covering the knowledge it assumes, which you can skip if you already have it.</div>
+        </details>
+        <details class="q">
+          <summary>Why is Excel taught before SQL and Python?<span class="caret"></span></summary>
+          <div class="a">Because that is the order employers ask for them in. Across 328 analyst job descriptions this year, Excel appeared in 81%, SQL in 60%, Power BI in 43% and Python in 41%. If you stop halfway through the course you have still learned the two things you are most likely to be tested on.</div>
+        </details>
+        <details class="q">
+          <summary>What software do I need?<span class="caret"></span></summary>
+          <div class="a">Excel or Google Sheets, Power BI Desktop, and Python. All three are free to use for the course, and the sample database is hosted, so there is nothing to install to follow the SQL modules.</div>
+        </details>
+        <details class="q">
+          <summary>How long does it take?<span class="caret"></span></summary>
+          <div class="a">It depends which track you take. Twelve weeks at three hours a week if you are starting cold, six to eight weeks self-paced if you already work with data, or a fixed eight-week cohort for teams. Same lessons in all three, different pacing and assessment.</div>
+        </details>
+        <details class="q">
+          <summary>Is the AI course only for technical people?<span class="caret"></span></summary>
+          <div class="a">No, and it involves no coding. It is aimed at whoever owns a process that is eating the week. The hard parts are choosing the right process, measuring a baseline before you build, and deciding where a human stays in the loop.</div>
+        </details>
+        <details class="q">
+          <summary>Do I get feedback on the capstone?<span class="caret"></span></summary>
+          <div class="a">On the all-access and team plans, yes, marked against the published rubric. On a single course you get the rubric and the worked example, and you can mark it yourself.</div>
+        </details>
+        <details class="q">
+          <summary>What if it isn't for me?<span class="caret"></span></summary>
+          <div class="a">Email within 30 days and I will refund you, no forms and no questions. The first three modules are free, so watch those before you buy and you probably will not need to.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final" id="contact">
+    <div class="wrap inner">
+      <span class="eyebrow">Start today</span>
+      <h2 class="display"><span class="dim">The first three modules are free.</span>Do the drill, then decide.</h2>
+      <p class="lede">Modules 01 to 03 cover the two skills that appear in most analyst job ads. Work through them, attempt the drill, and judge the teaching on the result rather than on this page.</p>
+      <a class="btn btn-primary btn-lg" href="#courses">Start module 01</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col">
+        <a class="brand" href="#top"><span class="mark" aria-hidden="true"></span>Emberlern.</a>
+        <p style="color:var(--faint);font-size:.92rem;max-width:34ch;margin-top:4px">Data analysis and AI operations, taught in the order employers ask for them. By Deola.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Courses</h4>
+        <a href="#courses">Data Analyst</a>
+        <a href="#courses">AI for Operations</a>
+        <a href="#courses">Virtual Assistant</a>
+        <a href="#courses">Customer Support</a>
+        <a href="#courses">Teams</a>
+      </div>
+      <div class="foot-col">
+        <h4>Learn</h4>
+        <a href="#inside">Curriculum</a>
+        <a href="#courses">Courses</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="foot-col">
+        <h4>Contact</h4>
+        <a href="#contact">Teams &amp; workshops</a>
+        <a href="#contact">Email</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>&copy; 2026 Emberlern. All rights reserved.</span>
+      <span>Made for people who'd rather do it than watch it.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var nav = document.getElementById('nav');
+    var onScroll = function () {
+      nav.classList.toggle('stuck', window.scrollY > 12);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    document.getElementById('menuBtn').addEventListener('click', function () {
+      var open = document.body.classList.toggle('menu-open');
+      this.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    });
+
+    // Accordion: keep one module open at a time, per panel
+    document.querySelectorAll('.curric').forEach(function (panel) {
+      var mods = panel.querySelectorAll('.mod');
+      mods.forEach(function (m) {
+        m.addEventListener('toggle', function () {
+          if (!m.open) return;
+          mods.forEach(function (o) { if (o !== m) o.open = false; });
+        });
+      });
+    });
+
+    // Course tabs: switch which curriculum panel is showing
+    var setTab = function (name) {
+      document.querySelectorAll('.ctab').forEach(function (b) {
+        var on = b.getAttribute('data-tab') === name;
+        b.classList.toggle('on', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      document.querySelectorAll('.curric[data-panel]').forEach(function (p) {
+        p.hidden = p.getAttribute('data-panel') !== name;
+      });
+      document.querySelectorAll('.curric-note[data-panel-note]').forEach(function (n) {
+        n.hidden = n.getAttribute('data-panel-note') !== name;
+      });
+    };
+    document.querySelectorAll('.ctab').forEach(function (b) {
+      b.addEventListener('click', function () { setTab(b.getAttribute('data-tab')); });
+    });
+    document.querySelectorAll('a[data-tab]').forEach(function (a) {
+      a.addEventListener('click', function () { setTab(a.getAttribute('data-tab')); });
+    });
+
+    document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        var el = document.querySelector(a.getAttribute('href'));
+        if (!el) return;
+        e.preventDefault();
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  })();
+</script>
+
+<style>
+  body.menu-open .nav-links{
+    display:flex;
+    position:absolute;
+    top:70px;left:0;right:0;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:0;
+    background:rgba(6,7,9,.97);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--line);
+    padding:8px var(--pad) 18px;
+  }
+  body.menu-open .nav-links a{padding:13px 0;width:100%;border-bottom:1px solid var(--line)}
+  body.menu-open .nav-links a:last-child{border-bottom:0}
+</style>
+
+</body>
+</html>
