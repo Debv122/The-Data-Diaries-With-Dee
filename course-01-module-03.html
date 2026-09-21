@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Holding Someone Else’s Diary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<style>
+  .tz{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .tz .t-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .trow{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);gap:6px 16px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:baseline;font-size:.92rem}
+  .trow:last-child{border-bottom:0}
+  .trow.h{background:var(--sunk);font-family:var(--mono);font-size:.66rem;letter-spacing:.11em;text-transform:uppercase;color:var(--faint)}
+  .trow b{color:var(--ink);font-weight:500}
+  .trow span{color:var(--body);font-variant-numeric:tabular-nums}
+  .trow .warn{color:var(--ember);font-weight:500}
+  @media (max-width:560px){.trow{grid-template-columns:minmax(0,1fr)}.trow.h{display:none}}
+
+  .cal{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .cal .c-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .crow{display:grid;grid-template-columns:88px minmax(0,1fr) auto;gap:6px 16px;padding:10px 18px;border-bottom:1px solid var(--line-soft);align-items:baseline;font-size:.92rem}
+  .crow:last-child{border-bottom:0}
+  .crow time{font-family:var(--mono);font-size:.8rem;color:var(--faint);font-variant-numeric:tabular-nums}
+  .crow .c-t{color:var(--body)}
+  .crow .c-t b{color:var(--ink);font-weight:500}
+  .crow .c-k{font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:2px 9px;color:var(--faint);white-space:nowrap}
+  .crow .c-k.fixed{border-color:var(--ember-edge);color:var(--ember)}
+  .crow .c-k.block{border-color:var(--line);color:var(--dusk)}
+  .crow.gap{background:var(--sunk)}
+  .crow.gap .c-t{color:var(--muted);font-style:italic}
+  @media (max-width:560px){.crow{grid-template-columns:76px minmax(0,1fr)}.crow .c-k{grid-column:2;justify-self:start}}
+
+  .key{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .key .k-hd{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .krow{display:grid;grid-template-columns:minmax(120px,160px) minmax(0,1fr);gap:6px 18px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:baseline;font-size:.93rem}
+  .krow:last-child{border-bottom:0}
+  .krow b{font-family:var(--mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ember);font-weight:500}
+  .krow span{color:var(--body)}
+  @media (max-width:560px){.krow{grid-template-columns:minmax(0,1fr)}}
+</style>
+
+</head>
+<body>
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">The Assistant They Can't Replace</span>
+      <span class="sep">/</span>
+      <span class="label">Module 03</span>
+    </div>
+    <h1>The calendar</h1>
+    <p class="standfirst">Five lessons, about an hour. The inbox is where you prove you are useful. The calendar is where you prove you can be trusted — because a calendar mistake is public, it involves other people, and it cannot be quietly undone.</p>
+
+    <nav class="toc">
+      <a href="#l1"><i>3.1</i><span>Time zones, and the mistake that costs people the contract</span><u>14 min</u></a>
+      <a href="#l2"><i>3.2</i><span>Booking links, buffers, and protecting someone's focus</span><u>13 min</u></a>
+      <a href="#l3"><i>3.3</i><span>The reschedule chain: moving people without damage</span><u>14 min</u></a>
+      <a href="#l4"><i>3.4</i><span>Travel, prep time, and the day-before brief</span><u>12 min</u></a>
+      <a href="#l5"><i>3.5</i><span>Owning a calendar you cannot see the reasons behind</span><u>12 min</u></a>
+      <a href="#drill"><i>D</i><span>Drill: three time zones, one broken week</span><u>60 min</u></a>
+    </nav>
+  </div>
+</header>
+
+<section class="lesson" id="l1">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 3.1</b><span class="label">14 minutes</span></div>
+      <h2>Time zones, and the mistake that costs people the contract</h2>
+    </div>
+
+    <div class="flow">
+      <p>Adaeze has taken on two remote clients — one in London, one in New York. In your second week you book a call for "2pm" and someone joins an empty room. It is the most common way a new assistant loses a client, and it is worth understanding precisely why, because the reason is not carelessness.</p>
+
+      <h3>The mistake is not arithmetic. It is assuming the gap is fixed.</h3>
+
+      <p>Most people learn the difference between two cities once and treat it as permanent. <em>Lagos is an hour ahead of London. Lagos is six hours ahead of New York.</em> Then they do the sum correctly for four months and get it wrong in April without ever finding out why.</p>
+
+      <p>Here is what is actually happening. <strong>Nigeria does not observe daylight saving. Britain and America both do — and they do not switch on the same days.</strong></p>
+
+      <ul class="list">
+        <li>Lagos is on West Africa Time, UTC+1, all year. It never moves.</li>
+        <li>London moves forward on the <strong>last Sunday in March</strong> and back on the <strong>last Sunday in October</strong>.</li>
+        <li>New York moves forward on the <strong>second Sunday in March</strong> and back on the <strong>first Sunday in November</strong>.</li>
+      </ul>
+
+      <p>So the gap between Lagos and London is one hour in winter and <em>zero</em> in summer — for several months of the year, they are simply the same time. And the gap to New York is six hours in winter, five in summer.</p>
+
+      <p>Worse, look at those switching dates again. America moves in the second week of March; Britain in the last. For about two weeks every spring, and about one week every autumn, <strong>every relationship between all three cities is different from the rest of the year.</strong></p>
+
+      <div class="tz">
+        <div class="t-h">Lagos → London → New York, across one year</div>
+        <div class="trow h"><b>When</b><span>Lagos to London</span><span>Lagos to New York</span></div>
+        <div class="trow"><b>January</b><span>+1 hour</span><span>+6 hours</span></div>
+        <div class="trow"><b>Mid-to-late March</b><span class="warn">+1 hour</span><span class="warn">+5 hours</span></div>
+        <div class="trow"><b>April to October</b><span>Same time</span><span>+5 hours</span></div>
+        <div class="trow"><b>Late Oct to early Nov</b><span class="warn">+1 hour</span><span>+5 hours</span></div>
+        <div class="trow"><b>November, December</b><span>+1 hour</span><span>+6 hours</span></div>
+      </div>
+
+      <p>Nobody memorises that table, and you should not try. <strong>The point of the table is to convince you never to do this arithmetic in your head again.</strong> Those two highlighted rows are the weeks when a confident assistant, doing the sum she has done correctly a hundred times, is wrong.</p>
+
+      <h3>The five rules</h3>
+
+      <ol class="numlist">
+        <li><strong>Send a calendar invitation. Never a typed time.</strong> An invitation carries the underlying moment and every recipient's software converts it correctly, daylight saving included. This single habit removes almost all of the risk. If someone asks for a time in a message, you may write it — but the invitation is what makes it real, and it goes out in the same breath.</li>
+        <li><strong>Write both zones, every time.</strong> "Thursday 4pm Lagos / 3pm London." It takes four extra words and it lets the other person catch your error before it becomes a missed meeting. People do check, and they will thank you.</li>
+        <li><strong>Work in the client's zone, not yours.</strong> Set the calendar's primary zone to hers and add yours as a secondary display. You are managing her day, not translating from your own. This also stops the subtler error of booking something that is fine for you and unreasonable for her.</li>
+        <li><strong>Never write 12am or 12pm.</strong> They are ambiguous to a surprising number of people and mean the opposite thing to some of them. Write "12 noon" and "midnight", or use 00:00 and 12:00 in twenty-four hour form.</li>
+        <li><strong>Write the month as a word.</strong> 03/09/2026 is the 3rd of September to your client in London and the 9th of March to your client in New York. "3 September 2026" cannot be misread by anyone.</li>
+      </ol>
+
+      <div class="ex">
+        <div class="ex-h">The same confirmation, dangerous and safe</div>
+        <div class="split">
+          <div>
+            <span class="who">Dangerous</span>
+            <p class="quote">"Hi Mark, confirming our call for 2pm on 05/04. Speak then."</p>
+            <p style="color:var(--muted);font-size:.9rem">Two zones unstated, a date that reads as 5 April or 4 May depending on the reader, and no invitation. Three separate ways for this to fail, and the assistant will believe she confirmed it.</p>
+          </div>
+          <div class="bad">
+            <span class="who">Safe</span>
+            <p class="quote">"Hi Mark, confirming our call for Thursday 4 September, 2pm London / 2pm Lagos — we're on the same time until late October. Invitation is in your diary with the link.<br><br>Adaeze"</p>
+            <p style="color:var(--muted);font-size:.9rem">Day and month in words, both zones, the reason they match, and an invitation carrying the real moment. The parenthetical about October also quietly tells Mark that someone here is paying attention.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="aside">
+        <span>The recovery, for when it happens anyway</span>
+        <p>It will happen once. When it does: message within minutes, take the blame without elaborating, offer two specific new slots, and do not explain the mechanics of your error — nobody wants a lecture on daylight saving from the person who just wasted their morning. <em>"Mark, that was my mistake on the time and I'm sorry you waited. I can do 3pm today or 10am tomorrow, both your time — which is less annoying?"</em> Clients forgive the error. What they do not forgive is a defensive explanation.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>The gap between two cities is not fixed. Nigeria never changes; Britain and America both do, on different dates.</li>
+          <li>There are roughly three weeks a year when your usual arithmetic is wrong.</li>
+          <li>Send invitations, not typed times. The software handles what your head cannot.</li>
+          <li>Both zones in every message. Month as a word. Never 12am or 12pm.</li>
+          <li>Set the calendar to the client's zone and stop translating.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 10 minutes</span>
+        <p>Find today's date. Work out the current gap between your city and London, and between your city and New York. Then work out what it will be on 1 December and on 1 July. Write all six down. If any two of them are the same, check again — you have probably made the exact mistake this lesson is about.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l2">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 3.2</b><span class="label">13 minutes</span></div>
+      <h2>Booking links, buffers, and protecting someone's focus</h2>
+    </div>
+
+    <div class="flow">
+      <p>Adaeze told you in module 1 that eleven clients a week is as many as she can hold without going hollow. Last month she saw fourteen. Nobody forced her — her booking link was simply open, and people booked.</p>
+
+      <p class="pull">A calendar with nothing defended in it fills up with other people's priorities.</p>
+
+      <p>This is the lesson where you stop being someone who schedules things and start being someone who protects a person's capacity. It is also, quietly, the lesson that keeps your client in business long enough to keep paying you.</p>
+
+      <h3>Block first, then open</h3>
+
+      <p>The order matters and almost everybody gets it backwards. Do not start with an empty week and add meetings. Start by blocking everything that is not a meeting, then offer whatever is left.</p>
+
+      <p>What gets blocked before anything else:</p>
+
+      <ul class="list">
+        <li><strong>The work itself.</strong> Notes after sessions, report writing, preparation. If the work that generates the income is not in the calendar, it will be booked over, and it will happen at 10pm instead.</li>
+        <li><strong>Real life.</strong> The school run, prayers, lunch, the commute, the day she collects her mother. These are not soft. A calendar that pretends they do not exist produces a schedule nobody can actually follow.</li>
+        <li><strong>Recovery.</strong> For a therapist that is fifteen minutes between sessions; for a consultant it might be a whole afternoon after a difficult client. Ask what she needs and take it seriously even when it looks like idle time.</li>
+        <li><strong>One protected block a week, minimum.</strong> A half-day with nothing in it. This is the first thing to disappear and the last thing you should let go.</li>
+      </ul>
+
+      <div class="cal">
+        <div class="c-h">Adaeze's Wednesday — after blocking, before opening bookings</div>
+        <div class="crow"><time>07:30</time><span class="c-t">School run</span><span class="c-k block">Life</span></div>
+        <div class="crow gap"><time>09:00</time><span class="c-t">Open for bookings</span><span class="c-k">Available</span></div>
+        <div class="crow"><time>10:00</time><span class="c-t"><b>Session</b> — Chinelo O.</span><span class="c-k fixed">Fixed</span></div>
+        <div class="crow"><time>10:50</time><span class="c-t">Notes</span><span class="c-k block">Buffer</span></div>
+        <div class="crow"><time>11:05</time><span class="c-t"><b>Session</b> — Ify M.</span><span class="c-k fixed">Fixed</span></div>
+        <div class="crow"><time>11:55</time><span class="c-t">Notes</span><span class="c-k block">Buffer</span></div>
+        <div class="crow"><time>12:10</time><span class="c-t">Lunch, properly</span><span class="c-k block">Life</span></div>
+        <div class="crow"><time>13:00</time><span class="c-t">Report writing — insurance summaries</span><span class="c-k block">Work</span></div>
+        <div class="crow gap"><time>15:00</time><span class="c-t">Open for bookings</span><span class="c-k">Available</span></div>
+        <div class="crow"><time>16:30</time><span class="c-t">Collect the children</span><span class="c-k block">Life</span></div>
+      </div>
+
+      <p>Two bookable windows on a full working day. That will feel wrong to you the first time you build one — it looks like you are throwing away money. You are not. You are making eleven sessions sustainable instead of fourteen sessions followed by a month of exhaustion and two cancelled weeks.</p>
+
+      <h3>The four booking-link settings that matter</h3>
+
+      <p>Every booking tool has dozens of settings and four that change anything:</p>
+
+      <ol class="numlist">
+        <li><strong>Buffer before and after.</strong> Set it in the tool, not by hand, or it will erode. Fifteen minutes after a session is not padding — it is when the actual note-writing happens.</li>
+        <li><strong>Minimum notice.</strong> Twenty-four hours, usually. Without it someone books an 8am slot at 7:40am, and your client discovers a new client fourteen minutes before meeting them.</li>
+        <li><strong>Maximum per day.</strong> The cap that enforces the limit she told you about. Three or four for a therapist. This setting is the whole lesson in one field.</li>
+        <li><strong>Required questions.</strong> Two or three, no more. Name, what they want, and how they found you. Long forms lose people; no form means every booking generates an email exchange to find out what it is about.</li>
+      </ol>
+
+      <h3>Batching, and why scattered calls destroy a week</h3>
+
+      <p>Three calls at 9am, 1pm and 4pm do not cost three hours. They cost the day — nothing substantial fits into the pieces between them, so the whole day becomes waiting.</p>
+
+      <p>So cluster them. Calls on Tuesday and Thursday afternoons; Monday untouched. Then when someone asks for "a quick fifteen minutes on Monday", you have somewhere to put it that is not Monday, and a reason.</p>
+
+      <div class="aside">
+        <span>The sentence that protects a calendar</span>
+        <p>You will need a way to say no to a booking without saying no to a person. This works, and you can use it forever: <em>"She's fully booked on Monday — I can do Tuesday at 11 or Thursday at 2, both of which give her time to prepare properly for you."</em> You have declined, offered two specific alternatives, and framed the refusal as being in <em>their</em> interest. Nobody argues with it.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Block the work, real life and recovery first. Open what remains.</li>
+          <li>An undefended calendar fills with other people's priorities, every time.</li>
+          <li>Four settings do the work: buffer, minimum notice, maximum per day, two or three questions.</li>
+          <li>Batch calls into clusters so whole days survive.</li>
+          <li>Decline by offering two specific alternatives, framed as their benefit.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 20 minutes</span>
+        <p>Set up a free booking link for yourself. Configure all four settings deliberately, then book a slot in it from another device and see what your invitee actually receives — the confirmation, the reminder, the wording. Most assistants have never seen their own booking flow from the outside, and it is where the embarrassing errors live.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l3">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 3.3</b><span class="label">14 minutes</span></div>
+      <h2>The reschedule chain: moving people without damage</h2>
+    </div>
+
+    <div class="flow">
+      <p>Adaeze messages at 7:50am. Her son is ill and she cannot work until midday. Four appointments need to move.</p>
+
+      <p>What almost every new assistant does now: opens the first client's message and starts typing. Twenty minutes later there are four conversations running, two people have accepted slots that conflict with each other, one has replied asking why, and the week is worse than when it started.</p>
+
+      <p class="pull">Solve the entire chain on paper before you send a single message.</p>
+
+      <h3>Why moving one person is never moving one person</h3>
+
+      <p>Move Chinelo from 10am to 3pm, and 3pm belonged to Bola. Bola goes to Thursday, and Thursday's slot was the only one a new enquiry could have taken. Every move displaces something, and the displacement is invisible until you have mapped it.</p>
+
+      <p>So: paper first. Write the four appointments, the constraints on each, and the empty slots you actually have this week. Then find the arrangement that <strong>moves the fewest people.</strong> That is the objective — not the neatest week, not the fullest week. Fewest people disturbed.</p>
+
+      <h3>Who gets moved, in order</h3>
+
+      <ol class="numlist">
+        <li><strong>Never someone you have already moved.</strong> Being rescheduled once is life. Twice tells a person, correctly, that their time is the flexible kind. Keep a note of who has been moved recently; this is exactly what nobody remembers and what people never forget.</li>
+        <li><strong>Never a first appointment.</strong> A new client who is rescheduled before they have ever met your client often simply does not come. They had to work up to booking in the first place, and the move gives them a way out. Protect first appointments above almost everything.</li>
+        <li><strong>Prefer whoever has genuine flexibility.</strong> The regular who has said "any time works for me" is not being taken for granted — they told you.</li>
+        <li><strong>Prefer moving within the same day.</strong> Same-day beats same-week beats next-week. A person moved by three hours barely registers it; a person moved by six days has to rearrange their own life.</li>
+      </ol>
+
+      <h3>The message</h3>
+
+      <p>Now, and only now, do you write. One message per person, sent in one batch, each with two concrete alternatives already checked against every other move.</p>
+
+      <div class="ex">
+        <div class="ex-h">Rescheduling a regular client</div>
+        <div class="split">
+          <div>
+            <span class="who">Weak</span>
+            <p class="quote">"Hi Chinelo, I'm so so sorry but Adaeze has had a family emergency this morning and needs to cancel. She feels terrible about it. Could you possibly let me know when you might be free this week or next? Sorry again for the inconvenience!!"</p>
+            <p style="color:var(--muted);font-size:.9rem">Three apologies, a private detail that was not yours to share, and it hands Chinelo the work of finding a slot. She now has a task, and she is being asked to feel sympathetic while doing it.</p>
+          </div>
+          <div class="bad">
+            <span class="who">Strong</span>
+            <p class="quote">"Hi Chinelo,<br><br>I'm sorry — Adaeze has to move this morning's session. I've held two slots for you: today at 3pm, or Thursday at 10am, whichever is easier.<br><br>Just reply with one and it's done. If neither works, tell me roughly when suits and I'll sort it.<br><br>Best,<br>Adaeze's office"</p>
+            <p style="color:var(--muted);font-size:.9rem">Apologises once. Gives no reason. Two specific slots, already held, chosen because they move nobody else. Chinelo replies with one word and it is over.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>Never give the reason</h3>
+
+      <p>This is the rule beginners break most often, always out of kindness. Adaeze's son being ill is <strong>her private information</strong>, and it belongs to her family, not to her client list. Sharing it feels warm and considerate. It is a small breach of confidence, it is not yours to make, and if it reaches her it damages you more than a late cancellation ever would.</p>
+
+      <p>"Adaeze has to move this morning's session" is complete. It needs nothing after it. If someone presses — and occasionally they will — the answer is <em>"Something came up at short notice, I'm sorry"</em>, and then you stop.</p>
+
+      <p>The same applies in reverse and it is the harder half: <strong>you may never explain a move by referring to another client.</strong> Not "another client had an emergency", not "we had to fit someone urgent in". Every person on that list is now wondering whether they are the one who gets moved for someone else. In a therapy practice, or a law firm, or anywhere confidential, the mere existence of another named client is information you do not have the right to release.</p>
+
+      <div class="aside">
+        <span>The three-move rule</span>
+        <p>If solving a chain takes more than three moves, stop and go back to the client. <em>"Moving all four means disturbing five other people. Alternative: we cancel today's two and I offer everyone next week — quieter, but two clients wait. Which do you prefer?"</em> Some chains are not yours to solve, and recognising one is judgement, not failure. What you must never do is quietly disrupt half the week because you were too proud to ask a question.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Map the whole chain on paper before sending anything. Every move displaces something.</li>
+          <li>Optimise for fewest people disturbed, not for the tidiest week.</li>
+          <li>Never move the same person twice; protect first appointments hardest; prefer same-day moves.</li>
+          <li>Apologise once, give two held slots, and let them reply with one word.</li>
+          <li>Never give the reason, and never explain a move by referring to another client.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 15 minutes</span>
+        <p>Write the reschedule message you would send to someone who has already been moved once before. It needs to do something the standard message does not — acknowledge the repetition without over-apologising for it, and offer something that makes it right. Try three versions and keep the shortest one that still lands.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l4">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 3.4</b><span class="label">12 minutes</span></div>
+      <h2>Travel, prep time, and the day-before brief</h2>
+    </div>
+
+    <div class="flow">
+      <p>A meeting is never just the meeting. It is the getting there, the preparing for it, and the recovering from it — and a calendar that only records the middle hour is a calendar that lies to the person following it.</p>
+
+      <h3>Travel is an appointment</h3>
+
+      <p>Book it as one, with a title, in the calendar, blocking the time. Not a mental note. Not "she knows how long it takes."</p>
+
+      <p>Three rules that stop the failures:</p>
+
+      <ul class="list">
+        <li><strong>Door to door, not journey time.</strong> Leaving the desk, finding parking, the lift, reception, waiting to be collected. The map application's estimate is the smallest part of it. Add fifteen minutes at each end and you will be right far more often than wrong.</li>
+        <li><strong>Build for the bad version.</strong> Traffic in Lagos on a Friday afternoon is not the same journey as Tuesday at 10am, and a booking that assumes the good version fails predictably. If a client is chronically late, this is usually the reason and it is fixable by you.</li>
+        <li><strong>Book the return too.</strong> The commonest error: an hour blocked to get there, nothing to get back, and a call scheduled for ten minutes after the meeting ends while she is still in a car park.</li>
+      </ul>
+
+      <h3>Prep time is also an appointment</h3>
+
+      <p>If a meeting needs preparation, it needs two calendar entries. A board meeting at 2pm with no prep block means the preparation happens at 1:55pm or at midnight. Both of those are your failure, not hers.</p>
+
+      <p>Where you put it matters: prep goes <em>the day before</em> for anything that needs thought, and immediately before for anything that just needs the documents in hand. Thinking does not happen well in the twenty minutes before a meeting.</p>
+
+      <h3>The day-before brief</h3>
+
+      <p>This is the highest-value ten minutes of your day, and it is what a client means when they say an assistant is "on top of things". It goes out the evening before, every working day.</p>
+
+      <div class="ex">
+        <div class="ex-h">Sent 6:15pm — Tomorrow, Thursday 4 September</div>
+        <div class="ex-b">
+          <p class="quote"><strong>Three sessions and one call.</strong><br><br><strong>10:00 — Chinelo O.</strong> Regular. This was moved from Tuesday, so she's due an easy one. Nothing outstanding.<br><br><strong>11:05 — Ify M.</strong> Regular. Mentioned last time she might want to reduce to fortnightly — she may raise it.<br><br><strong>13:00 — New: Grace A.</strong> First session. Found you through Bola's referral. Intake form is attached and I've put it in your folder. She asked about evening slots — you have none, and I've already told her.<br><br><strong>15:30 — Call with Mark (London).</strong> 15:30 Lagos / 15:30 London, same time until late October. It's about the insurance appeal — the claim reference is 4471 and the rejection letter is attached. He'll want a decision on whether to escalate.<br><br><strong>You need to bring:</strong> nothing. Everything's in the shared folder.<br><br><strong>Already handled:</strong> Bola's rescheduling, the supplier order, and the two rate enquiries.</p>
+        </div>
+      </div>
+
+      <p>Read what that brief is actually doing. It is not a list of times — she can see times in her calendar. It is <strong>context she would otherwise have to remember</strong>: that Chinelo has been moved once, that Ify may raise something awkward, that Grace is new and came from a referral, that a question is coming at 3:30 and a decision will be wanted.</p>
+
+      <p>The last line matters as much as the rest. "Already handled" is where invisible work becomes visible — the same principle as the end-of-day summary in lesson 2.5, applied to the morning she is about to have.</p>
+
+      <ul class="list">
+        <li><strong>Keep it to one screen.</strong> If she has to scroll, it becomes a document, and documents get read later.</li>
+        <li><strong>One line of context per person, not a history.</strong> The thing she needs in her head at 09:55, and nothing else.</li>
+        <li><strong>Flag the awkward thing.</strong> "She may raise going fortnightly" gives her the evening to think. Discovering it at 11:20 does not.</li>
+        <li><strong>Never let a first meeting go unmarked.</strong> Walking into a session not knowing the person is new is a specific and unpleasant kind of exposed.</li>
+      </ul>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Travel is an appointment: door to door, built for the bad version, and book the return.</li>
+          <li>Anything needing thought gets a prep block the day before, not twenty minutes prior.</li>
+          <li>The day-before brief carries context, not times — she already has the times.</li>
+          <li>One screen, one line per person, and flag anything awkward in advance.</li>
+          <li>End with what you already handled.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 15 minutes</span>
+        <p>Write tomorrow's brief for yourself, in this format, for your own day — including your travel and prep as booked appointments. Then compare it with what your day actually looked like when tomorrow arrives. The gap between the two is the thing you are learning to close.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l5">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 3.5</b><span class="label">12 minutes</span></div>
+      <h2>Owning a calendar you cannot see the reasons behind</h2>
+    </div>
+
+    <div class="flow">
+      <p>Adaeze keeps Friday mornings free. She has never explained why, and you have never asked. Three weeks in, a good client asks for a Friday 10am and there is nothing in the diary.</p>
+
+      <p>Do you book it?</p>
+
+      <p>No. And understanding why not is the last thing this module has to teach you, because it is the difference between someone who operates a calendar and someone who can be trusted with one.</p>
+
+      <p class="pull">An empty slot is not the same as an available slot, and you cannot tell them apart by looking.</p>
+
+      <p>Friday morning might be her supervision session — a professional requirement, unbookable, and not something she would put in a calendar you can read. It might be when she sees her own therapist. It might be the only three hours a week she is not responsible for anybody. All of those look identical to blank space.</p>
+
+      <h3>Ask once, properly, and write it down</h3>
+
+      <p>You are not going to learn her reasons by guessing, and you cannot ask about every slot forever. So you do it once, in week one, with a specific question rather than a vague offer to help:</p>
+
+      <div class="ex">
+        <div class="ex-h">The week-one calendar conversation — twenty minutes, once</div>
+        <div class="ex-b">
+          <span class="who">Ask exactly this</span>
+          <p class="quote">"Four questions about the diary, then I'll stop asking.<br><br>1. What in here can never move, whatever happens?<br>2. What can move if I give you notice, and how much notice?<br>3. Is there anything that looks empty but isn't available? I don't need to know why.<br>4. What's the most you want to see in one day, and one week?"</p>
+        </div>
+      </div>
+
+      <p>That third question is the one that matters, and note how it is worded. <em>"I don't need to know why."</em> You are asking for the boundary without asking for the private reason behind it — which makes it easy to answer honestly, and tells her something reassuring about the kind of person she has hired.</p>
+
+      <h3>The priority key</h3>
+
+      <p>Write the answers into a shared document and give each level a colour in the calendar. Now you both have a language, and most of your future questions answer themselves.</p>
+
+      <div class="key">
+        <div class="k-hd">Adaeze's calendar key — shared, updated as I learn</div>
+        <div class="krow"><b>Red · Never</b><span>Client sessions once confirmed. Supervision, Friday 9–12. School run. These move only if Adaeze herself moves them.</span></div>
+        <div class="krow"><b>Amber · With notice</b><span>Admin blocks, report writing, supplier calls. Movable with 24 hours' notice — tell her, don't ask.</span></div>
+        <div class="krow"><b>Green · Freely</b><span>Anything I've scheduled for myself, internal catch-ups, the weekly review. Move without asking.</span></div>
+        <div class="krow"><b>Grey · Not empty</b><span>Looks blank, is not available. Do not book into it. No reason needed and none given.</span></div>
+        <div class="krow"><b>Caps</b><span>Maximum four sessions a day, eleven a week. Hard limit, agreed 2 September.</span></div>
+      </div>
+
+      <p>Twenty minutes of conversation and one page. From this point on you can answer almost every scheduling question alone, which is precisely the point — you asked once so you would never have to ask a hundred times.</p>
+
+      <h3>Keep a why-file</h3>
+
+      <p>Alongside the key, keep a running note of reasons you pick up as you go. Not private ones — operational ones. <em>Mark prefers afternoons because his mornings are with the New York office. Chinelo cannot do Mondays, term-time only. The insurance company only answers the phone before 11am.</em></p>
+
+      <p>Nobody will ever tell you these in one sitting. You collect them, one at a time, and within a few months you hold a picture of how this business actually works that the client herself has never written down. That is not administration. That is the thing that makes leaving you expensive.</p>
+
+      <h3>The quarterly audit — a rung-four move</h3>
+
+      <p>Once a quarter, look at every recurring meeting and ask a simple question: is this still earning its slot?</p>
+
+      <p>Recurring meetings almost never get cancelled. They get created for a reason, the reason expires, and the meeting continues for years because cancelling it would require someone to have an opinion. That someone can be you.</p>
+
+      <div class="ex">
+        <div class="ex-h">The quarterly calendar note</div>
+        <div class="ex-b">
+          <span class="who">You → Adaeze</span>
+          <p class="quote">"I went through the recurring items this quarter. Two things:<br><br>The Monday supplier check-in hasn't produced an action in eleven weeks — I'd suggest dropping it to monthly, which gives you back three hours a month.<br><br>The Thursday admin block gets eaten by overruns about half the time. Moving it to first thing Wednesday would protect it. Happy to do either or neither."</p>
+        </div>
+      </div>
+
+      <p>Three hours a month, found by looking at something nobody looks at, brought to her with a recommendation attached. That is the rung-four behaviour from lesson 1.4, in its most ordinary and most repeatable form. Do this four times a year and you will not be replaced by anybody.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Empty is not available. You cannot tell the difference by looking, so ask.</li>
+          <li>Ask the four questions once, in week one, and include "I don't need to know why".</li>
+          <li>Write a priority key with colours — it converts a hundred future questions into zero.</li>
+          <li>Collect operational reasons in a why-file as you learn them.</li>
+          <li>Audit recurring meetings quarterly and bring the findings with a recommendation.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 10 minutes</span>
+        <p>Look at your own week and identify every slot that is empty but not available. Write the key for your own calendar — Never, With notice, Freely, Not empty. It is a useful exercise for its own sake, and it will show you how strange it feels to be asked about the grey category, which is why the wording of that question matters so much.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="drill-sec" id="drill">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Module 3 drill</b><span class="label">one hour</span></div>
+      <h2>Three time zones, one broken week</h2>
+    </div>
+
+    <div class="flow">
+      <p>You are given Adaeze's calendar for a week in late October, three client time zones — Lagos, London and New York — and a message that arrives at 07:50 on Monday morning saying she cannot work until Wednesday.</p>
+
+      <p>Eleven appointments are affected. Two people believe they are the priority and both have said so in writing. One is a first appointment. One person has already been moved once this month. And the week crosses the last Sunday in October, which is the point of setting it then.</p>
+
+      <h3>Deliver three things</h3>
+
+      <ol class="numlist">
+        <li><strong>The repaired week</strong>, as a calendar, with every appointment placed and every zone stated in both the client's time and Adaeze's.</li>
+        <li><strong>The move log.</strong> Every person moved, where they went, and the one-line reason you chose them rather than someone else. Include who you deliberately did <em>not</em> move.</li>
+        <li><strong>The messages.</strong> One per affected person, ready to send, each with two held slots.</li>
+      </ol>
+
+      <h3>How it is marked</h3>
+
+      <ul class="list">
+        <li><strong>Did the clocks catch you?</strong> Britain returns to GMT that weekend; America does not change for another week. So the London gap shifts and the New York gap does not — and the classic failure is adjusting both, which breaks the appointments that were already right. Anything after Sunday that gets this wrong in either direction is marked wrong.</li>
+        <li><strong>Did you protect the first appointment?</strong> Moving it is not an automatic fail, but you must have written down why it was the least bad option.</li>
+        <li><strong>Did you move the same person twice?</strong> The information is in the calendar. It is not flagged, and finding it is the test.</li>
+        <li><strong>How many people did you disturb?</strong> A defensible solution exists that moves five. Most people move nine.</li>
+        <li><strong>Did any message leak a reason?</strong> Any message explaining a move by referring to another client, or disclosing why Adaeze is away, fails that message regardless of how well it reads.</li>
+        <li><strong>Did you escalate?</strong> Two of the two "I'm the priority" clients cannot both be satisfied. Deciding that yourself is the wrong answer. Going back to Adaeze with two options and a recommendation is the right one.</li>
+      </ul>
+
+      <div class="aside">
+        <span>What this drill is really testing</span>
+        <p>Whether you can hold a system in your head — people, constraints, clocks and consequences — and still make a decision at the end of it. Module 2 tested whether you could tell loud from load-bearing in a pile of messages. This tests whether you can do the same thing when every option costs somebody something, and there is no arrangement in which nobody is inconvenienced.</p>
+      </div>
+
+      <div class="doit">
+        <span>Before module 4</span>
+        <p>You should now have: a booking link you have configured and tested from the outside, a calendar key for your own week, a day-before brief you have written and checked against reality, and a reschedule message for someone being moved a second time. Module 4 takes files and documents — where all of the attachments in that day-before brief actually live, and why finding them takes most assistants far longer than it should.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Module 03 of 10 · The Assistant They Can't Replace</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

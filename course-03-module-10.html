@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Analyst's Operating System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+
+
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">How to Be a Top-Notch Data Analyst</span>
+      <span class="sep">/</span>
+      <span class="label">Module 10</span>
+    </div>
+    <h1>The analyst's operating system</h1>
+    <p class="standfirst">Four lessons, about 45 minutes. The last module before the capstone — how you run yourself as an analyst once the honeymoon of "new hire learning everything" is over.</p>
+
+    <nav class="toc">
+      <a href="#l1"><i>10.1</i><span>Documenting work so future-you can rerun it in five minutes</span><u>11 min</u></a>
+      <a href="#l2"><i>10.2</i><span>A request queue that does not drown you</span><u>11 min</u></a>
+      <a href="#l3"><i>10.3</i><span>Building a portfolio that survives thirty seconds of attention</span><u>11 min</u></a>
+      <a href="#l4"><i>10.4</i><span>The analyst interview: take-homes, case questions, and what they test</span><u>12 min</u></a>
+      <a href="#drill"><i>D</i><span>Drill: write up a case study, under 400 words</span><u>60 min</u></a>
+    </nav>
+
+    <div class="dl-callout">
+      <div class="dl-text">
+        <b>Module 10 worksheets</b>
+        <span>A documentation template, a request-intake and triage log, a portfolio case-study skeleton, and an interview prep sheet — the four operational tools this module builds. One .docx, five pages.</span>
+      </div>
+      <button class="dl-btn" id="dl-m10" type="button">Save worksheets (.docx)</button>
+      <span class="dl-status" id="dl-m10-status"></span>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 10.1 ============ -->
+<section class="lesson" id="l1">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 10.1</b><span class="label">11 minutes</span></div>
+      <h2>Documenting work so future-you can rerun it in five minutes</h2>
+    </div>
+
+    <div class="flow">
+      <p>Three months from now, Chidi asks you to rerun an analysis you did in your second week. If the only record of how you built it lives in your memory, you're rebuilding it from scratch. A short doc per real piece of analysis — what question it answered, where the data came from, what cleaning decisions you made, and where the final file lives — turns that rebuild into a five-minute task.</p>
+
+      <p class="pull">The habit isn't documenting everything exhaustively. It's documenting the handful of things you'd genuinely be annoyed to have forgotten.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Write a short doc for any analysis worth being able to rerun — the question, the source, the key decisions, where it lives.</li>
+          <li>Document selectively, for what you'd actually regret forgetting, not exhaustively for everything.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10.2 ============ -->
+<section class="lesson" id="l2">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 10.2</b><span class="label">11 minutes</span></div>
+      <h2>A request queue that does not drown you</h2>
+    </div>
+
+    <div class="flow">
+      <p>Once branch managers realise you exist, requests arrive faster than you can process them one at a time in your head. A simple queue — request, requester, scope agreed (per module 1.4), status, deadline — is the difference between a manageable job and a job that quietly runs your evenings.</p>
+
+      <div class="ex">
+        <div class="ex-h">The minimum viable queue</div>
+        <table class="kv">
+          <tr><td><b>Columns that matter</b></td><td>What was asked, scope actually agreed, who asked, when it's due, current status.</td></tr>
+          <tr><td><b>The discipline it enables</b></td><td>When a fifth urgent request lands, the queue lets you show — not just claim — that four other genuinely urgent things are already ahead of it, and negotiate honestly about order.</td></tr>
+        </table>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Track every request in one place with its agreed scope and status — memory alone doesn't scale past a handful of concurrent asks.</li>
+          <li>A visible queue turns "everything is urgent" arguments into an honest, shared conversation about order.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10.3 ============ -->
+<section class="lesson" id="l3">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 10.3</b><span class="label">11 minutes</span></div>
+      <h2>Building a portfolio that survives thirty seconds of attention</h2>
+    </div>
+
+    <div class="flow">
+      <p>A recruiter or hiring manager gives a portfolio roughly thirty seconds before deciding whether to look closer. A dump of every SQL query you've ever written fails this test completely. Three real case studies, each following problem → approach → decision it actually changed, pass it.</p>
+
+      <div class="ex">
+        <div class="ex-h">What survives thirty seconds</div>
+        <div class="ex-b">
+          <p style="color:var(--muted)">A one-paragraph case study: "Sahara Mart's nine branches reported sales inconsistently, making week-over-week comparisons unreliable. I built a Power Query pipeline that standardised every branch's export automatically, then a Power BI dashboard replacing a fragmented WhatsApp-thread reporting process. Branch managers now check one number instead of arguing about nine different ones every Monday."</p>
+        </div>
+      </div>
+
+      <p>Notice the shape: a real problem, a real approach, and a real, specific consequence — not "I learned SQL and Power BI," which says nothing about judgement or impact.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Three focused case studies (problem → approach → consequence) beat an exhaustive list of every skill or query you've written.</li>
+          <li>State the actual consequence — what changed because of the work — not just the tools used.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10.4 ============ -->
+<section class="lesson" id="l4">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 10.4</b><span class="label">12 minutes</span></div>
+      <h2>The analyst interview: take-homes, case questions, and what they are testing</h2>
+    </div>
+
+    <div class="flow">
+      <p>An analyst take-home assignment is rarely testing whether you can write correct SQL in isolation — it's testing the whole course's worth of judgement, compressed into two hours: did you profile the data first, did you catch an obvious data quality problem, did you state your assumptions, did you communicate the finding clearly.</p>
+
+      <div class="ex">
+        <div class="ex-h">What a strong take-home actually demonstrates</div>
+        <ul class="list">
+          <li>A short note on data quality issues found and how you handled each — module 4's discipline, on display.</li>
+          <li>Queries that are readable, not just correct — module 3.6's CTE habit.</li>
+          <li>A one-sentence finding stated clearly before the supporting detail — module 9.1's habit.</li>
+          <li>Explicit statement of what you're confident about versus not — module 9.4's habit.</li>
+        </ul>
+      </div>
+
+      <p class="pull">A take-home that's technically correct but skips all four of these looks like someone who can execute instructions. One that includes them looks like someone who can be handed an ambiguous problem and trusted with it — which is the actual job.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>A take-home tests the whole course's judgement, not isolated technical correctness — show your data-quality and communication discipline, not just working code.</li>
+          <li>Explicitly naming your assumptions and confidence level is itself part of what's being evaluated.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Before the drill</span>
+        <p>Pick a real piece of work from earlier in this course — a drill, an analysis, anything with a genuine before-and-after.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="drill-sec" id="drill">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Module 10 drill</b><span class="label">about 60 minutes</span></div>
+      <h2>Write up a case study, under 400 words</h2>
+    </div>
+
+    <div class="flow">
+      <p>Pick your strongest piece of work from modules 1–9 — the fan-out join catch in module 3, the nine-problem cleanup in module 4, the dashboard from module 6, or another. Write it up as a portfolio case study, in under 400 words, following lesson 10.3's structure: problem, approach, decision it actually changed or would change.</p>
+
+      <div class="aside">
+        <span>What this drill is really testing</span>
+        <p>Whether you can compress real, technically detailed work into something a non-technical reader would actually finish reading and come away impressed by — which is precisely the compression module 9's whole discipline has been building toward, applied to your own work instead of a hypothetical finding.</p>
+      </div>
+
+      <div class="doit">
+        <span>Before the capstone</span>
+        <p>You now have all ten modules' disciplines. The capstone drops you into a new client's genuinely messy week and asks whether they hold up together, under real pressure, without a lesson telling you which one applies.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Module 10 of 10 · How to Be a Top-Notch Data Analyst</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const FILE = { filename: 'DA-Module10-Worksheets.docx', b64: "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" };
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+  function saveBlob(filename, bytes) {
+    const blob = new Blob([bytes], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+
+  (async function wire() {
+    const btn = document.getElementById('dl-m10');
+    const status = document.getElementById('dl-m10-status');
+    if (!btn) return;
+
+        btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Saving…';
+      if (status) { status.textContent = ''; status.classList.remove('ok'); }
+      try {
+        const bytes = b64ToBytes(FILE.b64);
+        saveBlob(FILE.filename, bytes);
+        if (status) { status.textContent = 'Saved.'; status.classList.add('ok'); }
+      } catch (err) {
+        const code = err && err.code ? err.code : 'unavailable';
+        if (status) status.textContent = code === 'declined' ? 'Cancelled.' : 'Could not save (' + code + ').';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+  })();
+})();
+</script>
+
+</body>
+</html>

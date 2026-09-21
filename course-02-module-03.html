@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Angry Customer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- download callout ---------- */
+
+  .dl-callout{
+    margin-top:clamp(22px,3vw,32px);
+    display:flex;flex-wrap:wrap;gap:16px 20px;align-items:center;
+    border:1px solid var(--line);border-radius:12px;
+    background:var(--surface);padding:16px 20px;
+  }
+  .dl-callout .dl-text{flex:1;min-width:200px}
+  .dl-callout .dl-text b{display:block;font-size:.98rem;color:var(--ink);font-weight:600;margin-bottom:2px}
+  .dl-callout .dl-text span{font-size:.88rem;color:var(--muted)}
+  .dl-btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    height:42px;padding:0 20px;border-radius:999px;flex:none;
+    border:1px solid var(--ember);background:var(--ember);color:#160C08;
+    font-size:.86rem;font-weight:500;letter-spacing:-.01em;cursor:pointer;
+    font-family:inherit;transition:background .2s ease,transform .2s ease;
+  }
+  .dl-btn:hover{background:#EE9679;transform:translateY(-1px)}
+  .dl-btn:disabled{opacity:.55;cursor:default;transform:none}
+  .dl-status{font-family:var(--mono);font-size:.72rem;color:var(--faint);flex:none}
+  .dl-status.ok{color:var(--ember)}
+</style>
+<style>
+  .tree{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .tree .t-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .tree .t-b{padding:16px 18px;font-family:var(--mono);font-size:.85rem;line-height:1.85;color:var(--body);white-space:pre}
+  .tree .t-b .d{color:var(--ember)}
+  .tree .t-b .f{color:var(--muted)}
+  .tree .t-b .c{color:var(--faint);font-family:var(--sans);font-style:italic}
+
+  .namerow{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .namerow .n-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .nrow{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr);gap:6px 14px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:center;font-family:var(--mono);font-size:.84rem}
+  .nrow:last-child{border-bottom:0}
+  .nrow .bad{color:var(--dusk);text-decoration:line-through;text-decoration-color:var(--dusk);opacity:.7}
+  .nrow .good{color:var(--ink);font-weight:500}
+  .nrow .arrow{color:var(--ember);text-align:center;font-family:var(--sans)}
+  @media (max-width:560px){.nrow{grid-template-columns:minmax(0,1fr)}.nrow .arrow{display:none}}
+
+  .stagebox{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .stagebox .s-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .srow{display:grid;grid-template-columns:120px minmax(0,1fr);gap:6px 16px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:baseline;font-size:.92rem}
+  .srow:last-child{border-bottom:0}
+  .srow b{font-family:var(--mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ember)}
+  .srow span{color:var(--body)}
+  @media (max-width:560px){.srow{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">The Ticket That Doesn't Come Back</span>
+      <span class="sep">/</span>
+      <span class="label">Module 03</span>
+    </div>
+    <h1>The angry customer</h1>
+    <p class="standfirst">Five lessons, about fifty-five minutes. Everything in module 2 assumed the queue was manageable. This module is for when it isn't calm — the customer who is genuinely, sometimes justifiably, angry, and what you actually say to keep them without giving away more than the brand can afford to.</p>
+
+    <nav class="toc">
+      <a href="#l1"><i>3.1</i><span>Why customers escalate, and the three complaints never really about the product</span><u>13 min</u></a>
+      <a href="#l2"><i>3.2</i><span>The de-escalation script: acknowledge, own, act</span><u>12 min</u></a>
+      <a href="#l3"><i>3.3</i><span>When policy says no and the relationship says be careful</span><u>11 min</u></a>
+      <a href="#l4"><i>3.4</i><span>The public complaint: same fire, different stage</span><u>10 min</u></a>
+      <a href="#l5"><i>3.5</i><span>Knowing when you're the wrong person to keep talking</span><u>9 min</u></a>
+      <a href="#drill"><i>D</i><span>Drill: three real angry-customer threads</span><u>50 min</u></a>
+    </nav>
+
+    <div class="dl-callout">
+      <div class="dl-text">
+        <b>Module 3 worksheets</b>
+        <span>The de-escalation script, an escalation-trigger list, the policy-versus-relationship worksheet, a public-reply template, and a handoff template. One .docx, five pages.</span>
+      </div>
+      <button class="dl-btn" id="dl-m3" type="button">Save worksheets (.docx)</button>
+      <span class="dl-status" id="dl-m3-status"></span>
+    </div>
+  </div>
+</header>
+
+<section class="lesson" id="l1">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 3.1</b><span class="label">13 minutes</span></div>
+      <h2>Why customers escalate, and the three complaints never really about the product</h2>
+    </div>
+
+    <div class="flow">
+      <p>An angry message rarely arrives out of nowhere. Almost always, something happened before it that you didn't see: an earlier reply that felt dismissive, a second problem after the first was supposedly fixed, or a wait that outlasted the customer's patience. Understanding that the anger has a history, even when you can't see it, changes how you read the message in front of you.</p>
+
+      <p class="pull">Three complaints in support work are almost never actually about the thing named in the subject line.</p>
+
+      <h3>The three that hide something else</h3>
+
+      <p><strong>"This is broken, again."</strong> Often not really about the product defect — about not being believed the first time, or not being told it was a known issue. <strong>"I want a refund, now."</strong> Sometimes genuinely about the money, but just as often about wanting to feel in control of a situation that's felt out of their hands. <strong>"Nobody is responding to me."</strong> Rarely just about speed — usually about feeling unimportant to a brand they've spent money with and trusted.</p>
+
+      <h3>Worked example: reading past the surface</h3>
+
+      <div class="ex">
+        <div class="ex-h">A message, read two ways</div>
+        <div class="ex-b">
+          <p class="quote">"This is the SECOND bottle that's arrived with a broken pump. I don't understand how this keeps happening." <br><br><strong>Surface reading:</strong> a product defect complaint — offer a replacement. <strong>Reading underneath:</strong> a person who told you this before, was presumably given a fix, and is now watching that fix fail — which is really a complaint about not being believed or properly followed up, wearing a product complaint's clothes.</p>
+        </div>
+      </div>
+
+      <p>The reply that only replaces the pump answers the surface. The reply that also says "I can see this is the second time — I'm sorry the first fix didn't hold, and I want to make sure this one actually does" answers what's underneath, and is the one that keeps the customer.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Anger usually has a history you can't see in the message alone.</li>
+          <li>"Broken again", "refund now", and "nobody's responding" often mean not-believed, not-in-control, and not-important.</li>
+          <li>Answering only the surface complaint misses what actually needs addressing.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 6 minutes</span><p>Take an angry message — real or made up — and write one sentence on what it might really be about, underneath the surface complaint.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l2">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 3.2</b><span class="label">12 minutes</span></div>
+      <h2>The de-escalation script: acknowledge, own, act</h2>
+    </div>
+
+    <div class="flow">
+      <p>There is a reliable shape to a reply that calms a genuinely upset customer down, and it is not "I'm sorry you feel that way" — a phrase that sounds like an apology while actually blaming the customer's feelings rather than the situation.</p>
+
+      <h3>The three moves, in order</h3>
+
+      <ol class="numlist">
+        <li><strong>Acknowledge, specifically.</strong> Name what actually happened, not a vague gesture at it. "I can see your order arrived five days late and the pump was broken on top of that" — not "sorry for any inconvenience."</li>
+        <li><strong>Own it, without over-explaining.</strong> One honest sentence taking responsibility on the brand's behalf. Not a paragraph of internal reasons the customer didn't ask for and doesn't want.</li>
+        <li><strong>Act, with a specific next step and a timeframe.</strong> Not "we'll look into it" — "I'm sending a replacement today, it'll arrive by Thursday, and I'll personally check it's the right one before it ships."</li>
+      </ol>
+
+      <h3>Worked example: acknowledge, own, act, applied</h3>
+
+      <div class="ex">
+        <div class="ex-h">A late, broken order</div>
+        <div class="ex-b">
+          <p class="quote">"I can see your order arrived five days late and the pump was broken on top of that — that's genuinely not the experience we want anyone to have. I'm sending a replacement today with express shipping, no charge, and it'll be with you by Thursday. I'll check it myself before it goes out."</p>
+        </div>
+      </div>
+
+      <div class="aside">
+        <span>Never over-promise to make the moment feel better</span>
+        <p>A timeframe or gesture you can't actually deliver buys ten calm minutes and costs a much angrier customer later, when it doesn't happen. Only commit to what you can genuinely stand behind — this is the same discipline module 8's "the default is a real commitment" will apply to founders in Course 01, and it applies here too.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Acknowledge specifically, not with a generic "sorry for any inconvenience."</li>
+          <li>Own it in one honest sentence — no lengthy internal justification.</li>
+          <li>Act with a named next step and a real timeframe you can actually meet.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 8 minutes</span><p>Take a real or made-up angry message and write a reply using the three-move shape. Time yourself — the goal is under five minutes once the shape is familiar.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l3">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 3.3</b><span class="label">11 minutes</span></div>
+      <h2>When policy says no and the relationship says be careful</h2>
+    </div>
+
+    <div class="flow">
+      <p>Policy exists because most cases are routine, and a written rule lets a brand answer them fast and fairly. It stops being useful the moment applying it exactly, to one specific customer, would be technically correct and obviously wrong.</p>
+
+      <h3>The questions that tell you which situation you're in</h3>
+
+      <p>Before applying a policy strictly, ask: is this customer's history with the brand worth more than this one exception costs? Is the exception genuinely rare, or would granting it set a pattern you couldn't sustain? And — the one people skip — is there a version of "no" that still leaves the customer feeling heard, even if the answer doesn't change?</p>
+
+      <div class="ex">
+        <div class="ex-h">Same request, two customers, different calls</div>
+        <div class="split">
+          <div>
+            <span class="who">Policy holds</span>
+            <p style="color:var(--muted);font-size:.9rem">A first-time customer asks for a refund on a used, opened product forty days past the 30-day window, with no prior contact. Holding the line, explained clearly, is defensible — there's no relationship yet to protect, and the request is well outside policy.</p>
+          </div>
+          <div class="bad">
+            <span class="who">Exception, documented</span>
+            <p style="color:var(--muted);font-size:.9rem">A three-year repeat customer, several past orders, asks for the same thing four days past the window because a family emergency delayed her return. A one-time exception, clearly logged as one, protects a relationship worth far more than one refund.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>The distinction isn't "be generous" versus "be strict" — it's reading the actual situation each time, which is precisely the judgement a chatbot enforcing policy literally cannot do.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Policy is a default for routine cases, not a rule with no exceptions ever.</li>
+          <li>Weigh the relationship's value, how rare the exception is, and whether "no" can still be said with warmth.</li>
+          <li>An exception granted without being logged as one becomes tomorrow's precedent by accident.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 6 minutes</span><p>Write one situation where you'd hold a policy firmly, and one where you'd grant an exception, using the same policy for both. Say why in one line each.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l4">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 3.4</b><span class="label">10 minutes</span></div>
+      <h2>The public complaint: same fire, different stage</h2>
+    </div>
+
+    <div class="flow">
+      <p>A complaint left as a public review, a comment, or a tagged social post is the same underlying situation as a private message, with one real difference: an audience is watching how it gets handled, and the reply is doing two jobs at once — resolving this customer's problem, and showing everyone else what happens if something goes wrong with this brand.</p>
+
+      <h3>What changes, and what doesn't</h3>
+
+      <p>The acknowledge-own-act shape from 3.2 still applies. What changes is the public reply should be shorter and move the specifics to a private channel fast — "I'm really sorry this happened, I've sent you a DM to sort it out properly" — rather than litigating the whole situation in public, which reads as either defensive or like airing the customer's private order details for an audience.</p>
+
+      <div class="ex">
+        <div class="ex-h">A public one-star review, replied to well</div>
+        <div class="ex-b">
+          <p class="quote">"Hi [name], I'm really sorry your order arrived damaged — that's not the experience we want anyone to have, and I'd like to make it right properly. I've sent you a message directly so we can sort a replacement without you having to share order details here. Thank you for flagging it."</p>
+        </div>
+      </div>
+
+      <div class="aside">
+        <span>Never argue with the customer in public, even if they're wrong</span>
+        <p>A defensive or corrective public reply reads badly to everyone watching, regardless of who's technically right. Move the disagreement private; keep the public reply warm, brief, and visibly taking the problem seriously.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Acknowledge-own-act still applies, but shorter, in public.</li>
+          <li>Move specifics and any real back-and-forth to a private channel fast.</li>
+          <li>Never argue in public, even when the customer is factually wrong.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 5 minutes</span><p>Write a public reply to a one-star review, following the worked example's shape, then the private message that would follow it.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l5">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 3.5</b><span class="label">9 minutes</span></div>
+      <h2>Knowing when you're the wrong person to keep talking, and handing off well</h2>
+    </div>
+
+    <div class="flow">
+      <p>Occasionally, no reply you write is going to work — the customer needs to hear from the founder directly, or the situation has moved past what support judgement alone should decide (a legal threat, a request touching someone's safety, a sum of money beyond what you're authorised to offer). Recognising this moment is itself a skill, and it is not a failure to hand off.</p>
+
+      <h3>Signs it's time to escalate the conversation itself, not just the ticket</h3>
+
+      <p>The customer has explicitly asked to speak to someone more senior. The situation touches money, safety, or legal exposure beyond your authority — the same tiers Course 01's escalation lesson names. Or you've tried the acknowledge-own-act shape twice and the customer's anger is increasing rather than settling, which usually means the real issue hasn't been named yet, and someone with more context needs to find it.</p>
+
+      <div class="ex">
+        <div class="ex-h">Handing off without dropping the customer</div>
+        <div class="ex-b">
+          <p class="quote">To the customer: "I want to make sure this gets handled properly — I'm bringing in Ada, who can make a call I'm not able to on this one. She'll be in touch today." To Ada: "This customer's had two failed fixes already and is understandably frustrated — I think this needs a gesture beyond what I can offer alone. Full history attached."</p>
+        </div>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Escalating a conversation is a judgement call, not a failure.</li>
+          <li>Escalate when asked directly, when stakes exceed your authority, or when de-escalation isn't working after a real attempt.</li>
+          <li>Tell the customer what's happening, and brief whoever takes over with full context, not just "please handle."</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 5 minutes</span><p>Write the two messages from the worked example — to the customer and to whoever you're escalating to — for a situation of your own choosing.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="drill-sec" id="drill">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Module 3 drill</b><span class="label">fifty minutes</span></div>
+      <h2>Three real angry-customer threads</h2>
+    </div>
+
+    <div class="flow">
+      <p>Three threads are supplied: one email, one live-chat transcript, one public review. Each is a genuine risk to the relationship if handled badly.</p>
+
+      <h3>Deliver three replies</h3>
+
+      <ol class="numlist">
+        <li><strong>The email thread</strong> — a customer on their second complaint about the same issue. Use 3.1's underneath-reading and 3.2's shape.</li>
+        <li><strong>The live-chat transcript</strong> — a request that sits right on the edge of policy. Decide hold-or-exception using 3.3, and write the reply.</li>
+        <li><strong>The public review</strong> — reply publicly using 3.4's shape, then write the private follow-up.</li>
+      </ol>
+
+      <h3>How it is marked</h3>
+
+      <ul class="list">
+        <li><strong>Does each reply acknowledge specifically, not generically?</strong> A reply that could be sent to any complaint about anything has failed 3.2's first move.</li>
+        <li><strong>Is the policy call defensible, and documented as an exception if it is one?</strong> Not whether it matches an answer key exactly — whether the reasoning holds.</li>
+        <li><strong>Does the public reply stay warm and move specifics private?</strong> A public reply that argues, over-explains, or shares order details has failed 3.4.</li>
+        <li><strong>Would any of the three need to be walked back later?</strong> An over-promised timeframe or gesture fails even if it reads well in the moment.</li>
+      </ul>
+
+      <div class="aside">
+        <span>What this drill is really testing</span>
+        <p>Whether the judgement from this module holds up against real, specific anger rather than a calm hypothetical — the same test module 3's whole subject is built around.</p>
+      </div>
+
+      <div class="doit">
+        <span>Before module 4</span>
+        <p>You should now have: a way of reading past a surface complaint, the acknowledge-own-act shape, a policy-versus-relationship test, a public-reply template, and a sense of when to hand a conversation off. Module 4 turns to the mechanics underneath all of this — the five channels support actually happens on, and the different rules each one runs by.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Module 03 of 10 · The Ticket That Doesn't Come Back</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+<script>
+(function () {
+  const FILE = { filename: 'C2-Module3-Worksheets.docx', b64: "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" };
+
+  function saveBlob(filename, bytes) {
+    const blob = new Blob([bytes], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+
+  (async function wire() {
+    const btn = document.getElementById('dl-m3');
+    const status = document.getElementById('dl-m3-status');
+    if (!btn) return;
+
+        btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Saving…';
+      if (status) { status.textContent = ''; status.classList.remove('ok'); }
+      try {
+        const bytes = b64ToBytes(FILE.b64);
+        saveBlob(FILE.filename, bytes);
+        if (status) { status.textContent = 'Saved.'; status.classList.add('ok'); }
+      } catch (err) {
+        const code = err && err.code ? err.code : 'unavailable';
+        if (status) status.textContent = code === 'declined' ? 'Cancelled.' : 'Could not save (' + code + ').';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+  })();
+})();
+</script>
+
+</body>
+</html>

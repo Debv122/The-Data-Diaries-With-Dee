@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Excel That Holds Up Under Pressure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+
+
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">How to Be a Top-Notch Data Analyst</span>
+      <span class="sep">/</span>
+      <span class="label">Module 02</span>
+    </div>
+    <h1>Excel that holds up under pressure</h1>
+    <p class="standfirst">Seven lessons, about an hour and ten minutes. You'll take Sahara Mart's branch spreadsheets — the ones that break every time someone inserts a column — and rebuild the habits that stop that from happening.</p>
+
+    <nav class="toc">
+      <a href="#l1"><i>2.1</i><span>Structuring a sheet so formulas don't break when data grows</span><u>11 min</u></a>
+      <a href="#l2"><i>2.2</i><span>Lookups that survive an inserted column</span><u>11 min</u></a>
+      <a href="#l3"><i>2.3</i><span>Conditional aggregation: SUMIFS, COUNTIFS, multi-criteria logic</span><u>11 min</u></a>
+      <a href="#l4"><i>2.4</i><span>Pivot tables aimed at a question, not at the data</span><u>10 min</u></a>
+      <a href="#l5"><i>2.5</i><span>Power Query: an import that cleans itself every time</span><u>11 min</u></a>
+      <a href="#l6"><i>2.6</i><span>Error handling, validation, and leaving an audit trail</span><u>8 min</u></a>
+      <a href="#l7"><i>2.7</i><span>Handing a workbook to someone who didn't build it</span><u>8 min</u></a>
+      <a href="#drill"><i>D</i><span>Drill: the 12,000-row sales export</span><u>90 min</u></a>
+    </nav>
+
+    <div class="dl-callout">
+      <div class="dl-text">
+        <b>Module 2 practice workbook</b>
+        <span>A real Sahara Mart-style export with every problem this module names already baked in — inconsistent branch names, text dates in three formats, a stray TOTAL row, and a Products tab built to break a lazy VLOOKUP. Build the Table, the lookups, the SUMIFS and the pivot yourself, then check against the worked example tab. One .xlsx, five tabs.</span>
+      </div>
+      <button class="dl-btn" id="dl-m2" type="button">Save practice workbook (.xlsx)</button>
+      <span class="dl-status" id="dl-m2-status"></span>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 2.1 ============ -->
+<section class="lesson" id="l1">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 2.1</b><span class="label">11 minutes</span></div>
+      <h2>Structuring a sheet so formulas don't break when data grows</h2>
+    </div>
+
+    <div class="flow">
+      <p>Every branch manager at Sahara Mart keeps a version of the same spreadsheet, and every version breaks the same way. Someone inserts a row for a new product halfway down the list, and a SUM formula three rows above quietly stops including it. Nobody notices for two weeks, because the number still looks plausible — it's just wrong.</p>
+
+      <p>This happens because the sheet was built around ranges typed by hand — <span class="mono">=SUM(B2:B47)</span> — rather than around a structure that grows with the data. The fix is not a cleverer formula. It's building the sheet differently from the start.</p>
+
+      <h3>Tables, not ranges</h3>
+
+      <p>Turn any list of rows into an Excel Table (Insert &gt; Table, or Ctrl+T) before you write a single formula against it. A Table gives the range a name, auto-expands when you add a row anywhere inside it — including the bottom — and every formula referencing it grows automatically. <span class="mono">=SUM(SalesTable[Revenue])</span> will always sum every row of that column, whether the table has 40 rows or 4,000.</p>
+
+      <div class="ex">
+        <div class="ex-h">Before and after, same data</div>
+        <table class="kv">
+          <tr><td><b>Before</b></td><td><span class="mono">=SUM(B2:B47)</span> — stops updating the moment a row is added at row 48 or inserted mid-range in a way that lands outside the hard-coded reference.</td></tr>
+          <tr><td><b>After</b></td><td><span class="mono">=SUM(SalesTable[Revenue])</span> — a new row anywhere in the table, including a paste of 200 new rows, is included automatically.</td></tr>
+        </table>
+      </div>
+
+      <p class="pull">A named Table is not a formatting choice. It is the single change that prevents the most common silent error in branch reporting.</p>
+
+      <h3>One row, one transaction — never a summary row mixed into the data</h3>
+
+      <p>The second recurring fault in Sahara Mart's sheets: someone adds a "TOTAL" row at the bottom of the same table that holds the daily transactions. The moment that happens, any SUM or AVERAGE run over the whole table double-counts, because the total row is itself being summed. Keep raw data and summaries on separate sheets, always. The raw data sheet should contain nothing but rows of the same shape, one per transaction or one per day — no headers halfway down, no blank separator rows, no totals mixed in.</p>
+
+      <div class="aside">
+        <span>Why this is worth doing on day one, not "eventually"</span>
+        <p>Restructuring a live spreadsheet that five people already use is disruptive. Restructuring it before anyone else has built formulas on top of the old, fragile version costs almost nothing. If you inherit a branch's existing sheet, this is the first thing to fix — before you build anything new on top of it.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Convert any list to a Table (Ctrl+T) before writing formulas against it — ranges grow automatically, hard-coded cell ranges don't.</li>
+          <li>Never mix a summary or total row into the same range as the raw data it's summarising.</li>
+          <li>Fix the structure before you build on top of it, not after.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2.2 ============ -->
+<section class="lesson" id="l2">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 2.2</b><span class="label">11 minutes</span></div>
+      <h2>Lookups that survive an inserted column</h2>
+    </div>
+
+    <div class="flow">
+      <p>Sahara Mart's product list lives in one sheet; each branch's daily sales live in another, referencing products by SKU code. Somewhere, someone needs to look up a product's category or price from its SKU. This is the single most common operation in the whole course, and the most common way to quietly break a workbook.</p>
+
+      <h3>Why VLOOKUP is the wrong default</h3>
+
+      <p><span class="mono">=VLOOKUP(A2, Products!A:D, 3, FALSE)</span> works — until someone inserts a new column into the Products sheet between columns A and D. The "3" was counting columns from the left edge of the range, and that count is now wrong, silently returning the wrong value rather than an error. This is worse than a formula that breaks loudly, because nobody notices.</p>
+
+      <div class="ex">
+        <div class="ex-h">The fix: XLOOKUP</div>
+        <div class="ex-b">
+          <p><span class="mono">=XLOOKUP(A2, Products!A:A, Products!D:D)</span></p>
+          <p style="color:var(--muted);font-size:.9rem">This names the lookup column and the return column directly, by reference, not by counting position. Insert a column anywhere in the Products sheet and this formula keeps pointing at the right data, because it never counted columns in the first place.</p>
+        </div>
+      </div>
+
+      <p>Where XLOOKUP isn't available (some older Excel builds still in use at Sahara Mart's branch offices), <span class="mono">INDEX/MATCH</span> does the same job: <span class="mono">=INDEX(Products!D:D, MATCH(A2, Products!A:A, 0))</span>. Slightly more to type, same immunity to inserted columns.</p>
+
+      <h3>Handling the "not found" case honestly</h3>
+
+      <p>A lookup for a SKU that doesn't exist in the Products sheet — a typo, a discontinued item still showing in old sales data — returns <span class="mono">#N/A</span> by default. Wrapping it in <span class="mono">IFERROR</span> to hide that error is tempting and usually wrong: it silently converts a real data problem into a blank cell that looks like a legitimate zero. Better: <span class="mono">=IFERROR(XLOOKUP(...), "CHECK SKU")</span> — something visible enough that it gets caught in review, not something that disappears into the summary numbers unnoticed.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Use XLOOKUP (or INDEX/MATCH) by default — never VLOOKUP counting columns by position.</li>
+          <li>Don't silently hide lookup errors with IFERROR-to-blank. Make missing data visible, not invisible.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2.3 ============ -->
+<section class="lesson" id="l3">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 2.3</b><span class="label">11 minutes</span></div>
+      <h2>Conditional aggregation: SUMIFS, COUNTIFS, and multi-criteria logic</h2>
+    </div>
+
+    <div class="flow">
+      <p>"What was Lekki branch's revenue from the beverages category last Tuesday" is a question with three conditions stacked on top of each other — branch, category, date. This is exactly what SUMIFS is built for, and it is the formula you will reach for more than any other in this course.</p>
+
+      <div class="ex">
+        <div class="ex-h">SUMIFS, worked</div>
+        <div class="ex-b">
+          <p><span class="mono">=SUMIFS(SalesTable[Revenue], SalesTable[Branch], "Lekki", SalesTable[Category], "Beverages", SalesTable[Date], DATE(2026,8,25))</span></p>
+          <p style="color:var(--muted);font-size:.9rem">Read it right to left in groups of three: the column to sum, then pairs of (condition column, condition value) repeated for as many criteria as you need. All conditions must be true for a row to be included — this is an AND, not an OR.</p>
+        </div>
+      </div>
+
+      <p>COUNTIFS works identically but counts matching rows instead of summing a column — useful for "how many transactions" rather than "how much revenue." AVERAGEIFS does the same for averages. All three share the exact same argument pattern, so learning SUMIFS well teaches you the other two for free.</p>
+
+      <h3>The trap: an OR condition dressed up as if it were an AND</h3>
+
+      <p>"Revenue from Lekki or Yaba branches" is not a job for a single SUMIFS with a branch condition — SUMIFS can't express OR inside one condition slot directly. The reliable pattern is to sum two SUMIFS calls: <span class="mono">=SUMIFS(...,"Lekki",...) + SUMIFS(...,"Yaba",...)</span>. New analysts often try to jam both branch names into one condition and get a silent zero or an error, because SUMIFS is quietly expecting a single exact match per criteria pair, not a list.</p>
+
+      <div class="aside">
+        <span>Wildcard care</span>
+        <p>SUMIFS supports wildcards — <span class="mono">"Lek*"</span> matches anything starting with "Lek". Useful, but dangerous if a product or branch name genuinely contains an asterisk or question mark, which needs escaping with a tilde. Rare at Sahara Mart, but worth knowing before it silently breaks a total.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>SUMIFS/COUNTIFS/AVERAGEIFS share one pattern: sum column, then (condition column, value) pairs, all joined as AND.</li>
+          <li>To express OR across values in the same field, add separate SUMIFS calls together rather than forcing a list into one condition.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2.4 ============ -->
+<section class="lesson" id="l4">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 2.4</b><span class="label">10 minutes</span></div>
+      <h2>Pivot tables aimed at a question, not at the data</h2>
+    </div>
+
+    <div class="flow">
+      <p>The fastest way to build a useless pivot table is to drag every field you have into it "to see what's there." A pivot table should exist because you already have a question — module 1's discipline applies here directly — and its shape follows from that question, not the other way round.</p>
+
+      <h3>Start from the question, not the field list</h3>
+
+      <p>Chidi asks: "which branches are dragging down this month's average basket size?" That question names exactly what belongs where: Branch in Rows, Average of Basket Size in Values, month filtered in the filter area. Nothing else. A pivot with Branch, Category, Day of Week, Payment Method and three value fields all dropped in at once might technically contain the answer somewhere inside it, but it takes Chidi longer to find it than it would take him to ask you directly — which defeats the purpose of building it at all.</p>
+
+      <div class="ex">
+        <div class="ex-h">Two pivots, same data, one question each</div>
+        <table class="kv">
+          <tr><td><b>Everything pivot</b></td><td>Branch × Category × Week in rows, Revenue / Units / Basket Size / Discount all in values. Technically complete, practically unreadable in one glance.</td></tr>
+          <tr><td><b>Question pivot</b></td><td>Branch in rows, Average Basket Size in values, this month only. Answers exactly what was asked, readable in three seconds.</td></tr>
+        </table>
+      </div>
+
+      <p>If a second question comes up, build a second pivot. Pivot tables are cheap to create and nearly free to delete — there's no cost to having several small, sharp ones instead of one sprawling one.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Know the question before you open the pivot table field list, and let the question decide what goes where.</li>
+          <li>Prefer several small, single-purpose pivots over one pivot trying to answer everything at once.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2.5 ============ -->
+<section class="lesson" id="l5">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 2.5</b><span class="label">11 minutes</span></div>
+      <h2>Power Query: an import that cleans itself every time</h2>
+    </div>
+
+    <div class="flow">
+      <p>Every Monday, each of Sahara Mart's nine branches exports last week's till data as a CSV and emails it in. Every one of those nine CSVs is formatted slightly differently — one branch's till software puts the date as DD/MM/YYYY, another as text, a third leaves trailing spaces on every branch name. Manually cleaning nine files every week is not a sustainable habit; it is a guaranteed future mistake waiting for a busy Monday.</p>
+
+      <h3>Build the cleaning step once, in Power Query</h3>
+
+      <p>Power Query (Data &gt; Get Data &gt; From File) lets you record a sequence of cleaning steps — trim whitespace, fix the date column's type, rename columns to match your standard, filter out any test transactions — once, against one sample file. Every subsequent week, you point the same query at the new file and click Refresh; every step replays automatically, in order, on the new data.</p>
+
+      <div class="ex">
+        <div class="ex-h">A minimal cleaning sequence for a branch export</div>
+        <ol class="numlist">
+          <li>Remove any fully blank rows at the top or bottom of the export.</li>
+          <li>Trim whitespace from the Branch and Category text columns.</li>
+          <li>Set the Date column's type explicitly, rather than trusting Excel's auto-detect, which behaves differently across the nine branches' export formats.</li>
+          <li>Filter out rows where Transaction Type equals "VOID" or "TEST" — till software leaves these in the export.</li>
+          <li>Rename columns to Sahara Mart's standard names, since branch till software labels them inconsistently.</li>
+        </ol>
+      </div>
+
+      <p class="pull">The point of Power Query is not that it's faster once. It's that it's identical every single time, which a person redoing the same five steps by hand every Monday morning at 8am, tired, will not be.</p>
+
+      <div class="aside">
+        <span>What to do when a branch changes its export format</span>
+        <p>It will happen — a branch upgrades its till system and the CSV columns shift order. The query will error loudly on Refresh rather than silently producing wrong numbers, which is exactly the outcome you want: a loud failure that gets fixed once, not a quiet one that pollutes a month of reports before anyone notices.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Any cleaning step you do more than once by hand belongs in Power Query instead, recorded once and replayed on every refresh.</li>
+          <li>A loud error on Refresh, when a source format changes, is a feature — it stops bad data before it reaches a report.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2.6 ============ -->
+<section class="lesson" id="l6">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 2.6</b><span class="label">8 minutes</span></div>
+      <h2>Error handling, validation, and leaving an audit trail</h2>
+    </div>
+
+    <div class="flow">
+      <p>A workbook that never shows an error is not necessarily a correct workbook — it might just be one where errors have been hidden rather than fixed. Two habits keep this from happening at Sahara Mart.</p>
+
+      <h3>Data validation stops bad input at the source</h3>
+
+      <p>Any cell a human types into directly — a branch manager entering a manual adjustment, say — should have Data Validation restricting what can go in it: a dropdown list of the nine valid branch names, rather than free text that will inevitably drift into "Lekki", "lekki", and "Lekki Branch" as three different values that don't group together in any pivot table.</p>
+
+      <h3>An audit trail: who changed what, and why</h3>
+
+      <p>When a number is adjusted manually — a correction for a till error, say — that adjustment should be visible, not buried inside the original figure. Keep a separate "Adjustments" column or sheet: original value, adjusted value, who made the change, and one line of reasoning. Six months later, when someone asks why April's Yaba figure looks unusual, the answer is one lookup away instead of a mystery.</p>
+
+      <div class="aside">
+        <span>The habit this replaces</span>
+        <p>The failure mode this prevents is a branch manager quietly overtyping a wrong number directly in the raw data sheet to "fix" it, with no record that a change was made at all. It might even be the right fix — but nobody downstream can ever verify that, and the original wrong number is now unrecoverable.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Restrict free-text entry with dropdown validation wherever the valid values are a known, fixed list.</li>
+          <li>Never overtype a raw figure to correct it — log the correction separately, with who and why.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2.7 ============ -->
+<section class="lesson" id="l7">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 2.7</b><span class="label">8 minutes</span></div>
+      <h2>Handing a workbook to someone who didn't build it</h2>
+    </div>
+
+    <div class="flow">
+      <p>A workbook only you can operate is a workbook that breaks the moment you're on leave. Chidi needs to be able to open any report you build, understand roughly how it works, and refresh it himself in a pinch — even though he didn't write a single formula in it.</p>
+
+      <h3>A minimal handover standard</h3>
+
+      <ul class="list">
+        <li><strong>A README tab, first in the workbook.</strong> Three lines: what this workbook does, where the source data comes from, and what to do if a number looks wrong.</li>
+        <li><strong>Colour-code by function.</strong> Blue text for numbers a person can safely type over (inputs); black for formulas nobody should touch. This single convention, used consistently, tells anyone at a glance what's safe to edit.</li>
+        <li><strong>Name the sheets for what they contain, not for how you built them.</strong> "Branch Summary" is useful to a stranger; "Sheet3 (working)" is not.</li>
+      </ul>
+
+      <p>None of this is about making the workbook prettier. It's about making sure the analysis survives contact with someone other than you — including future-you, six months from now, who will have forgotten exactly why a formula was built the way it was.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>A README tab and a consistent colour convention turn a workbook only you understand into one anyone at Sahara Mart can operate.</li>
+          <li>Name sheets for their content, not their build history.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Before the drill</span>
+        <p>Have Excel or Google Sheets open and ready — the drill below is a real, hands-on file, not a written exercise.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="drill-sec" id="drill">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Module 2 drill</b><span class="label">about 90 minutes</span></div>
+      <h2>The 12,000-row sales export</h2>
+    </div>
+
+    <div class="flow">
+      <p>You're handed a raw 12,000-row export covering all nine branches over six weeks — the kind of file this module has been describing the whole way through. Branch names are inconsistently cased ("Lekki", "LEKKI", "Lekki Branch"), dates arrive as text in two different formats depending on which branch's till exported them, and there are a handful of VOID transactions still sitting in the data.</p>
+
+      <h3>Deliver a workbook containing</h3>
+
+      <ol class="numlist">
+        <li><strong>A cleaned data table.</strong> Branch names standardised to the official nine, dates converted to a real date type, VOID rows removed — built as a Power Query so it can be refreshed against next week's export without redoing this by hand.</li>
+        <li><strong>A weekly summary pivot.</strong> Revenue by branch by week, built from a question ("how is each branch trending week over week"), not a dump of every field.</li>
+        <li><strong>A lookup-based product detail.</strong> Every transaction row showing the product's category, pulled in with XLOOKUP against the Products sheet, in a way that would survive someone inserting a column into Products.</li>
+        <li><strong>A README tab.</strong> What the workbook does, and what to do if a branch name doesn't match the official nine after refresh.</li>
+      </ol>
+
+      <h3>How it's marked</h3>
+
+      <ul class="list">
+        <li><strong>Does the cleaning step live in Power Query, or was it done by hand once?</strong> A hand-cleaned file fails this drill even if the numbers are currently correct — it won't survive next week's file.</li>
+        <li><strong>Do the lookups use XLOOKUP or INDEX/MATCH, not VLOOKUP counting columns by position?</strong></li>
+        <li><strong>Is the underlying data an Excel Table, not a hard-coded range?</strong></li>
+        <li><strong>Does the pivot answer a specific question cleanly, rather than including every available field?</strong></li>
+        <li><strong>Could Chidi, who didn't build this, open it and understand what he's looking at inside two minutes?</strong></li>
+      </ul>
+
+      <div class="aside">
+        <span>What this drill is really testing</span>
+        <p>Not whether you know the individual functions — SUMIFS and XLOOKUP are both one search away for anyone. It's testing whether the habits from this module (Tables not ranges, cleaning steps recorded not repeated, lookups that survive change, a stranger-readable handover) show up together, under time pressure, on a genuinely messy file — because that combination is what actually gets asked for at Sahara Mart every single week.</p>
+      </div>
+
+      <div class="doit">
+        <span>Before module 3</span>
+        <p>Keep this cleaned workbook — module 3 loads the same underlying sales data into a SQL database, and you'll compare what a spreadsheet does well against what a database does better once the row count keeps growing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Module 02 of 10 · How to Be a Top-Notch Data Analyst</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const FILE = { filename: 'Sahara-Mart-Module2-Practice.xlsx', b64: "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" };
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+  function saveBlob(filename, bytes) {
+    const blob = new Blob([bytes], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+
+  (async function wire() {
+    const btn = document.getElementById('dl-m2');
+    const status = document.getElementById('dl-m2-status');
+    if (!btn) return;
+
+        btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Saving…';
+      if (status) { status.textContent = ''; status.classList.remove('ok'); }
+      try {
+        const bytes = b64ToBytes(FILE.b64);
+        saveBlob(FILE.filename, bytes);
+        if (status) { status.textContent = 'Saved.'; status.classList.add('ok'); }
+      } catch (err) {
+        const code = err && err.code ? err.code : 'unavailable';
+        if (status) status.textContent = code === 'declined' ? 'Cancelled.' : 'Could not save (' + code + ').';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+  })();
+})();
+</script>
+
+</body>
+</html>

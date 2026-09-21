@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>What the Job Actually Is</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+
+
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">How to Be a Top-Notch Data Analyst</span>
+      <span class="sep">/</span>
+      <span class="label">Module 01</span>
+      <span class="sep">/</span>
+      <span class="label">Free preview</span>
+    </div>
+    <h1>What the job actually is</h1>
+    <p class="standfirst">Four lessons, about 35 minutes. By the end of this module you will be able to turn a vague request from a manager into a scoped question with a metric, a time window and a decision attached — which is the discipline everything else in this course sits on.</p>
+
+    <nav class="toc">
+      <a href="#l1"><i>1.1</i><span>What a company is paying an analyst to do</span><u>9 min</u></a>
+      <a href="#l2"><i>1.2</i><span>The four questions every analysis answers</span><u>9 min</u></a>
+      <a href="#l3"><i>1.3</i><span>The request behind the request</span><u>9 min</u></a>
+      <a href="#l4"><i>1.4</i><span>Scoping: what you will and won't answer, in writing</span><u>8 min</u></a>
+      <a href="#drill"><i>D</i><span>Drill: five vague requests, five scoped questions</span><u>45 min</u></a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ 1.1 ============ -->
+<section class="lesson" id="l1">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 1.1</b><span class="label">9 minutes</span></div>
+      <h2>What a company is paying an analyst to do</h2>
+    </div>
+
+    <div class="flow">
+      <p>Here is the client whose data you will be working with for the whole of this course. Chidi Umeh is Head of Operations at Sahara Mart, a nine-branch grocery chain spread across Lagos, Ibadan and Abuja. Sahara Mart has grown from two branches to nine in four years, and its reporting has not kept up. Each branch manager keeps their own spreadsheet. Nobody agrees on what "this week's sales" means — some branches count a sale the moment it rings up, others only once the till is reconciled at close. There is a database a contractor built two years ago that the finance team no longer trusts. There is a Power BI dashboard nobody opens. And every Monday morning there is a WhatsApp group where nine branch managers argue about whose numbers are right.</p>
+
+      <p>Chidi has just hired you — his first dedicated analyst, three days a week to start — to make the numbers trustworthy enough that the Monday argument stops happening. That is the real brief, even though it will never be written down that plainly.</p>
+
+      <p class="pull">Nobody hires an analyst to produce numbers. They hire one to end an argument, or to catch a problem before it becomes a crisis.</p>
+
+      <p>Hold onto that, because it changes what "good work" means. A number that is technically correct but arrives too late to change anything is a wasted number. A chart nobody can defend under a follow-up question is a liability, not an asset. The job is not "run the query" — the job is "get this business to a decision it can trust."</p>
+
+      <h3>The two failure modes, and which one you'll be tempted by</h3>
+
+      <p>New analysts fail in one of two directions, and it is worth naming both before you start.</p>
+
+      <div class="ex">
+        <div class="ex-h">Two ways to fail Chidi's first request</div>
+        <div class="split">
+          <div>
+            <span class="who">The order-taker</span>
+            <p class="quote">Chidi: "Can you tell me why Ibadan's numbers dropped last week?"<br>You, three days later: attaches a 40-tab workbook with every metric for every branch, no summary, no answer.</p>
+            <p style="color:var(--muted);font-size:.9rem">Technically responsive. Chidi now has to do the analysis himself, from your output, which is the exact work he hired you to remove from his week.</p>
+          </div>
+          <div class="bad">
+            <span class="who">The over-confident guesser</span>
+            <p class="quote">You, same afternoon: "Ibadan's down because of the new competitor store." No query shown, no number attached, delivered as fact.</p>
+            <p style="color:var(--muted);font-size:.9rem">Might be right. But Chidi cannot use a claim he can't check, and the first time this guess turns out wrong, nothing you say afterward gets trusted the same way again.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>The version that actually works sits between these: <em>"Ibadan branch revenue fell 14% week-on-week. Two-thirds of that is explained by three fewer trading days after a generator fault closed the store Tuesday–Wednesday. The remaining third looks like lower basket size on the days it was open — I want a day to confirm that before I say why."</em> Notice what that sentence does: gives the number, explains most of it with something checkable, is honest about the part that is not yet explained, and states exactly what more time would buy.</p>
+
+      <div class="aside">
+        <span>If you're worried you don't know enough tools yet</span>
+        <p>You will learn Excel, SQL, Power BI and Python across this course, in that order, because that is the order Sahara Mart's problems actually arrive in. But the sentence above required none of them — it required deciding what question was actually being asked and answering the honest version of it. That judgement is what this module trains, before a single formula.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>You are hired to end an argument or catch a problem in time to matter, not to "run numbers."</li>
+          <li>A correct answer that arrives too late, or that nobody can act on, has failed at the job even though it is correct.</li>
+          <li>Give the number, explain what you can check, be honest about what you can't yet, and say what would close the gap.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 5 minutes</span>
+        <p>Think of a time someone showed you a number or a chart and your first reaction was "so what do I do with this?" Write one sentence describing what was missing — not the number itself, but the thing that would have turned it into a decision. You'll use this instinct throughout the course.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 1.2 ============ -->
+<section class="lesson" id="l2">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 1.2</b><span class="label">9 minutes</span></div>
+      <h2>The four questions every analysis answers</h2>
+    </div>
+
+    <div class="flow">
+      <p>Almost every request you will ever get, however it is worded, is really one of four questions. Learning to sort a vague request into one of these four is most of the battle, because each one calls for a different kind of answer.</p>
+
+      <div class="ex">
+        <div class="ex-h">The four questions, with a Sahara Mart example of each</div>
+        <table class="kv">
+          <tr><td><b>What happened?</b></td><td>"How did we do last month?" — a description of the past. Answer with a number and a comparison point; do not explain unless asked.</td></tr>
+          <tr><td><b>Why?</b></td><td>"Why did Ibadan drop?" — a cause behind a past number. Answer by ruling things out, not by guessing the first plausible story.</td></tr>
+          <tr><td><b>What next?</b></td><td>"Are we going to hit the Q4 target?" — a forecast. Answer with a range and the assumption behind it, never a single confident number.</td></tr>
+          <tr><td><b>What if?</b></td><td>"What happens if we drop the loyalty discount?" — a simulation of a decision not yet made. Answer by showing the trade-off, not by recommending.</td></tr>
+        </table>
+      </div>
+
+      <p>The reason this matters is that people ask "why" questions in "what happened" language constantly, and answering the wrong one wastes everyone's time. When Chidi asks "how's Abuja doing," find out — with one follow-up if needed — whether he wants a number (what happened) or he already suspects a problem and wants the cause (why). The two answers look completely different.</p>
+
+      <h3>A worked pass through a real Sahara Mart request</h3>
+
+      <p>Branch managers submitted this into the WhatsApp group last month: <em>"Something is wrong with the Yaba branch, sales just aren't moving like before."</em> That is not yet a question you can answer. Sorted properly, it decomposes into three of the four types, in this order:</p>
+
+      <ol class="numlist">
+        <li><strong>What happened, precisely?</strong> "Sales aren't moving" needs a number: revenue is down 9% month-on-month, footfall is down only 2% — so it's not that fewer people are coming in.</li>
+        <li><strong>Why?</strong> Given footfall barely moved but revenue fell more, the honest next question is about basket size or mix, not foot traffic. That is where the actual analysis starts, and it is a completely different investigation than "why aren't people coming to Yaba."</li>
+        <li><strong>What next?</strong> Only after the why is reasonably nailed down does "will this keep happening into next month" become answerable — and until then, forecasting off a cause you haven't confirmed is just guessing with extra steps.</li>
+      </ol>
+
+      <div class="aside">
+        <span>The trap this catches</span>
+        <p>The branch manager's framing — "sales aren't moving" — silently assumed the why (something is broken) before establishing the what happened. A weaker analyst chases "what's wrong with Yaba" and burns two days on a theory that a five-minute footfall-versus-revenue check would have ruled out immediately.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Every request is a what-happened, a why, a what-next, or a what-if — sort it before you touch a tool.</li>
+          <li>Never skip straight to "why" without first confirming "what happened" with an actual number.</li>
+          <li>A forecast (what next) is only as good as the cause (why) it's built on — don't forecast an unconfirmed story.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 1.3 ============ -->
+<section class="lesson" id="l3">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 1.3</b><span class="label">9 minutes</span></div>
+      <h2>The request behind the request</h2>
+    </div>
+
+    <div class="flow">
+      <p>Chidi will rarely give you a clean, analysis-ready question. He is not being difficult — he is busy, and he is translating a business worry into words on the fly. Your job in the first five minutes of any request is to run a short intake conversation that turns his words into something you can actually go and answer.</p>
+
+      <div class="ex">
+        <div class="ex-h">The intake, worked</div>
+        <div class="split">
+          <div>
+            <span class="who">Chidi's message</span>
+            <p class="quote">"Can you look into why our margins feel tight this quarter? Finance is asking questions."</p>
+          </div>
+          <div class="bad">
+            <span class="who">Your three questions back</span>
+            <p class="quote">"Happy to look into it. Three quick things first: (1) Margin on revenue, or margin per branch, or a specific category? (2) 'This quarter' vs. last quarter, or vs. this quarter last year? (3) Is Finance asking about a number they've already seen, or is this open-ended?"</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Notice what those three questions are doing. They are not stalling — each one changes what you would actually go and build. Margin-on-revenue overall is a one-line answer; margin per category, per branch, is a real project. Quarter-on-quarter versus year-on-year changes which comparison is even meaningful for a grocery business with obvious seasonality. And "Finance already has a number" versus "open-ended" tells you whether you're validating someone else's figure or building one from scratch — a completely different piece of work wearing the same words.</p>
+
+      <p class="pull">The words in a request are rarely precise. Your job is to make them precise before you start, not while you're halfway through the query.</p>
+
+      <h3>Reading between the lines even when you can't ask</h3>
+
+      <p>Sometimes there's no time for three questions back — Chidi is in a supplier meeting in twenty minutes and needs a number now. In that situation, make your best interpretation explicit rather than silent: <em>"Reading this as overall gross margin, this quarter vs. same quarter last year, since that's what usually comes up with Finance — will send in 20 minutes, flag if you meant something else."</em> That one sentence does the same job as the three questions, just compressed, and it means if you guessed wrong, Chidi finds out before he's already repeated your number in the meeting.</p>
+
+      <div class="aside">
+        <span>Why this is worth the ten extra minutes</span>
+        <p>The alternative — building the wrong analysis and finding out after two hours of work — costs far more than ten minutes of intake. Every hour you save Sahara Mart by asking a sharp clarifying question up front is an hour Chidi notices, even if he never says so directly.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Every vague request has hidden decisions buried in it — which metric, which comparison, whose number. Surface them before you build.</li>
+          <li>When there's no time to ask, state your interpretation out loud and let it be corrected, rather than silently guessing.</li>
+          <li>Three sharp questions up front are cheaper than two hours on the wrong analysis.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 5 minutes</span>
+        <p>Take the vague request "sales feel slow" and write the three clarifying questions you'd send back before starting any analysis. Keep them — you'll compare them against the drill at the end of this module.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 1.4 ============ -->
+<section class="lesson" id="l4">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 1.4</b><span class="label">8 minutes</span></div>
+      <h2>Scoping: what you will and won't answer, agreed in writing</h2>
+    </div>
+
+    <div class="flow">
+      <p>Intake gets you a precise question. Scoping gets you agreement on where the work stops — and skipping it is the single most common reason analyst work overruns, because "just quickly check one more thing" is nearly always said with total sincerity and never actually takes five minutes.</p>
+
+      <h3>What a scope line looks like</h3>
+
+      <p>After the margin intake above, you'd send Chidi one more short message before opening a spreadsheet: <em>"Scope: overall gross margin, this quarter vs. same quarter last year, all nine branches combined. Not covering per-branch or per-category breakdown — flag if you need that too and I'll size it separately. Back to you by end of day."</em></p>
+
+      <p>That single message does three things at once. It states exactly what's included. It states what's explicitly excluded, so nobody assumes it's coming for free inside the same request. And it gives a time. If Chidi comes back wanting the per-branch breakdown too, that is now a visible second ask with its own time estimate — not a silent addition to the first one that quietly doubles your afternoon.</p>
+
+      <div class="ex">
+        <div class="ex-h">Without a scope line, versus with one</div>
+        <div class="split">
+          <div>
+            <span class="who">No scope agreed</span>
+            <p class="quote">You deliver overall margin. Chidi replies: "Great, can you also break it down by branch? And by category, actually that's what Finance really wants." Now on hour four of what felt like a twenty-minute favor.</p>
+          </div>
+          <div class="bad">
+            <span class="who">Scope agreed up front</span>
+            <p class="quote">You deliver overall margin exactly as scoped. Chidi replies: "This is useful — can you also do it by branch?" You reply: "Sure, that's about half a day given the per-branch cost allocation — want it today or is tomorrow fine?"</p>
+          </div>
+        </div>
+      </div>
+
+      <p>The work is identical in both scenarios. The difference is that in the second one, the extra time is visible, agreed, and nobody feels either overworked or surprised.</p>
+
+      <div class="aside">
+        <span>This isn't about protecting your time from Chidi</span>
+        <p>It reads that way at first, but it's really about protecting the relationship. An analyst who quietly absorbs scope creep for a few months either burns out or starts resenting requests that were never unreasonable individually. Naming the boundary early keeps every future "yes" an honest one.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>A scope line names what's included, what's explicitly not, and when it'll land — three short pieces of information, one short message.</li>
+          <li>New asks that arrive mid-analysis are not failures of scoping — they're exactly what scoping is designed to surface, so size them separately rather than absorbing them.</li>
+          <li>This protects the relationship as much as your calendar.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="drill-sec" id="drill">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Module 1 drill</b><span class="label">about 45 minutes</span></div>
+      <h2>Five vague requests, five scoped questions</h2>
+    </div>
+
+    <div class="flow">
+      <p>Five real messages Chidi has sent into the analyst request channel over the past two months, lightly anonymised. For each one, write: (1) which of the four question types it really is, (2) the precise, scoped question you'd go and answer, and (3) one line you'd send back to Chidi confirming that scope before you start.</p>
+
+      <div class="posts">
+        <div class="job">
+          <div class="j-h"><b>Request 1</b><span>Sent 8:41am, Monday</span></div>
+          <div class="j-b">
+            "The Lekki branch keeps running out of stock on the popular items and I don't know why. Can you look into it?"
+            <span class="rate">No metric, no time window named</span>
+          </div>
+        </div>
+
+        <div class="job">
+          <div class="j-h"><b>Request 2</b><span>Sent 2:15pm, Wednesday</span></div>
+          <div class="j-b">
+            "Board meeting is Thursday. Need something on how we're tracking against this year's targets."
+            <span class="rate">Deadline given, metric and comparison unclear</span>
+          </div>
+        </div>
+
+        <div class="job">
+          <div class="j-h"><b>Request 3</b><span>Sent 11:02am, Friday</span></div>
+          <div class="j-b">
+            "If we opened a tenth branch in Ikorodu, would it actually make money, or would it just cannibalise Lekki and Yaba?"
+            <span class="rate">A decision not yet made</span>
+          </div>
+        </div>
+
+        <div class="job">
+          <div class="j-h"><b>Request 4</b><span>Sent 9:20am, Tuesday</span></div>
+          <div class="j-b">
+            "Quick one — what were our top 5 selling items last week across all branches?"
+            <span class="rate">Sounds simple, but "top selling" by units or by revenue is not stated</span>
+          </div>
+        </div>
+
+        <div class="job">
+          <div class="j-h"><b>Request 5</b><span>Sent 4:50pm, Thursday</span></div>
+          <div class="j-b">
+            "Finance thinks we're over-discounting at Abuja. Can you check if that's actually true and if it's costing us money?"
+            <span class="rate">A suspicion someone else already holds</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="aside">
+        <span>What this drill is testing</span>
+        <p>Not whether you can guess the "correct" scoped question — several reasonable versions exist for each request. It's testing whether you can consistently spot the missing metric, missing comparison point, or missing decision in a request that sounds complete on first read. That habit is the foundation this entire course is built on top of.</p>
+      </div>
+
+      <div class="doit">
+        <span>Before module 2</span>
+        <p>You should now have five sorted requests, five scoped questions, and five one-line confirmations ready to send. Module 2 opens Sahara Mart's actual sales spreadsheets — the ones branch managers keep sending Chidi that break every time someone inserts a column.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Module 01 of 10 · How to Be a Top-Notch Data Analyst</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

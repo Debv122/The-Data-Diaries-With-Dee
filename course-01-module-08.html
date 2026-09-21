@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Communication and Discretion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- download callout ---------- */
+
+  .dl-callout{
+    margin-top:clamp(22px,3vw,32px);
+    display:flex;flex-wrap:wrap;gap:16px 20px;align-items:center;
+    border:1px solid var(--line);border-radius:12px;
+    background:var(--surface);padding:16px 20px;
+  }
+  .dl-callout .dl-text{flex:1;min-width:200px}
+  .dl-callout .dl-text b{display:block;font-size:.98rem;color:var(--ink);font-weight:600;margin-bottom:2px}
+  .dl-callout .dl-text span{font-size:.88rem;color:var(--muted)}
+  .dl-btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    height:42px;padding:0 20px;border-radius:999px;flex:none;
+    border:1px solid var(--ember);background:var(--ember);color:#160C08;
+    font-size:.86rem;font-weight:500;letter-spacing:-.01em;cursor:pointer;
+    font-family:inherit;transition:background .2s ease,transform .2s ease;
+  }
+  .dl-btn:hover{background:#EE9679;transform:translateY(-1px)}
+  .dl-btn:disabled{opacity:.55;cursor:default;transform:none}
+  .dl-status{font-family:var(--mono);font-size:.72rem;color:var(--faint);flex:none}
+  .dl-status.ok{color:var(--ember)}
+</style>
+<style>
+  .tree{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .tree .t-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .tree .t-b{padding:16px 18px;font-family:var(--mono);font-size:.85rem;line-height:1.85;color:var(--body);white-space:pre}
+  .tree .t-b .d{color:var(--ember)}
+  .tree .t-b .f{color:var(--muted)}
+  .tree .t-b .c{color:var(--faint);font-family:var(--sans);font-style:italic}
+
+  .namerow{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .namerow .n-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .nrow{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr);gap:6px 14px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:center;font-family:var(--mono);font-size:.84rem}
+  .nrow:last-child{border-bottom:0}
+  .nrow .bad{color:var(--dusk);text-decoration:line-through;text-decoration-color:var(--dusk);opacity:.7}
+  .nrow .good{color:var(--ink);font-weight:500}
+  .nrow .arrow{color:var(--ember);text-align:center;font-family:var(--sans)}
+  @media (max-width:560px){.nrow{grid-template-columns:minmax(0,1fr)}.nrow .arrow{display:none}}
+
+  .stagebox{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .stagebox .s-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .srow{display:grid;grid-template-columns:120px minmax(0,1fr);gap:6px 16px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:baseline;font-size:.92rem}
+  .srow:last-child{border-bottom:0}
+  .srow b{font-family:var(--mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ember)}
+  .srow span{color:var(--body)}
+  @media (max-width:560px){.srow{grid-template-columns:minmax(0,1fr)}}
+</style>
+
+
+</head>
+<body>
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">The Assistant They Can't Replace</span>
+      <span class="sep">/</span>
+      <span class="label">Module 08</span>
+    </div>
+    <h1>Communication and discretion</h1>
+    <p class="standfirst">Five lessons, about an hour. Everything you've learned so far — the inbox, the calendar, the files, the meetings, the research, the AI tools — moves through messages. This module is the judgement behind the words themselves: how to write for a decision instead of a conversation, how tone shifts without losing your own voice, how to say no without saying "not my problem," when to escalate and when to decide, and what you never repeat.</p>
+
+    <nav class="toc">
+      <a href="#l1"><i>8.1</i><span>Writing a message that gets a decision, not a conversation</span><u>13 min</u></a>
+      <a href="#l2"><i>8.2</i><span>Tone across cultures, seniority and time zones</span><u>12 min</u></a>
+      <a href="#l3"><i>8.3</i><span>Saying no, saying "not yet", and offering the smaller thing you can do</span><u>13 min</u></a>
+      <a href="#l4"><i>8.4</i><span>Escalation: what you decide, what you ask, and how fast</span><u>12 min</u></a>
+      <a href="#l5"><i>8.5</i><span>Discretion: what you know, and what you never repeat</span><u>11 min</u></a>
+      <a href="#drill"><i>D</i><span>Drill: three messages that could each lose the client</span><u>60 min</u></a>
+    </nav>
+
+    <div class="dl-callout">
+      <div class="dl-text">
+        <b>Module 8 worksheets</b>
+        <span>The five fill-in pages this module refers to — the decision-message template, a tone-shift guide, the no-with-an-alternative formula, an escalation key and a discretion checklist. One .docx, five pages.</span>
+      </div>
+      <button class="dl-btn" id="dl-m8" type="button">Save worksheets (.docx)</button>
+      <span class="dl-status" id="dl-m8-status"></span>
+    </div>
+  </div>
+</header>
+
+<section class="lesson" id="l1">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 8.1</b><span class="label">13 minutes</span></div>
+      <h2>Writing a message that gets a decision, not a conversation</h2>
+    </div>
+
+    <div class="flow">
+      <p>"Hi Adaeze, just wanted to check in about the MedSupply thing — let me know your thoughts whenever you get a chance!" This message will sit unanswered for three days. Not because Adaeze doesn't care, but because it asks nothing specific enough to answer quickly. It hands her a vague feeling of obligation instead of a decision she can make in the fifteen seconds she has between clients.</p>
+
+      <p class="pull">A message that asks "what do you think?" gets a conversation. A message that asks "A or B?" gets a decision.</p>
+
+      <h3>The shape of a message built for a busy person</h3>
+
+      <p>Most of the people you'll message in this role are genuinely busy, reading on a phone, between things. A message built for that reader has three parts, in this order:</p>
+
+      <ol class="numlist">
+        <li><strong>Context, in one line.</strong> Just enough that the reader doesn't have to reconstruct the situation from memory. Not the whole backstory — the one fact that makes the rest make sense.</li>
+        <li><strong>The specific decision needed, named as a question with a shape.</strong> Not "what do you think" — "should I confirm the 5% or push back once more?" A question with a small number of named answers is answerable in one tap. An open question requires composing a reply, which is exactly the extra effort that makes a message sit for three days.</li>
+        <li><strong>What happens if there's no reply by when.</strong> A default, stated plainly, so silence doesn't become its own kind of decision by accident. "If I don't hear back by Thursday, I'll confirm the 5% as the safer option" turns an unanswered message from a stuck task into a plan that proceeds either way.</li>
+      </ol>
+
+      <h3>Worked example: the same message, rebuilt</h3>
+
+      <div class="ex">
+        <div class="ex-h">Vague check-in, versus a message built for a decision</div>
+        <div class="split">
+          <div>
+            <span class="who">Gets a conversation, eventually</span>
+            <p style="color:var(--muted);font-size:.9rem">"Hi Adaeze, just wanted to check in about the MedSupply thing — let me know your thoughts whenever you get a chance!"</p>
+          </div>
+          <div class="bad">
+            <span class="who">Gets a decision, fast</span>
+            <p style="color:var(--muted);font-size:.9rem">"MedSupply's offering 5%, down from their initial 8% — the renewal window closes Friday. Should I confirm the 5% or hold out for one more counter? If I don't hear back by Wednesday I'll confirm the 5%, since it's already a real improvement and the window's tight."</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Notice the second version does more work up front — it costs you a little more time to write than the vague check-in did. That trade is almost always worth making: a well-built message takes an extra thirty seconds to compose and can save days of back-and-forth, or worse, a decision made too late because nobody actually decided anything.</p>
+
+      <h3>When there genuinely isn't a small set of options yet</h3>
+
+      <p>Not every message can be reduced to A-or-B — sometimes you genuinely need Adaeze's open judgement on something with no obvious shortlist. In that case, still frame it as a decision rather than a conversation: state clearly what you need from her ("I need your read on which of these two directions to take this in") rather than opening with "thoughts?" and hoping the question sharpens itself in her reply.</p>
+
+      <div class="aside">
+        <span>The default is a real commitment, not a bluff</span>
+        <p>If you state "I'll proceed with X if I don't hear back by Thursday," actually do it. A default that quietly doesn't happen teaches the reader that your deadlines aren't real, which erodes the entire tool — the next default you state will be read as decoration rather than a plan.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Three parts: one line of context, a decision with a named shape, and what happens by default if there's no reply.</li>
+          <li>A question with a small set of named answers gets answered faster than an open one.</li>
+          <li>State a real default, and honour it — don't let silence become an accidental non-decision.</li>
+          <li>The extra time spent building a clear message is almost always cheaper than the delay a vague one causes.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 8 minutes</span>
+        <p>Find a message you sent recently that never got a reply, or took days to get one. Rewrite it using the three-part shape. Notice specifically which of the three parts the original was missing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l2">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 8.2</b><span class="label">12 minutes</span></div>
+      <h2>Tone across cultures, seniority and time zones</h2>
+    </div>
+
+    <div class="flow">
+      <p>The same message — "confirming our call for Thursday" — reads as perfectly normal to one recipient and slightly abrupt to another, depending entirely on who they are and what they're used to. Tone isn't one setting you get right once. It's a dial you adjust for the specific person reading, every time, the same way lesson 5.5's escalation ladder adjusted for the relationship rather than repeating one fixed script.</p>
+
+      <p class="pull">Tone is not about being more or less polite. It's about matching the reader's expectations closely enough that the message doesn't have to work hard to be understood.</p>
+
+      <h3>Three dials worth adjusting deliberately</h3>
+
+      <ol class="numlist">
+        <li><strong>Formality, by seniority and relationship.</strong> A first message to a prospective referral partner earns a fuller, more formal register than a fifth message to a supplier you've worked with for a year. Watch what the other person actually does — mirroring their own register is usually safer than guessing a fixed rule.</li>
+        <li><strong>Directness, by cultural context.</strong> Some business cultures expect the ask stated plainly in the first line; others expect a warmer opening before the actual point. Neither is more correct — the mismatch is what creates friction, not either style on its own. When you don't know a contact's preference, a brief warm opening followed by a clear, direct ask works reasonably across most contexts without reading as cold in either direction.</li>
+        <li><strong>Response-time expectations, by time zone.</strong> A message sent to London at 6pm Lagos time lands in the recipient's early evening too, since Lagos and London share very close clocks most of the year — but the same message sent to New York at 6pm Lagos time lands around lunchtime there, hours before their working day even starts to wind down. Naming the time difference plainly — "I know it's still morning for you" — shows the awareness without needing to get the exact math right in the reader's head.</li>
+      </ol>
+
+      <h3>Worked example: the same request, two contexts</h3>
+
+      <div class="ex">
+        <div class="ex-h">Confirming a call — London consulting client, versus a new Lagos referral contact</div>
+        <div class="ex-b">
+          <p class="quote"><strong>To the London client, worked with for a year:</strong> "Hi James — confirming Thursday 2pm your time for the quarterly check-in. Let me know if anything changes."<br><br><strong>To a new referral contact in Lagos:</strong> "Good afternoon, this is [name], I work with Adaeze Okonkwo's practice. Thank you for taking the time to connect — I wanted to confirm we're still on for Thursday at 2pm. Please let me know if you need to reschedule, and looking forward to speaking with you."</p>
+        </div>
+      </div>
+
+      <p>Both messages do the same job — confirm a time, invite a reschedule if needed. The difference in register isn't decoration; it's calibrated to the relationship's actual history and what each reader will find normal, which is the entire point of adjusting tone at all.</p>
+
+      <h3>When you genuinely don't know someone's preference yet</h3>
+
+      <p>Default to slightly more formal than feels necessary, and slightly warmer than feels efficient. It is far easier to loosen up in a second message once someone's own style becomes clear than to walk back an opening message that landed as too casual for a relationship that hadn't been established yet.</p>
+
+      <div class="aside">
+        <span>Don't perform a culture you don't actually understand</span>
+        <p>Adjusting tone means matching register and directness, not adopting slang, phrases, or stylistic markers from a culture you're guessing at. That reads as caricature rather than respect, and it's usually obvious to the reader. When in doubt, plain, warm, clear language travels better across every context than an attempt to sound like a local you aren't.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Three dials: formality by seniority and relationship, directness by cultural context, response-time by time zone.</li>
+          <li>Mirroring what the other person already does is usually safer than guessing a fixed rule.</li>
+          <li>Name a time-zone gap plainly rather than assuming the reader has done the math.</li>
+          <li>Default to a touch more formal and warm until someone's own style is clear. It's easier to loosen than to walk back.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 8 minutes</span>
+        <p>Write the same short message — confirming a meeting — three ways: for someone senior you rarely speak with, for a peer you know well, and for someone in a time zone six or more hours from yours. Notice exactly what you changed in each.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l3">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 8.3</b><span class="label">13 minutes</span></div>
+      <h2>Saying no, saying "not yet", and offering the smaller thing you can do</h2>
+    </div>
+
+    <div class="flow">
+      <p>A client's friend emails asking if Adaeze can fit her in for a same-day session — the diary is full, and even if it weren't, taking on new clients through informal referrals outside the proper intake process isn't something Adaeze wants to make a habit of. "No" is the honest answer. "No" by itself, unadorned, is also the fastest way to make someone feel dismissed rather than declined.</p>
+
+      <p class="pull">A bare "no" closes a door. A well-built "no" closes the wrong door and points at the right one.</p>
+
+      <h3>Three shapes a decline can take, and when each fits</h3>
+
+      <ol class="numlist">
+        <li><strong>No, with the reason, briefly.</strong> When the answer is genuinely final. State it plainly, give one honest sentence of reason — not a defensive paragraph — and stop. Over-explaining a firm no often reads as an invitation to negotiate it.</li>
+        <li><strong>Not yet, with a real condition.</strong> When the answer could become yes under a different circumstance. Name that circumstance specifically — "not this week, since the diary's full, but there's a cancellation list I can add you to" — rather than a vague "maybe later" that quietly means never and everyone involved knows it.</li>
+        <li><strong>Not this, but this instead.</strong> When you can't do what was asked but can do something smaller and genuinely useful. Offering the smaller thing turns a decline into a piece of help, and it's frequently what the person actually needed anyway.</li>
+      </ol>
+
+      <h3>Worked example: the same request, three honest responses</h3>
+
+      <div class="ex">
+        <div class="ex-h">A same-day session request, three ways depending on what's actually true</div>
+        <div class="ex-b">
+          <p class="quote"><strong>If the diary is genuinely full today, full stop:</strong> "Thank you for reaching out — today's fully booked, and Adaeze isn't able to fit in same-day sessions. I'd recommend [alternative resource] if this is urgent."<br><br><strong>If there's a real chance of an opening later:</strong> "Today's fully booked, but I can add you to the cancellation list — it moves fairly often. I'll message you the moment something opens up."<br><br><strong>If a session isn't possible but something smaller is:</strong> "I can't fit in a session today, but I can send over the intake form now so you're ready to book the moment there's an opening, and a short list of grounding techniques Adaeze shares with new clients while they wait."</p>
+        </div>
+      </div>
+
+      <p>Notice none of the three is a "yes" — the diary genuinely is full in every version. What changes is whether there's something real and specific to offer instead of a flat door closing, and being honest about which of the three situations actually applies rather than defaulting to whichever sounds kindest.</p>
+
+      <h3>Never manufacture false hope to soften the moment</h3>
+
+      <p>The one failure mode worse than a blunt no is a "not yet" that isn't actually true — offering a cancellation list that doesn't really move, or a vague "check back soon" with no real chance attached. It feels kinder in the moment and corrodes trust the moment the person realises the hope was never real. Say the harder true thing rather than the softer false one.</p>
+
+      <div class="aside">
+        <span>Declining well is part of what protects Adaeze's time</span>
+        <p>Every request handled with a genuine, well-shaped no is time protected without Adaeze having to be the one who says it — one of the clearest ways an assistant earns the trust to make more calls independently, echoing module 5's point about what actually builds a client's confidence.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Three shapes: a brief final no, a "not yet" with a real condition, or "not this, but this instead."</li>
+          <li>A firm no needs one honest sentence of reason, not a defensive paragraph.</li>
+          <li>Never offer false hope to soften a decline — it costs more trust than the blunt truth would have.</li>
+          <li>A well-handled decline protects the business owner's time without her needing to say no herself.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 8 minutes</span>
+        <p>Think of something you've had to decline recently, or something you're currently avoiding declining. Write it in all three shapes from this lesson, then pick whichever one is actually true — not whichever feels kindest to write.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l4">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 8.4</b><span class="label">12 minutes</span></div>
+      <h2>Escalation: what you decide, what you ask, and how fast</h2>
+    </div>
+
+    <div class="flow">
+      <p>A client asks to reschedule a session — an easy call, made a hundred times, well inside what you're trusted to decide alone. A client asks to pause therapy entirely and wants Adaeze's read on whether that's wise — not your call at all, and pretending otherwise oversteps in a way that could genuinely damage the relationship. Most of the requests that land on you sit somewhere between these two, and the skill this lesson teaches is sorting them fast and correctly.</p>
+
+      <p class="pull">Escalating too much makes you a bottleneck. Escalating too little makes you a liability. The line between them is a judgement you can actually train.</p>
+
+      <h3>Three tiers, and a rough test for each</h3>
+
+      <div class="stagebox">
+        <div class="s-h">Sorting a request by who should decide</div>
+        <div class="srow"><b>Decide it yourself</b><span>Routine, reversible, and inside a pattern you've handled before — rescheduling, routine confirmations, anything module 5 and 6's disciplines already gave you a clear process for. Decide, act, and log it — don't ask permission for things you're already trusted with.</span></div>
+        <div class="srow"><b>Ask first, briefly</b><span>Not routine, but not high-stakes either — a borderline judgement call where a thirty-second question saves a possible redo. Bring a recommendation, not just the question, so the ask itself takes less of the client's time.</span></div>
+        <div class="srow"><b>Escalate immediately, don't attempt it yourself</b><span>Touches money beyond a set threshold, clinical judgement, legal exposure, or anything irreversible. Speed matters here more than in the other two tiers — a fast escalation on something serious is far better than a fast decision on something that wasn't yours to make.</span></div>
+      </div>
+
+      <h3>The test that sorts most borderline cases</h3>
+
+      <p>When a request doesn't obviously fit one tier, ask: if I get this wrong, can it be undone easily, and does getting it wrong cost time or something bigger than time? A wrong guess on a reschedule costs an email to fix. A wrong guess on anything touching a client's care, money beyond routine amounts, or the practice's legal standing costs far more, and some of that cost can't be undone at all. Reversibility and stakes together, not either alone, are what should decide the tier.</p>
+
+      <h3>Worked example: three real requests, sorted</h3>
+
+      <div class="ex">
+        <div class="ex-h">Where each one landed, and why</div>
+        <div class="ex-b">
+          <p class="quote"><strong>"Can we move Thursday's session to Friday?"</strong> — Decide yourself. Routine, reversible, exactly the pattern from module 5's calendar work.<br><br><strong>"MedSupply wants to add a ₦40,000 charge that wasn't in the original quote."</strong> — Ask first, with a recommendation. Not routine, moderate stakes, and a thirty-second question avoids a costly guess either way.<br><br><strong>"A client mentioned in passing that she's thinking about leaving her job because of something happening at home that sounded serious."</strong> — Escalate immediately. This is clinical territory, well outside an assistant's role, and speed genuinely matters here.</p>
+        </div>
+      </div>
+
+      <h3>Escalating well means bringing a recommendation, not just a problem</h3>
+
+      <p>"This came up, what do you want to do?" is a valid escalation, but "this came up, here's what I'd recommend and why" respects the time of the person you're escalating to, and it's how you build toward being trusted with more over time — the same principle from module 4's handover file, applied to real-time decisions rather than a document.</p>
+
+      <div class="aside">
+        <span>When you're not sure which tier, treat it as the higher one</span>
+        <p>The cost of asking about something you could have safely decided yourself is a few minutes of someone's attention. The cost of deciding something that should have been escalated can be much larger and, in some cases, impossible to fully undo. When genuinely unsure, escalate — and note the situation afterward so the tier is clearer next time it comes up.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Three tiers: decide yourself, ask first briefly, escalate immediately.</li>
+          <li>Sort borderline cases by reversibility and stakes together, not either alone.</li>
+          <li>Bring a recommendation when you escalate — it's faster for everyone and builds trust over time.</li>
+          <li>When genuinely unsure which tier, escalate. The cost of asking unnecessarily is far smaller than the cost of guessing wrong on something serious.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 8 minutes</span>
+        <p>List five decisions that have come up in something you're responsible for recently. Sort each into one of the three tiers, and for anything in the second or third tier, write the one-line recommendation you'd bring alongside the question.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l5">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 8.5</b><span class="label">11 minutes</span></div>
+      <h2>Discretion: what you know, and what you never repeat</h2>
+    </div>
+
+    <div class="flow">
+      <p>By this point in the role, you know things about Adaeze's practice that almost nobody else does — which clients are struggling to pay, which referral relationships are shaky, what she said in frustration about a difficult supplier call. None of that is yours to share, discuss, or even hint at, regardless of who's asking or how casually the conversation seems to invite it.</p>
+
+      <p class="pull">Being trusted with information is not the same as being free to use it. Discretion is what keeps those two things separate, every time, without exception.</p>
+
+      <h3>The categories worth distinguishing</h3>
+
+      <p>Not all client-adjacent information carries the same weight, but the safe default treats most of it as equally off-limits in casual conversation. Three categories are worth naming specifically, because they come up differently:</p>
+
+      <ol class="numlist">
+        <li><strong>What clients tell Adaeze, or what you overhear about them.</strong> Covered fully by module 7's confidentiality line — never repeated, never hinted at, regardless of the asker.</li>
+        <li><strong>What Adaeze tells you about her own practice, frustrations, or decisions.</strong> A different kind of trust — she's not your client, but she is confiding in you as someone she relies on. Repeating her private frustration about a difficult client, even to someone who seems sympathetic, damages her trust in you just as surely as a confidentiality breach would, even though it isn't clinical information.</li>
+        <li><strong>What you happen to know from being inside the business — finances, a shaky relationship with a referral partner, a mistake that hasn't been disclosed yet.</strong> Business-sensitive information that could cause real harm if it reached the wrong person, even unintentionally, through a conversation that felt harmless at the time.</li>
+      </ol>
+
+      <h3>The specific moments discretion actually gets tested</h3>
+
+      <p>Discretion rarely fails in an obvious, dramatic moment — it fails in small, casual ones. A friend asks "so how's it going working for a therapist, must be interesting stuff you hear." A colleague at another gig makes a joke that invites a story in return. Someone flatters you into feeling like sharing a detail would make you seem more important or in-the-know. Each of these is a low-stakes-feeling social moment where the discipline actually gets tested — not a dramatic confrontation where the stakes are obvious.</p>
+
+      <div class="ex">
+        <div class="ex-h">A casual question, answered with discretion intact</div>
+        <div class="ex-b">
+          <p class="quote"><strong>The question:</strong> "Working for a therapist, that must mean you hear all sorts — anything interesting lately?"<br><br><strong>What discretion sounds like:</strong> "Honestly it's mostly admin and scheduling on my end — I don't really get into the client side of things, that's all confidential anyway. But it's a good gig, I'm learning a lot about running a small practice."<br><br><strong>What it accomplishes:</strong> Answers warmly, doesn't dodge in a way that reads as suspicious, and gives absolutely nothing away — while sounding completely natural rather than rehearsed.</p>
+        </div>
+      </div>
+
+      <h3>Practise the redirect so it's ready, not improvised under pressure</h3>
+
+      <p>The moment this gets tested is rarely convenient — a casual conversation, unprompted, no time to think carefully about the right response. Having a warm, natural-sounding redirect ready in advance, like the example above, is what stops a well-intentioned person from accidentally saying more than they meant to simply because they were caught off guard.</p>
+
+      <div class="aside">
+        <span>Discretion is part of what you're actually being paid for</span>
+        <p>A business owner who can speak candidly to an assistant, vent about a hard day, or share a genuine worry without wondering if it'll circulate is getting something far more valuable than task completion. Being safe to confide in is not a side effect of doing this job well — for a role this close to someone's business and clients, it's close to the center of it.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Three categories: what clients share, what the business owner confides, and what you know from being inside the business.</li>
+          <li>Discretion is usually tested in small, casual moments — not dramatic ones.</li>
+          <li>Have a warm, natural redirect ready in advance rather than improvising one under social pressure.</li>
+          <li>Being genuinely safe to confide in is close to the center of what this role is worth to a client.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 6 minutes</span>
+        <p>Write your own version of the redirect from the worked example — in your own words, ready for the next time someone asks a casual question about work that touches something confidential.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="drill-sec" id="drill">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Module 8 drill</b><span class="label">one hour</span></div>
+      <h2>Three messages that could each lose the client</h2>
+    </div>
+
+    <div class="flow">
+      <p>Three situations, each one a genuine risk to the relationship if handled badly. Write the actual message for each — not a description of what you'd say, the real words you'd send.</p>
+
+      <h3>Deliver three messages</h3>
+
+      <ol class="numlist">
+        <li><strong>A mistake you made.</strong> You sent a client's invoice to the wrong recipient — a minor administrative error, but a real one, touching someone's financial information. Write the message disclosing it to Adaeze, following lesson 7.5's disclosure principle: immediate, plain, undiminished.</li>
+        <li><strong>A request you cannot meet.</strong> A long-standing client asks you to backdate an invoice for their own tax purposes — something you're not comfortable doing and that Adaeze wouldn't want done. Write the decline, using lesson 8.3's shapes, to the client directly.</li>
+        <li><strong>Something you were told that you shouldn't have been.</strong> In casual conversation, a client's friend fishes for details about why the client has been coming in more often lately. Write the in-the-moment redirect, using lesson 8.5's discipline.</li>
+      </ol>
+
+      <h3>How it is marked</h3>
+
+      <ul class="list">
+        <li><strong>Does the mistake disclosure actually name the mistake plainly?</strong> A disclosure that buries the error in softening language, or leads with the fix before the reader knows what went wrong, fails the honesty test from lesson 7.5.</li>
+        <li><strong>Does the decline stay firm without becoming defensive?</strong> One honest sentence of reason, not a paragraph justifying the no — the discipline from lesson 8.3, under real pressure from a long-standing relationship.</li>
+        <li><strong>Does the redirect give away nothing, while still sounding natural?</strong> A redirect that's technically discreet but reads as suspicious or cold has only half succeeded — it needs to work socially too.</li>
+        <li><strong>Would any of the three messages need to be walked back later?</strong> Read each one as if it were actually sent. A message that overpromises, softens too much, or leaves an opening it shouldn't has failed even if it feels good in the moment.</li>
+        <li><strong>Is the tone right for who's actually receiving each message?</strong> The disclosure to Adaeze, the decline to a client, and the redirect to a casual acquaintance are three different registers — lesson 8.2's dials should show up as real differences across the three.</li>
+      </ul>
+
+      <div class="aside">
+        <span>What this drill is really testing</span>
+        <p>Whether the judgement from this whole module holds up under the specific pressure of a real relationship being at stake, not just as an abstract rule. Every module's drill has tested judgement under a different kind of mess. This one tests it under the particular pressure of consequences that are social and reputational rather than just practical.</p>
+      </div>
+
+      <div class="doit">
+        <span>Before module 9</span>
+        <p>You should now have: a message template built for decisions, a felt sense of your own tone dial, three practised ways to decline, a clear escalation sort, and a redirect ready for casual pressure. Module 9 turns to running yourself as an actual business — rates, agreements, getting paid across borders, and tracking your own time without losing your evenings to it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Module 08 of 10 · The Assistant They Can't Replace</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const FILE = { filename: 'VA-Course-Module8-Worksheets.docx', b64: "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" };
+
+  function saveBlob(filename, bytes) {
+    const blob = new Blob([bytes], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+
+  (async function wire() {
+    const btn = document.getElementById('dl-m8');
+    const status = document.getElementById('dl-m8-status');
+    if (!btn) return;
+
+        btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Saving\u2026';
+      if (status) { status.textContent = ''; status.classList.remove('ok'); }
+      try {
+        const bytes = b64ToBytes(FILE.b64);
+        saveBlob(FILE.filename, bytes);
+        if (status) { status.textContent = 'Saved.'; status.classList.add('ok'); }
+      } catch (err) {
+        const code = err && err.code ? err.code : 'unavailable';
+        if (status) status.textContent = code === 'declined' ? 'Cancelled.' : 'Could not save (' + code + ').';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+  })();
+})();
+</script>
+
+</body>
+</html>

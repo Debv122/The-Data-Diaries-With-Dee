@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Refund Conversation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- download callout ---------- */
+
+  .dl-callout{
+    margin-top:clamp(22px,3vw,32px);
+    display:flex;flex-wrap:wrap;gap:16px 20px;align-items:center;
+    border:1px solid var(--line);border-radius:12px;
+    background:var(--surface);padding:16px 20px;
+  }
+  .dl-callout .dl-text{flex:1;min-width:200px}
+  .dl-callout .dl-text b{display:block;font-size:.98rem;color:var(--ink);font-weight:600;margin-bottom:2px}
+  .dl-callout .dl-text span{font-size:.88rem;color:var(--muted)}
+  .dl-btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    height:42px;padding:0 20px;border-radius:999px;flex:none;
+    border:1px solid var(--ember);background:var(--ember);color:#160C08;
+    font-size:.86rem;font-weight:500;letter-spacing:-.01em;cursor:pointer;
+    font-family:inherit;transition:background .2s ease,transform .2s ease;
+  }
+  .dl-btn:hover{background:#EE9679;transform:translateY(-1px)}
+  .dl-btn:disabled{opacity:.55;cursor:default;transform:none}
+  .dl-status{font-family:var(--mono);font-size:.72rem;color:var(--faint);flex:none}
+  .dl-status.ok{color:var(--ember)}
+</style>
+<style>
+  .tree{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .tree .t-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .tree .t-b{padding:16px 18px;font-family:var(--mono);font-size:.85rem;line-height:1.85;color:var(--body);white-space:pre}
+  .tree .t-b .d{color:var(--ember)}
+  .tree .t-b .f{color:var(--muted)}
+  .tree .t-b .c{color:var(--faint);font-family:var(--sans);font-style:italic}
+
+  .namerow{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .namerow .n-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .nrow{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr);gap:6px 14px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:center;font-family:var(--mono);font-size:.84rem}
+  .nrow:last-child{border-bottom:0}
+  .nrow .bad{color:var(--dusk);text-decoration:line-through;text-decoration-color:var(--dusk);opacity:.7}
+  .nrow .good{color:var(--ink);font-weight:500}
+  .nrow .arrow{color:var(--ember);text-align:center;font-family:var(--sans)}
+  @media (max-width:560px){.nrow{grid-template-columns:minmax(0,1fr)}.nrow .arrow{display:none}}
+
+  .stagebox{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .stagebox .s-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .srow{display:grid;grid-template-columns:120px minmax(0,1fr);gap:6px 16px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:baseline;font-size:.92rem}
+  .srow:last-child{border-bottom:0}
+  .srow b{font-family:var(--mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ember)}
+  .srow span{color:var(--body)}
+  @media (max-width:560px){.srow{grid-template-columns:minmax(0,1fr)}}
+</style>
+
+</head>
+<body>
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">The Ticket That Doesn't Come Back</span>
+      <span class="sep">/</span>
+      <span class="label">Module 05</span>
+    </div>
+    <h1>Refunds, returns and judgement under policy</h1>
+    <p class="standfirst">Five lessons, about an hour and five minutes. Every support role eventually comes down to this: a written policy, a specific customer, and a decision only a person can make well. This module is about reading a policy the way it's meant to be read, and knowing exactly where your own judgement is supposed to start.</p>
+
+    <nav class="toc">
+      <a href="#l1"><i>5.1</i><span>Reading a policy like a lawyer reads a contract</span><u>13 min</u></a>
+      <a href="#l2"><i>5.2</i><span>The refund conversation: verifying without accusing</span><u>12 min</u></a>
+      <a href="#l3"><i>5.3</i><span>Where discretion lives: what you decide, what you escalate</span><u>13 min</u></a>
+      <a href="#l4"><i>5.4</i><span>Goodwill gestures: retaining a customer versus training one</span><u>12 min</u></a>
+      <a href="#l5"><i>5.5</i><span>Documenting the exception</span><u>10 min</u></a>
+      <a href="#drill"><i>D</i><span>Drill: ten borderline refund requests</span><u>55 min</u></a>
+    </nav>
+
+    <div class="dl-callout">
+      <div class="dl-text">
+        <b>Module 5 worksheets</b>
+        <span>A policy-reading worksheet, a verification-question bank, a decide-or-escalate tier key, a goodwill-gesture guide, and an exception log. One .docx, five pages.</span>
+      </div>
+      <button class="dl-btn" id="dl-m5" type="button">Save worksheets (.docx)</button>
+      <span class="dl-status" id="dl-m5-status"></span>
+    </div>
+  </div>
+</header>
+
+<section class="lesson" id="l1">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 5.1</b><span class="label">13 minutes</span></div>
+      <h2>Reading a policy like a lawyer reads a contract</h2>
+    </div>
+
+    <div class="flow">
+      <p>Most support reps read a returns policy once, remember the gist, and answer from memory after that. This is how "30 days" quietly becomes "about a month" in someone's head, and how a customer at day 33 gets refused for something the actual policy might have allowed under a clause nobody reread.</p>
+
+      <p class="pull">A policy is not a vibe you remember. It's a document with edges, and the edges are where the real questions live.</p>
+
+      <h3>What to actually look for on a first careful read</h3>
+
+      <p>Read for the exact numbers (is it 30 days from purchase, or from delivery — these are different dates and the gap between them matters at the edge). Read for named exceptions (some brands' policies exclude sale items, or make an exception for a manufacturing defect regardless of the window). And read for what the policy doesn't say — a genuine gap, which is different from an unfavourable answer, and is exactly where lesson 5.3's escalation judgement applies.</p>
+
+      <h3>Worked example: the clause that changes the answer</h3>
+
+      <div class="ex">
+        <div class="ex-h">Bumi Naturals' actual return policy, one clause</div>
+        <div class="ex-b">
+          <p class="quote">"Items may be returned within 30 days of delivery, except sale items, which are final. Products with a manufacturing defect may be returned at any time within 6 months, regardless of sale status." <br><br>A sale item, bought 40 days ago, with a broken pump: reads as "final sale, too late" on a fast skim. Read properly, it's a defect claim, not a change-of-mind return — a completely different clause, with a 6-month window, applies.</p>
+        </div>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Read the exact numbers and what date they count from — memory rounds these off dangerously.</li>
+          <li>Read for named exceptions, in both directions — some narrow the policy, some widen it.</li>
+          <li>A genuine gap in the policy is different from an answer you don't like — gaps get escalated, not guessed.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 8 minutes</span><p>Find a real return policy — any brand's, publicly posted — and write down its exact window, what date it counts from, and any exception clause you find.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l2">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 5.2</b><span class="label">12 minutes</span></div>
+      <h2>The refund conversation: verifying without accusing</h2>
+    </div>
+
+    <div class="flow">
+      <p>Some refund requests need a genuine check — a photo of the damage, an order number that matches, a claim that seems inconsistent with the shipping record. Asking for that verification is completely reasonable. Asking for it in a way that implies the customer is lying is how a legitimate request turns into a lost customer, even when the refund is eventually approved.</p>
+
+      <h3>The shape of a verification request that doesn't accuse</h3>
+
+      <p>Frame the ask as routine process, not suspicion of this specific person. "Could you send a quick photo of the damage? — it's just so I can flag the batch to our supplier" does real verification work while giving the customer a reason that isn't "I don't believe you."</p>
+
+      <div class="ex">
+        <div class="ex-h">Same request, accusing versus routine</div>
+        <div class="split">
+          <div>
+            <span class="who">Reads as an accusation</span>
+            <p style="color:var(--muted);font-size:.9rem">"We'll need to see proof of the damage before we can process anything."</p>
+          </div>
+          <div class="bad">
+            <span class="who">Reads as routine</span>
+            <p style="color:var(--muted);font-size:.9rem">"So sorry about that! Could you send a quick photo when you get a chance? It helps me flag the batch to our supplier so it doesn't happen again — I'll get your refund started as soon as I see it."</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Notice the second version also tells the customer what happens next and why the photo matters beyond just proving their claim — it becomes useful information for the brand, not a hoop to jump through.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Frame verification as routine process, never as doubt about this specific person.</li>
+          <li>Give a reason the photo or detail helps beyond just proving the claim.</li>
+          <li>Tell the customer what happens once you have it — verification with no clear next step feels like stalling.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 6 minutes</span><p>Rewrite an accusatory-sounding verification request into a routine-sounding one, using the worked example's shape.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l3">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 5.3</b><span class="label">13 minutes</span></div>
+      <h2>Where discretion lives: what you decide, what you escalate</h2>
+    </div>
+
+    <div class="flow">
+      <p>Not every judgement call is yours to make alone, and knowing the line matters as much as having good judgement in the first place. A rep who escalates everything is nearly useless; a rep who never escalates anything eventually gives away money, stock, or trust the brand didn't authorise.</p>
+
+      <h3>Three tiers, sorted by reversibility and stakes together</h3>
+
+      <ol class="numlist">
+        <li><strong>Decide yourself.</strong> Squarely within policy, low value, a pattern you've handled before with a known-good outcome.</li>
+        <li><strong>Ask first, briefly, with a recommendation.</strong> A genuine grey area or a value above your comfort threshold, but not urgent enough that a short delay causes harm.</li>
+        <li><strong>Escalate immediately.</strong> A policy gap with real money attached, anything that could become a legal or safety issue, or a customer explicitly asking for someone more senior.</li>
+      </ol>
+
+      <p>The same request can sit in different tiers depending on the brand and the amount — a ₦5,000 goodwill discount might be squarely tier one at Bumi Naturals, and tier two the moment it's ₦50,000. Know your own thresholds, in writing, rather than guessing them fresh each time.</p>
+
+      <div class="aside">
+        <span>When genuinely unsure, treat it as the higher tier</span>
+        <p>Asking unnecessarily costs a founder a few minutes. Guessing wrong on something with real money or reputation attached costs considerably more — the same principle Course 01's escalation lesson applies to a virtual assistant's work.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Three tiers: decide alone, ask with a recommendation, escalate immediately.</li>
+          <li>The same request can shift tiers by value — know your own thresholds in writing.</li>
+          <li>When unsure, treat it as the higher tier. The cost of asking is small; the cost of guessing wrong on something serious isn't.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 7 minutes</span><p>Sort five real or made-up refund requests into the three tiers, and write your reasoning for each.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l4">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 5.4</b><span class="label">12 minutes</span></div>
+      <h2>Goodwill gestures: when they retain a customer, and when they train one to complain</h2>
+    </div>
+
+    <div class="flow">
+      <p>A free gift, a discount, an extra item thrown in — goodwill gestures genuinely work to keep a frustrated customer. They also, used carelessly, teach a customer that complaining is the fastest way to get something free, which creates more complaints rather than fewer.</p>
+
+      <h3>The test that tells the two apart</h3>
+
+      <p>A goodwill gesture answering a real, verified problem builds loyalty. A gesture handed out because a customer sounded annoyed, with nothing actually wrong, teaches the wrong lesson. The distinction isn't about being generous or stingy — it's whether the gesture is responding to a genuine issue or to volume of complaint alone.</p>
+
+      <div class="ex">
+        <div class="ex-h">Two goodwill calls, same brand, different outcomes</div>
+        <div class="split">
+          <div>
+            <span class="who">Builds loyalty</span>
+            <p style="color:var(--muted);font-size:.9rem">A verified late delivery, first time for this customer. A small discount on their next order, offered without being asked, alongside the apology. Reads as generous, unprompted, and tied to something real.</p>
+          </div>
+          <div class="bad">
+            <span class="who">Trains the wrong behaviour</span>
+            <p style="color:var(--muted);font-size:.9rem">A customer complains loudly that a product "isn't as described" with no specifics, and immediately asks what compensation they'll get. A free item handed over here, with nothing actually verified, is noticed — and repeated next time.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>A gesture answering a verified problem builds loyalty; one answering volume of complaint trains more complaints.</li>
+          <li>Offering a gesture unprompted, tied to something real, reads as more generous than one that was extracted.</li>
+          <li>The question is never "generous or stingy" — it's "is this responding to a real issue."</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 5 minutes</span><p>Write one situation where a goodwill gesture is clearly earned, and one where it clearly isn't, using the same brand for both.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l5">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 5.5</b><span class="label">10 minutes</span></div>
+      <h2>Documenting the exception so the next rep isn't stuck explaining it</h2>
+    </div>
+
+    <div class="flow">
+      <p>An exception granted and never written down doesn't stay an exception for long. The next rep sees the order history, notices a refund was approved outside policy, and — reasonably, with no other information — assumes that's now how it's done. Module 5's whole discipline collapses one undocumented exception at a time.</p>
+
+      <h3>What belongs in an exception log</h3>
+
+      <p>The specific clause or window that was set aside, the reason, and — critically — that it was a one-time exception rather than a new rule. Two lines is usually enough.</p>
+
+      <div class="ex">
+        <div class="ex-h">A logged exception</div>
+        <div class="ex-b">
+          <p class="quote">"Order #2311 — refunded a sale item at day 40 (outside the 30-day window and normally final-sale). Exception: 3-year repeat customer, documented family emergency delayed the return. One-time — does not set a new policy."</p>
+        </div>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Log the clause set aside, the reason, and that it was one-time — not a new rule.</li>
+          <li>Two lines is usually enough; the point is a record existing at all.</li>
+          <li>An unlogged exception becomes an accidental precedent the moment another rep sees it.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 5 minutes</span><p>Write a log entry for the exception you granted in 5.3's drill or 5.4's worked example, in the shape above.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="drill-sec" id="drill">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Module 5 drill</b><span class="label">fifty-five minutes</span></div>
+      <h2>Ten borderline refund requests</h2>
+    </div>
+
+    <div class="flow">
+      <p>Ten refund and return requests are supplied, checked against Bumi Naturals' actual return policy. Some are clearly within policy, some clearly outside it, and several sit right on an edge deliberately.</p>
+
+      <h3>Deliver three things per request</h3>
+
+      <ol class="numlist">
+        <li><strong>The decision</strong> — approve, decline, or a documented exception, with the specific clause it turns on.</li>
+        <li><strong>The reply</strong> — the actual message you'd send, using 5.2's verification shape where a check is needed.</li>
+        <li><strong>The tier</strong> — decide-yourself, ask-first, or escalate, using 5.3's key, with a one-line reason.</li>
+      </ol>
+
+      <h3>How it is marked</h3>
+
+      <ul class="list">
+        <li><strong>Is the policy read correctly?</strong> The most common failure is answering from a remembered gist rather than the actual clause — 5.1's whole point.</li>
+        <li><strong>Does a verification request read as routine rather than accusatory?</strong> A reply that sounds suspicious fails 5.2 even if the underlying decision is right.</li>
+        <li><strong>Is the tier defensible?</strong> Not whether it matches an answer key exactly — whether the reasoning holds under 5.3's test.</li>
+        <li><strong>Is every exception logged in the shape from 5.5?</strong> An undocumented exception fails this drill regardless of whether the underlying call was good.</li>
+      </ul>
+
+      <div class="aside">
+        <span>What this drill is really testing</span>
+        <p>Whether policy, verification, escalation judgement and documentation all show up together on the same request — not any one of them in isolation.</p>
+      </div>
+
+      <div class="doit">
+        <span>Before module 6</span>
+        <p>You should now have: a habit of reading a policy's actual clauses, a routine-sounding verification shape, a three-tier escalation key with your own thresholds, a goodwill test, and an exception log. Module 6 turns to the knowledge base itself — where these answers should live so the fifth rep to ask doesn't need you personally to get it right.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Module 05 of 10 · The Ticket That Doesn't Come Back</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const FILE = { filename: 'C2-Module5-Worksheets.docx', b64: "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" };
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+
+  function saveBlob(filename, bytes) {
+    const blob = new Blob([bytes], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+
+  (async function wire() {
+    const btn = document.getElementById('dl-m5');
+    const status = document.getElementById('dl-m5-status');
+    if (!btn) return;
+
+    btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Saving…';
+      if (status) { status.textContent = ''; status.classList.remove('ok'); }
+      try {
+        const bytes = b64ToBytes(FILE.b64);
+        saveBlob(FILE.filename, bytes);
+        if (status) {
+          status.textContent = 'Saved.';
+          status.classList.add('ok');
+        }
+      } catch (err) {
+        const code = err && err.code ? err.code : 'unavailable';
+        if (status) status.textContent = code === 'declined' ? 'Cancelled.' : 'Could not save (' + code + ').';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+  })();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Communicating the Answer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+
+
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">How to Be a Top-Notch Data Analyst</span>
+      <span class="sep">/</span>
+      <span class="label">Module 09</span>
+    </div>
+    <h1>Communicating the answer</h1>
+    <p class="standfirst">Six lessons, about an hour. Every technique from modules 1–8 is wasted if the answer doesn't land — this module is about making sure it does.</p>
+
+    <nav class="toc">
+      <a href="#l1"><i>9.1</i><span>The one-sentence finding, written before the chart exists</span><u>10 min</u></a>
+      <a href="#l2"><i>9.2</i><span>Charts that argue: choosing a form that carries the point</span><u>11 min</u></a>
+      <a href="#l3"><i>9.3</i><span>Structuring an executive summary people finish reading</span><u>10 min</u></a>
+      <a href="#l4"><i>9.4</i><span>Presenting a number you are not fully certain about</span><u>10 min</u></a>
+      <a href="#l5"><i>9.5</i><span>Handling "that doesn't look right" in the room</span><u>10 min</u></a>
+      <a href="#l6"><i>9.6</i><span>Saying no, and offering the smaller question you can answer</span><u>9 min</u></a>
+      <a href="#drill"><i>D</i><span>Drill: one analysis, three deliverables</span><u>75 min</u></a>
+    </nav>
+
+    <div class="dl-callout">
+      <div class="dl-text">
+        <b>Module 9 worksheets</b>
+        <span>Real templates for the three deliverables this module builds toward — a one-sentence finding worksheet, a chart-choice decision tree, an executive summary structure, and a hedged-number phrasebook. One .docx, five pages.</span>
+      </div>
+      <button class="dl-btn" id="dl-m9" type="button">Save worksheets (.docx)</button>
+      <span class="dl-status" id="dl-m9-status"></span>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 9.1 ============ -->
+<section class="lesson" id="l1">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 9.1</b><span class="label">10 minutes</span></div>
+      <h2>The one-sentence finding, written before the chart exists</h2>
+    </div>
+
+    <div class="flow">
+      <p>Write the sentence first: "Ibadan Central's revenue fell 14% in August, driven mostly by three fewer trading days after a generator fault." Only once that sentence exists do you build the chart, the slide, or the dashboard designed to make that exact sentence obvious at a glance.</p>
+
+      <p>Build the chart first, and you'll spend twenty minutes reverse-engineering what point it's supposedly making. Write the sentence first, and the chart becomes a much smaller, much clearer design problem: "what visual makes this specific claim visible in two seconds."</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Write the one-sentence finding before touching a chart tool — the sentence should drive the chart, never the reverse.</li>
+          <li>If you can't write the sentence yet, you don't have a finding yet — you have data still waiting to become one.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9.2 ============ -->
+<section class="lesson" id="l2">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 9.2</b><span class="label">11 minutes</span></div>
+      <h2>Charts that argue: choosing a form that carries the point</h2>
+    </div>
+
+    <div class="flow">
+      <p>A chart type is an argument, not a decoration. Choosing the wrong one makes true data look like it's arguing something else.</p>
+
+      <table class="kv">
+        <tr><td><b>Comparing categories</b></td><td>Bar chart — Chidi can see which branch is biggest without reading a single label.</td></tr>
+        <tr><td><b>Showing change over time</b></td><td>Line chart — the shape of the trend is the point, not any single value on it.</td></tr>
+        <tr><td><b>Showing composition</b></td><td>Stacked bar, used sparingly — a pie chart with more than four slices argues nothing clearly.</td></tr>
+        <tr><td><b>Showing a single headline number</b></td><td>A big number with a comparison, not a chart at all — sometimes the honest visual is no visual.</td></tr>
+      </table>
+
+      <p class="pull">A dual-axis chart, a 3D pie chart, or a chart with fourteen colours is rarely clarifying — it's usually a sign the underlying finding hasn't actually been simplified to one sentence yet.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Match the chart type to the kind of claim — comparison, trend, composition, or headline — deliberately, not by habit.</li>
+          <li>A chart that needs a long caption to explain what it's showing has usually chosen the wrong form.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9.3 ============ -->
+<section class="lesson" id="l3">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 9.3</b><span class="label">10 minutes</span></div>
+      <h2>Structuring an executive summary people finish reading</h2>
+    </div>
+
+    <div class="flow">
+      <p>Chidi reads the first two sentences of anything you send him, and decides in that time whether the rest is worth his attention. Structure accordingly: finding first, then the one piece of supporting evidence that matters most, then anything else — never build up to the finding at the end.</p>
+
+      <div class="ex">
+        <div class="ex-h">Backwards versus forwards</div>
+        <div class="split">
+          <div>
+            <span class="who">Buried finding</span>
+            <p class="quote">"I looked at August sales across all nine branches, broke it down by category and by week, and after controlling for seasonality and comparing against last year..." — the actual finding arrives in paragraph four, if Chidi is still reading.</p>
+          </div>
+          <div class="bad">
+            <span class="who">Finding first</span>
+            <p class="quote">"Ibadan Central's revenue fell 14% in August — mostly explained by three lost trading days after a generator fault, not a real demand problem. Details below if useful."</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Lead with the finding, always — never make Chidi read to the end to find out what you actually discovered.</li>
+          <li>Everything after the first two sentences should be there because Chidi wants more, not because you needed to build up to it.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9.4 ============ -->
+<section class="lesson" id="l4">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 9.4</b><span class="label">10 minutes</span></div>
+      <h2>Presenting a number you are not fully certain about</h2>
+    </div>
+
+    <div class="flow">
+      <p>Module 5's statistics discipline showed you how to know when you're not fully certain. This lesson is about saying so out loud without it sounding like you don't know what you're doing.</p>
+
+      <div class="ex">
+        <div class="ex-h">Hedging that reads as competence, not weakness</div>
+        <div class="ex-b">
+          <p style="color:var(--muted)">"Revenue is roughly flat month-on-month — within the range Lekki normally moves week to week, so I wouldn't read this as a real trend yet. I'll have a clearer read after another two weeks of data."</p>
+          <p style="color:var(--muted);font-size:.9rem">This states the number, states the honest uncertainty, and states exactly what would resolve it — which reads as more competent, not less, than a false-confident single figure that later turns out wrong.</p>
+        </div>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>State uncertainty plainly and specifically — what's uncertain, and what would resolve it — rather than hiding it or over-hedging vaguely.</li>
+          <li>Honest uncertainty, stated clearly, builds more trust over time than false confidence that occasionally turns out wrong.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9.5 ============ -->
+<section class="lesson" id="l5">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 9.5</b><span class="label">10 minutes</span></div>
+      <h2>Handling "that doesn't look right" in the room</h2>
+    </div>
+
+    <div class="flow">
+      <p>Module 6.7 covered this for a dashboard specifically; the same discipline applies live, in a meeting, when Chidi or a branch manager pushes back on a number you're presenting in real time.</p>
+
+      <div class="ex">
+        <div class="ex-h">The live version of the verification sequence</div>
+        <div class="ex-b">
+          <p style="color:var(--muted)">"That's useful pushback — can you say what number you were expecting? ... Okay, let me check whether we're looking at the same date range first, because that's the most common reason these disagree. [checks] You're right, I had July, you meant the rolling twelve months — let me pull that specific number now / I'll have it to you by end of day."</p>
+        </div>
+      </div>
+
+      <p>Never defend a number reflexively in the room before actually checking it. Never capitulate and agree it's wrong before checking either. The credible move, every time, is visible verification — even if it takes an extra minute of silence while you check.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Neither defend nor concede immediately when challenged live — verify visibly, out loud, before answering either way.</li>
+          <li>A calm "let me check" is more credible in the moment than an instant answer in either direction.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9.6 ============ -->
+<section class="lesson" id="l6">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 9.6</b><span class="label">9 minutes</span></div>
+      <h2>Saying no, and offering the smaller question you can answer</h2>
+    </div>
+
+    <div class="flow">
+      <p>Sometimes the honest answer is "I can't answer that with what we have" — and the module 1 scoping habit applies here in reverse: rather than a flat no, offer the smaller, real question that the same data actually can answer.</p>
+
+      <div class="ex">
+        <div class="ex-h">A "no" that's actually useful</div>
+        <div class="ex-b">
+          <p style="color:var(--muted)">Chidi asks: "Would opening a tenth branch in Ikorodu definitely be profitable?" You: "I can't give you a definite answer from our data alone — that needs a market study we don't have. What I can tell you: based on our existing branches' revenue-per-square-metre and how similar-density areas perform, here's a realistic range. That's a real input, not a full answer."</p>
+        </div>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>A flat "I can't answer that" is a dead end. Naming the smaller, real question the data can answer keeps the conversation useful.</li>
+          <li>Being honest about a question's limits is not the same as being unhelpful about it.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Before the drill</span>
+        <p>Have your module 6 dashboard findings or module 5 drill results handy — you'll be turning one real analysis into three different deliverables.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="drill-sec" id="drill">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Module 9 drill</b><span class="label">about 75 minutes</span></div>
+      <h2>One analysis, three deliverables</h2>
+    </div>
+
+    <div class="flow">
+      <p>Take any real finding from earlier in this course — Ibadan Central's August dip, the Lekki promotions fan-out, or one of your own drill results — and produce it three ways.</p>
+
+      <ol class="numlist">
+        <li><strong>A Slack message to Chidi.</strong> Two sentences, finding first, appropriately hedged if the certainty warrants it.</li>
+        <li><strong>A one-page memo.</strong> Finding, evidence, what you're not certain about, what you'd recommend.</li>
+        <li><strong>Three slides for a board meeting.</strong> One chart chosen deliberately per lesson 9.2, minimal text, built to survive being challenged live per lesson 9.5.</li>
+      </ol>
+
+      <p>Same underlying finding, three genuinely different artifacts — not the same paragraph reformatted three times.</p>
+
+      <div class="aside">
+        <span>What this drill is really testing</span>
+        <p>Whether you can adjust register and depth for three different real audiences without losing the honesty or the certainty-hedging that modules 5 and 9 have built — a Slack message that's too formal, or slides with too much text, both fail this just as much as an inaccurate number would.</p>
+      </div>
+
+      <div class="doit">
+        <span>Before module 10</span>
+        <p>Module 10 turns to running yourself as an analyst long-term — documentation, request queues, and building a portfolio from work like this drill's.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Module 09 of 10 · How to Be a Top-Notch Data Analyst</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const FILE = { filename: 'DA-Module9-Worksheets.docx', b64: "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" };
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+  function saveBlob(filename, bytes) {
+    const blob = new Blob([bytes], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+
+  (async function wire() {
+    const btn = document.getElementById('dl-m9');
+    const status = document.getElementById('dl-m9-status');
+    if (!btn) return;
+
+        btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Saving…';
+      if (status) { status.textContent = ''; status.classList.remove('ok'); }
+      try {
+        const bytes = b64ToBytes(FILE.b64);
+        saveBlob(FILE.filename, bytes);
+        if (status) { status.textContent = 'Saved.'; status.classList.add('ok'); }
+      } catch (err) {
+        const code = err && err.code ? err.code : 'unavailable';
+        if (status) status.textContent = code === 'declined' ? 'Cancelled.' : 'Could not save (' + code + ').';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+  })();
+})();
+</script>
+
+</body>
+</html>

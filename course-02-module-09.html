@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Running Yourself as a Business</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- download callout ---------- */
+
+  .dl-callout{
+    margin-top:clamp(22px,3vw,32px);
+    display:flex;flex-wrap:wrap;gap:16px 20px;align-items:center;
+    border:1px solid var(--line);border-radius:12px;
+    background:var(--surface);padding:16px 20px;
+  }
+  .dl-callout .dl-text{flex:1;min-width:200px}
+  .dl-callout .dl-text b{display:block;font-size:.98rem;color:var(--ink);font-weight:600;margin-bottom:2px}
+  .dl-callout .dl-text span{font-size:.88rem;color:var(--muted)}
+  .dl-btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    height:42px;padding:0 20px;border-radius:999px;flex:none;
+    border:1px solid var(--ember);background:var(--ember);color:#160C08;
+    font-size:.86rem;font-weight:500;letter-spacing:-.01em;cursor:pointer;
+    font-family:inherit;transition:background .2s ease,transform .2s ease;
+  }
+  .dl-btn:hover{background:#EE9679;transform:translateY(-1px)}
+  .dl-btn:disabled{opacity:.55;cursor:default;transform:none}
+  .dl-status{font-family:var(--mono);font-size:.72rem;color:var(--faint);flex:none}
+  .dl-status.ok{color:var(--ember)}
+</style>
+<style>
+  .tree{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .tree .t-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .tree .t-b{padding:16px 18px;font-family:var(--mono);font-size:.85rem;line-height:1.85;color:var(--body);white-space:pre}
+  .tree .t-b .d{color:var(--ember)}
+  .tree .t-b .f{color:var(--muted)}
+  .tree .t-b .c{color:var(--faint);font-family:var(--sans);font-style:italic}
+
+  .namerow{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .namerow .n-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .nrow{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr);gap:6px 14px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:center;font-family:var(--mono);font-size:.84rem}
+  .nrow:last-child{border-bottom:0}
+  .nrow .bad{color:var(--dusk);text-decoration:line-through;text-decoration-color:var(--dusk);opacity:.7}
+  .nrow .good{color:var(--ink);font-weight:500}
+  .nrow .arrow{color:var(--ember);text-align:center;font-family:var(--sans)}
+  @media (max-width:560px){.nrow{grid-template-columns:minmax(0,1fr)}.nrow .arrow{display:none}}
+
+  .stagebox{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .stagebox .s-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .srow{display:grid;grid-template-columns:120px minmax(0,1fr);gap:6px 16px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:baseline;font-size:.92rem}
+  .srow:last-child{border-bottom:0}
+  .srow b{font-family:var(--mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ember)}
+  .srow span{color:var(--body)}
+  @media (max-width:560px){.srow{grid-template-columns:minmax(0,1fr)}}
+</style>
+
+</head>
+<body>
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">The Ticket That Doesn't Come Back</span>
+      <span class="sep">/</span>
+      <span class="label">Module 09</span>
+    </div>
+    <h1>Running yourself as a business</h1>
+    <p class="standfirst">Five lessons, about an hour and five minutes. Everything so far has been about doing the work well. This module is about the arithmetic and paperwork that decide whether doing it well actually pays — rates, agreements, and the specific friction of getting paid across borders.</p>
+
+    <nav class="toc">
+      <a href="#l1"><i>9.1</i><span>Hourly, retainer or per-ticket: the arithmetic behind each</span><u>13 min</u></a>
+      <a href="#l2"><i>9.2</i><span>What your hour actually costs you</span><u>12 min</u></a>
+      <a href="#l3"><i>9.3</i><span>The one-page agreement and the trial-shift rule</span><u>13 min</u></a>
+      <a href="#l4"><i>9.4</i><span>Getting paid across borders</span><u>13 min</u></a>
+      <a href="#l5"><i>9.5</i><span>Tracking shifts and invoicing without losing your evening</span><u>10 min</u></a>
+      <a href="#drill"><i>D</i><span>Drill: rate card, agreement, live payment route</span><u>60 min</u></a>
+    </nav>
+
+    <div class="dl-callout">
+      <div class="dl-text">
+        <b>Module 9 worksheets</b>
+        <span>A pricing-model worksheet, a real-hourly-cost calculator, a one-page agreement template, a cross-border payment comparison sheet, and a time-tracking log. One .docx, five pages.</span>
+      </div>
+      <button class="dl-btn" id="dl-m9" type="button">Save worksheets (.docx)</button>
+      <span class="dl-status" id="dl-m9-status"></span>
+    </div>
+  </div>
+</header>
+
+<section class="lesson" id="l1">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 9.1</b><span class="label">13 minutes</span></div>
+      <h2>Hourly, retainer or per-ticket: the arithmetic behind each, and when to use which</h2>
+    </div>
+
+    <div class="flow">
+      <p>The three common ways to price support work reward genuinely different things, and picking the wrong one for a given client isn't just a preference — it can quietly cost you money for months without either side noticing why.</p>
+
+      <h3>What each model actually rewards</h3>
+
+      <p><strong>Hourly</strong> rewards time spent, which is fair for unpredictable workload but means getting faster at the job literally lowers your income unless you renegotiate. <strong>Retainer</strong> — a fixed monthly fee for owning the queue — rewards outcomes and efficiency, and is where the trust-ladder rung 4 role from module 1 naturally lands. <strong>Per-ticket</strong> rewards volume, which fits a high, predictable ticket count but can quietly pressure rushing through complex tickets to keep the per-ticket rate worthwhile.</p>
+
+      <h3>Worked example: the same role, priced three ways</h3>
+
+      <div class="ex">
+        <div class="ex-h">Bumi Naturals' support role, three pricing models</div>
+        <div class="ex-b">
+          <p class="quote">Hourly: ₦2,500/hr, roughly 15 hrs/week = ₦37,500/week, but the faster Tolu gets, the less he earns for the same output. Retainer: ₦140,000/month flat for owning the whole queue — rewards Tolu for getting efficient, since the fee doesn't shrink. Per-ticket: ₦800/ticket, which works well at steady volume but tempts rushing the harder ones.</p>
+        </div>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Hourly rewards time; getting faster lowers income unless renegotiated.</li>
+          <li>Retainer rewards outcomes and efficiency — the natural fit once you own the whole queue.</li>
+          <li>Per-ticket rewards volume but can pressure rushing complex tickets.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 7 minutes</span><p>Price a made-up support role three ways — hourly, retainer, per-ticket — and note which model you'd actually choose and why.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l2">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 9.2</b><span class="label">12 minutes</span></div>
+      <h2>What your hour actually costs you: data, power, transport, tax, unpaid admin</h2>
+    </div>
+
+    <div class="flow">
+      <p>A quoted rate that looks reasonable on paper can quietly lose money once the real costs of earning it are counted — and most beginners never count them, which is a large part of why underpricing is so common at entry.</p>
+
+      <h3>What to actually count</h3>
+
+      <p>Data and connectivity costs for the hours worked. Power — a generator or inverter running during a shift is a real cost, not a rounding error, in markets where outages are common. Unpaid time: replying to a client's messages outside billed hours, or time spent invoicing and chasing payment, which is real work that often goes uncounted. And tax, if applicable, which changes what a quoted rate actually nets.</p>
+
+      <div class="ex">
+        <div class="ex-h">A rate, before and after real costs</div>
+        <div class="ex-b">
+          <p class="quote">Quoted: ₦2,500/hour. Real costs per hour worked: ~₦150 data, ~₦200 power (generator, prorated), ~30 minutes of unpaid admin per 10 billed hours. The quoted rate is still reasonable — but only once these are actually counted rather than assumed away.</p>
+        </div>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Data, power, unpaid admin time, and tax are all real costs, not rounding errors.</li>
+          <li>Most underpricing at entry comes from never counting these at all.</li>
+          <li>A rate that looks fine on paper can be thin once real costs are subtracted.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 6 minutes</span><p>List your own real costs per working hour — data, power, anything else genuinely relevant to you — and see what they actually add up to.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l3">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 9.3</b><span class="label">13 minutes</span></div>
+      <h2>The one-page agreement and the trial-shift rule</h2>
+    </div>
+
+    <div class="flow">
+      <p>Most beginner support work happens with no written agreement at all — just a message thread and a handshake understanding. This works fine until it doesn't: a scope disagreement, a payment delay, a "actually I meant something different" that costs real money to sort out after the fact.</p>
+
+      <h3>What a one-page agreement actually needs</h3>
+
+      <p>What's covered (channels, hours or ticket volume), what isn't, the rate and payment schedule, and a trial-shift or notice period on both sides. It doesn't need to be a legal document — a clear, mutually agreed message that both sides can point back to is often enough at this scale, as long as it's actually written down rather than assumed.</p>
+
+      <div class="ex">
+        <div class="ex-h">A one-page agreement, in practice</div>
+        <div class="ex-b">
+          <p class="quote">"Confirming our agreement: I'll cover email and WhatsApp support, roughly 15 hrs/week, at ₦2,500/hr, invoiced every two weeks. This doesn't include live chat or social DMs — happy to discuss adding those separately. Either of us can end this with 2 weeks' notice. Let me know if this matches your understanding!"</p>
+        </div>
+      </div>
+
+      <div class="aside">
+        <span>The trial-shift rule protects both sides</span>
+        <p>A paid trial period, clearly time-boxed, lets a founder assess fit without a long commitment, and lets you assess whether the brand and the work are actually what they seemed before agreeing to anything longer.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Cover what's included, what isn't, the rate, and a notice period — in writing.</li>
+          <li>It doesn't need to be a legal document, just clearly written and mutually confirmed.</li>
+          <li>A trial-shift period protects both sides from a long commitment before fit is proven.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 8 minutes</span><p>Write your own one-page agreement message for a made-up support role, using the worked example's shape.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l4">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 9.4</b><span class="label">13 minutes</span></div>
+      <h2>Getting paid across borders: rails, fees, FX, and the wait that makes people quit</h2>
+    </div>
+
+    <div class="flow">
+      <p>A support rep working for a brand based in another country runs into a genuinely different problem than the work itself: actually receiving the money. Payment platforms, currency conversion, and intermediary fees can turn an agreed rate into a smaller and later-arriving number than either side expected, and not knowing this in advance is how good working relationships sour over a purely mechanical issue.</p>
+
+      <h3>What to check before agreeing to a cross-border rate</h3>
+
+      <p>Which payment rails the client can actually use to pay into your country, what each one's fees and typical delivery time are, and what exchange rate you'll actually receive versus the quoted mid-market rate — platforms differ meaningfully here, and the difference is real money, not a rounding error.</p>
+
+      <div class="aside">
+        <span>Cross-border payment friction is a documented, widespread problem — not a personal failing</span>
+        <p>Delays and fees in receiving money already earned are a genuine, common source of frustration for freelancers working across borders, and part of why some quietly stop taking international clients even when the work itself pays well. Knowing this in advance, and testing a payment route before committing to a rate, is what protects against it — rather than discovering the problem after weeks of unpaid work.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Check which payment rails actually work for your country before agreeing to a rate.</li>
+          <li>Compare fees and actual delivery time, not just the headline rate.</li>
+          <li>Test the payment route with a small real transaction before relying on it for a full month's pay.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 6 minutes</span><p>List two payment methods you could realistically receive cross-border payment through, and what you know or can find out about each one's fees and delivery time.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l5">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 9.5</b><span class="label">10 minutes</span></div>
+      <h2>Tracking shifts and invoicing without losing your evening to it</h2>
+    </div>
+
+    <div class="flow">
+      <p>Time tracking and invoicing done at the last minute, from memory, is where money quietly gets lost — a shift undercounted, a rate misapplied, an invoice sent late enough that payment slips a cycle. A five-minute daily habit prevents an hour of reconstruction at month end.</p>
+
+      <h3>The minimum viable habit</h3>
+
+      <p>Log hours or tickets the same day, not from memory a week later. Keep one running sheet, however simple, rather than scattered notes. And send the invoice on a fixed schedule — the same day every two weeks, say — rather than whenever you remember to.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Log the same day — memory a week later is where hours quietly disappear.</li>
+          <li>One running sheet beats scattered notes across messages and memory.</li>
+          <li>A fixed invoicing schedule beats invoicing whenever you remember to.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 5 minutes</span><p>Set up a simple running log — even a single spreadsheet row per shift — and log one made-up entry to see the shape of it.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="drill-sec" id="drill">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Module 9 drill</b><span class="label">one hour</span></div>
+      <h2>Rate card, agreement, live payment route</h2>
+    </div>
+
+    <div class="flow">
+      <p>Build the three pieces of paperwork that make this role a real business, end to end — not hypothetically, but with your own real numbers where possible.</p>
+
+      <h3>Deliver three things</h3>
+
+      <ol class="numlist">
+        <li><strong>Your rate card</strong> — built from your real costs per 9.2, priced under at least two of 9.1's three models.</li>
+        <li><strong>Your one-page agreement</strong> — using 9.3's shape, for a made-up or real support role.</li>
+        <li><strong>A payment route, proven</strong> — using 9.4's checks, with a live test transaction if at all possible, not a screenshot or a guess.</li>
+      </ol>
+
+      <h3>How it is marked</h3>
+
+      <ul class="list">
+        <li><strong>Does the rate card reflect real costs, not just a round number picked by feel?</strong> 9.2's arithmetic should be visible in the number.</li>
+        <li><strong>Is the agreement genuinely clear on scope, rate, and notice period?</strong> Ambiguity here is exactly what causes disputes later.</li>
+        <li><strong>Is the payment route actually tested, not assumed?</strong> A route that "should work" is not the same as one proven to work.</li>
+      </ul>
+
+      <div class="aside">
+        <span>What this drill is really testing</span>
+        <p>Whether you can turn this role into an actual, defensible small business — not just do the support work well, but be paid for it reliably and fairly.</p>
+      </div>
+
+      <div class="doit">
+        <span>Before module 10</span>
+        <p>You should now have: a pricing model chosen with real reasoning, your real hourly cost, a one-page agreement template, a tested payment route, and a tracking habit. Module 10 turns to the last piece — actually finding your first three clients.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Module 09 of 10 · The Ticket That Doesn't Come Back</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const FILE = { filename: 'C2-Module9-Worksheets.docx', b64: "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" };
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+
+  function saveBlob(filename, bytes) {
+    const blob = new Blob([bytes], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+
+  (async function wire() {
+    const btn = document.getElementById('dl-m9');
+    const status = document.getElementById('dl-m9-status');
+    if (!btn) return;
+
+    btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Saving…';
+      if (status) { status.textContent = ''; status.classList.remove('ok'); }
+      try {
+        const bytes = b64ToBytes(FILE.b64);
+        saveBlob(FILE.filename, bytes);
+        if (status) {
+          status.textContent = 'Saved.';
+          status.classList.add('ok');
+        }
+      } catch (err) {
+        const code = err && err.code ? err.code : 'unavailable';
+        if (status) status.textContent = code === 'declined' ? 'Cancelled.' : 'Could not save (' + code + ').';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+  })();
+})();
+</script>
+
+</body>
+</html>

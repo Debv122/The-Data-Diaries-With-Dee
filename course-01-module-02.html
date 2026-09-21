@@ -1,0 +1,834 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Running Someone Else’s Inbox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<style>
+  .piles{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .pile{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:7px}
+  .pile .p-n{font-family:var(--mono);font-size:.66rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember)}
+  .pile .p-t{font-family:var(--display);font-size:1.15rem;color:var(--ink);letter-spacing:-.015em}
+  .pile p{font-size:.92rem;color:var(--muted)}
+  .pile .p-eg{font-family:var(--mono);font-size:.76rem;color:var(--body);border-top:1px solid var(--line-soft);padding-top:8px;margin-top:2px}
+
+  .mail{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .mail .m-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .mrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:baseline}
+  .mrow:last-child{border-bottom:0}
+  .mrow .m-from{font-size:.88rem;color:var(--ink);font-weight:500}
+  .mrow .m-sub{grid-column:1;font-size:.9rem;color:var(--muted)}
+  .mrow .m-tag{grid-row:1 / span 2;font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--ember-edge);color:var(--ember);border-radius:999px;padding:3px 10px;align-self:center;white-space:nowrap}
+  .mrow .m-tag.ask{border-color:var(--line);color:var(--dusk)}
+  .mrow .m-tag.kill{border-color:var(--line);color:var(--faint)}
+
+  .vfile{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .vfile .v-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .vrow{display:grid;grid-template-columns:minmax(120px,150px) minmax(0,1fr);gap:6px 18px;padding:11px 18px;border-bottom:1px solid var(--line-soft);align-items:baseline;font-size:.92rem}
+  .vrow:last-child{border-bottom:0}
+  .vrow b{font-family:var(--mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);font-weight:400}
+  .vrow span{color:var(--body)}
+  @media (max-width:560px){.vrow{grid-template-columns:minmax(0,1fr)}}
+</style>
+
+</head>
+<body>
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">The Assistant They Can't Replace</span>
+      <span class="sep">/</span>
+      <span class="label">Module 02</span>
+      <span class="sep">/</span>
+      <span class="label">Free preview</span>
+    </div>
+    <h1>The inbox</h1>
+    <p class="standfirst">Five lessons, about seventy minutes. Inbox management is the single most requested thing in VA job posts, and it is where a new assistant is either trusted within two weeks or quietly replaced. This module is how you land on the right side of that.</p>
+
+    <nav class="toc">
+      <a href="#l1"><i>2.1</i><span>Getting access without getting your client hacked</span><u>14 min</u></a>
+      <a href="#l2"><i>2.2</i><span>Triage: the four piles and the ten-minute pass</span><u>15 min</u></a>
+      <a href="#l3"><i>2.3</i><span>Writing in someone else's voice, and the file that makes it repeatable</span><u>14 min</u></a>
+      <a href="#l4"><i>2.4</i><span>Which replies need a template, and which need a human decision</span><u>13 min</u></a>
+      <a href="#l5"><i>2.5</i><span>The end-of-day summary that makes a client keep you</span><u>11 min</u></a>
+      <a href="#drill"><i>D</i><span>Drill: sixty messages, one hour</span><u>60 min</u></a>
+    </nav>
+  </div>
+</header>
+
+<section class="lesson" id="l1">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 2.1</b><span class="label">14 minutes</span></div>
+      <h2>Getting access without getting your client hacked</h2>
+    </div>
+
+    <div class="flow">
+      <p>Adaeze — the therapist from module 1 — has agreed to a trial. Her first message to you is this:</p>
+
+      <div class="ex">
+        <div class="ex-h">The message almost every new assistant receives</div>
+        <div class="ex-b">
+          <span class="who">Adaeze</span>
+          <p class="quote">"Great, let's start Monday. My email login is adaeze@[her practice].com and the password is Sunshine2019! — the code will come to my phone so message me when you're logging in and I'll send it across."</p>
+        </div>
+      </div>
+
+      <p>This is the most dangerous moment in a new client relationship, and it will feel like the opposite. It will feel like trust. Here is why you should not accept it, and what to say instead.</p>
+
+      <h3>Why a shared password is your problem, not hers</h3>
+
+      <p>Think about what happens if something goes wrong three months from now. A client's account gets phished. Money moves that should not have moved. A confidential file goes somewhere it should not. There is exactly one login, it was used by two people, and <strong>the logs cannot tell anyone apart.</strong></p>
+
+      <p>You will be asked to prove it was not you. You will not be able to. Not because you did anything — because the setup made it impossible to demonstrate.</p>
+
+      <p>And a second, quieter cost. Every time Adaeze has to stop a session to send you a two-factor code, you have handed her a task. You were hired to remove those. Within a fortnight she will start feeling that you are more effort than help, and she will not be able to say why.</p>
+
+      <p class="pull">Password sharing is not trust. It is an absence of a system, and you are the one it will fail.</p>
+
+      <h3>What to do instead: delegation</h3>
+
+      <p>Gmail and Outlook both let an account owner grant another account <em>delegate access</em>. The delegate reads the inbox, replies, and files things — using their own login, with their own password and their own second factor. Nothing is shared.</p>
+
+      <p>What a delegate can do: read, reply, send, archive, and move messages to trash. What a delegate cannot do: change the password, touch account settings, permanently delete, or use chat and video calls as the owner. That boundary is not a limitation, it is the point — it is what protects you.</p>
+
+      <p>Three limits worth knowing before you promise anything, because getting caught out by these in week one is a bad look:</p>
+
+      <ul class="list">
+        <li><strong>No mobile app.</strong> Delegated inboxes cannot be accessed through the Gmail app on iOS or Android. You will be working in a browser. For anyone planning to run an inbox from a phone, this is the single most important sentence in the lesson — check you can actually work this way before you take the job.</li>
+        <li><strong>Recipients can see it was delegated.</strong> Sent mail carries a trace showing it came from you on her behalf. Most clients are fine with this and some prefer it; a few strongly are not. Ask before the first send, never after.</li>
+        <li><strong>It is all-or-nothing.</strong> You cannot be given access to some folders and not others. If there are messages Adaeze genuinely does not want you to see, delegation is the wrong tool and you need a shared or forwarding address instead.</li>
+      </ul>
+
+      <h3>The other two setups, and when each is right</h3>
+
+      <ul class="list">
+        <li><strong>A role address that forwards to you</strong> — hello@, bookings@, support@. Best when the work is a defined stream rather than her whole inbox. Cleanest boundary of the three, and the one to propose when a client is nervous. You send as that address, not as her.</li>
+        <li><strong>A shared inbox tool</strong> — where two people work the same mailbox with assignment, internal notes and no shared password. Right for a small business with several people touching the same address, or when someone needs to work from a phone. It costs money, so propose it with a reason attached.</li>
+      </ul>
+
+      <h3>How to say it to Adaeze</h3>
+
+      <div class="ex">
+        <div class="ex-h">Your reply — send this, not "sure, no problem"</div>
+        <div class="ex-b">
+          <span class="who">You</span>
+          <p class="quote">"Thanks Adaeze — I'd rather not use your password, for your protection and mine. If either of us ever needs to prove who did what, a shared login makes that impossible.<br><br>Better option: add me as a delegate on your email. Takes about two minutes in settings, I'll send the steps. I get in with my own login, you keep your password, and you never have to send me a code again.<br><br>Two things to know: I'd be working in a browser rather than the phone app, and people can see a reply came from me on your behalf. Happy either way — say the word if you'd rather I just had a bookings@ address instead, and I'll set that up."</p>
+        </div>
+      </div>
+
+      <p>Read what that message actually does. It refuses something, but the refusal is framed entirely as her protection. It names the exact benefit she cares about — no more codes. It discloses the two downsides before she can discover them. And it offers an alternative, so she is choosing between two options rather than being told no.</p>
+
+      <p>You have also, in your first week, demonstrated the thing module 1 said gets you paid: <strong>you thought about a risk she had not thought about, and you brought her a solution rather than a problem.</strong></p>
+
+      <div class="aside">
+        <span>When the client refuses</span>
+        <p>Some will insist on the password. If it is a small, short, low-stakes job, you may decide the risk is acceptable — that is your call to make deliberately, not by default. If you do accept it, ask her to change the password when the engagement ends, and put that in writing. If the work involves money, health information or anything legal, hold the line: <em>"I'm not able to work in an account I can't be individually accountable in — but I can set up a bookings address today and we can start this afternoon."</em></p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Never share a login. Not for security theatre — because you cannot prove your innocence in a shared account.</li>
+          <li>Delegation gives you access with your own credentials and no password exchange.</li>
+          <li>Its three limits: no mobile app, visible delegation on sent mail, no partial access.</li>
+          <li>A forwarding role address is the clean fallback; a shared inbox tool is for teams and phone work.</li>
+          <li>Refuse by offering an alternative, and disclose the downsides before the client finds them.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 15 minutes</span>
+        <p>Set up delegation between two email accounts you control — a friend's, a second account of your own, anything. Send one message as the delegate and look at exactly what the recipient sees in the header. You need to have seen this with your own eyes before you describe it to a client, because they will ask and a vague answer costs you the job.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l2">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 2.2</b><span class="label">15 minutes</span></div>
+      <h2>Triage: the four piles and the ten-minute pass</h2>
+    </div>
+
+    <div class="flow">
+      <p>You now have access. Adaeze's inbox has 340 unread messages and she has not told you what to do with any of them.</p>
+
+      <p>Almost every beginner does the same thing here: opens the top message, reads it, thinks about it, writes a reply, sends it, feels good, opens the next one. Ninety minutes later they have cleared eleven emails, missed the two that mattered, and have nothing to tell the client.</p>
+
+      <p>The fix is one rule, and it is the most useful sentence in this module.</p>
+
+      <p class="pull">Sort everything before you answer anything.</p>
+
+      <h3>Why sorting first works</h3>
+
+      <p>Sorting and answering are two different kinds of thinking. Sorting is fast, shallow and comparative — you are asking <em>what kind of thing is this, and how does it rank against the others?</em> Answering is slow and deep. Switching between them every thirty seconds is what makes an inbox exhausting.</p>
+
+      <p>More importantly: <strong>you cannot know what is urgent until you have seen everything.</strong> The email that looks alarming at position four is often nothing once you have read the one at position thirty-one that resolves it. Beginners reply to the alarming one and create work.</p>
+
+      <h3>The four piles</h3>
+
+      <div class="piles">
+        <div class="pile">
+          <span class="p-n">Pile 1</span>
+          <span class="p-t">Handle</span>
+          <p>You can deal with this completely, right now, without the client. Most of the inbox lives here once you know the business.</p>
+          <p class="p-eg">Reschedule requests · known FAQs · confirmations · routine supplier replies</p>
+        </div>
+        <div class="pile">
+          <span class="p-n">Pile 2</span>
+          <span class="p-t">Draft</span>
+          <p>Needs her decision, but not her writing. You prepare the reply, she approves in one word. This pile is where you become valuable.</p>
+          <p class="p-eg">A new client enquiry · a partnership request · a rate negotiation</p>
+        </div>
+        <div class="pile">
+          <span class="p-n">Pile 3</span>
+          <span class="p-t">Ask</span>
+          <p>Genuinely needs her, and you cannot draft it. Keep this pile small and ruthless — every item is a tax on her attention.</p>
+          <p class="p-eg">Something only she knows · a personal matter · a decision with real money attached</p>
+        </div>
+        <div class="pile">
+          <span class="p-n">Pile 4</span>
+          <span class="p-t">Kill</span>
+          <p>No reply needed, ever. Archive, file or unsubscribe. Being decisive here is a skill, not a risk.</p>
+          <p class="p-eg">Newsletters · receipts · notifications · cold sales pitches · thread already resolved</p>
+        </div>
+      </div>
+
+      <p>Four labels in her email client, applied at speed. No replies yet. On a backlog of 340 this takes about forty minutes; on a normal day's forty messages, ten.</p>
+
+      <h3>The ten-minute pass, step by step</h3>
+
+      <ol class="numlist">
+        <li><strong>Newest first, top to bottom.</strong> Read only the sender, subject and first line. Do not open threads unless the subject is genuinely ambiguous.</li>
+        <li><strong>Label and move on.</strong> Three seconds per message. If you are hesitating between two piles, it is a Draft — that is the safe default, because a draft can always be discarded.</li>
+        <li><strong>Kill first, and hard.</strong> Clear pile four before anything else. It is usually half the inbox, and getting it out of sight makes the rest legible.</li>
+        <li><strong>Then Handle, oldest first.</strong> Oldest first matters — the person who has waited longest is the one closest to giving up on you.</li>
+        <li><strong>Then Draft.</strong> Write them all, leave them unsent in one place, and present them together rather than dribbling questions at her all day.</li>
+        <li><strong>Ask last, and bundled.</strong> One message containing every question, each with your recommendation attached. Never send six separate questions across an afternoon.</li>
+      </ol>
+
+      <h3>What it looks like on a real morning</h3>
+
+      <div class="mail">
+        <div class="m-h">Adaeze's inbox, Tuesday 8:40am — first nine of forty-one</div>
+        <div class="mrow"><span class="m-from">Chinelo O.</span><span class="m-tag">Handle</span><span class="m-sub">Can we move Thursday's session to Friday?</span></div>
+        <div class="mrow"><span class="m-from">LinkedIn</span><span class="m-tag kill">Kill</span><span class="m-sub">You appeared in 14 searches this week</span></div>
+        <div class="mrow"><span class="m-from">unknown@gmail</span><span class="m-tag">Draft</span><span class="m-sub">Enquiry — do you have availability for weekly sessions?</span></div>
+        <div class="mrow"><span class="m-from">Bola A.</span><span class="m-tag">Handle</span><span class="m-sub">What are your rates again?</span></div>
+        <div class="mrow"><span class="m-from">HealthPlan Insurance</span><span class="m-tag ask">Ask</span><span class="m-sub">Claim 4471 rejected — action required within 14 days</span></div>
+        <div class="mrow"><span class="m-from">Stripe</span><span class="m-tag kill">Kill</span><span class="m-sub">Your payout of ₦184,200 is on the way</span></div>
+        <div class="mrow"><span class="m-from">Ify M.</span><span class="m-tag">Handle</span><span class="m-sub">Sorry — running 10 minutes late today</span></div>
+        <div class="mrow"><span class="m-from">Conference Org.</span><span class="m-tag">Draft</span><span class="m-sub">Invitation to speak in November — need answer by Fri</span></div>
+        <div class="mrow"><span class="m-from">Chinelo O.</span><span class="m-tag kill">Kill</span><span class="m-sub">Re: Can we move Thursday — never mind, Thursday works!</span></div>
+      </div>
+
+      <p>Look at the first row and the last. Chinelo asked to move her session, then withdrew it four hours later. An assistant answering top-down would have spent ten minutes rearranging a diary for no reason, and emailed a client twice. The assistant who sorted first spends nothing.</p>
+
+      <p>Look at the insurance rejection. It is the fifth item, does not look urgent, uses bland language — and it is the only thing in the inbox with a deadline and money attached. This is exactly the <em>load-bearing</em> email from lesson 1.3. Finding it in the first ten minutes rather than on day four is, on its own, worth more than a month of your fee.</p>
+
+      <div class="aside">
+        <span>The mistake that gets people fired in week one</span>
+        <p>Not the wrong reply. Silence. An assistant who spends her first day reading carefully and sends nothing has, from the client's side, done nothing at all — and clients have no way to see effort, only output. Sort, clear the easy pile, send the summary. Visible progress on day one buys you the patience you will need in week three.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Sort everything before answering anything. Sorting and answering are different modes and switching costs you.</li>
+          <li>Four piles: Handle, Draft, Ask, Kill. When unsure, it is a Draft.</li>
+          <li>Kill first, Handle oldest-first, Draft in a batch, Ask once, bundled, with recommendations.</li>
+          <li>Urgency is often invisible in the subject line. You find it by seeing everything, not by reading carefully.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 20 minutes</span>
+        <p>Run the four piles on your own inbox. Time yourself. Notice how many are Kill, and notice at least one message you had been avoiding that turns out to be a thirty-second Handle. If your own inbox is small, use a spam-heavy account — the sorting reflex is what you are building, not the outcome.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l3">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 2.3</b><span class="label">14 minutes</span></div>
+      <h2>Writing in someone else's voice, and the file that makes it repeatable</h2>
+    </div>
+
+    <div class="flow">
+      <p>Here is the fear that keeps new assistants from sending anything: <em>what if I don't sound like her?</em></p>
+
+      <p>It is a reasonable fear and there is a boring, reliable answer. You do not guess at someone's voice. <strong>You go and read it, write down what you find, and follow the notes.</strong> An hour of work, once, and then it is a document rather than a talent.</p>
+
+      <h3>Mining the sent folder</h3>
+
+      <p>Open her sent mail and read the last twenty replies she wrote herself. Do not read for content. Read for mechanics, and write down what you see:</p>
+
+      <ul class="list">
+        <li>How does she open? "Hi Chinelo," / "Hello Chinelo" / "Dear Ms Okafor" / straight into the sentence with no greeting at all?</li>
+        <li>How does she close? Does the sign-off change with the person?</li>
+        <li>Contractions — "I'll" or "I will"? This one difference does more to make a reply sound right or wrong than anything else.</li>
+        <li>Sentence length. Does she write in short lines, or long ones with semicolons?</li>
+        <li>Exclamation marks. How many per email? Zero is a real answer and you must match it.</li>
+        <li>What she never does. Emoji? "Kindly"? "Please be informed"? "Hope you're well"? Absences matter more than presences.</li>
+        <li>How she says no. This is the most important one, and the hardest to fake. Find three examples and copy the shape exactly.</li>
+        <li>How she apologises — does she explain, or just fix it?</li>
+      </ul>
+
+      <h3>The voice file</h3>
+
+      <p>Put it on one page in a shared document. This is the artefact — and when you eventually hand this client to someone else, or take on a second client, it is what stops you starting from nothing.</p>
+
+      <div class="vfile">
+        <div class="v-h">voice-adaeze.doc — one page, updated as you learn</div>
+        <div class="vrow"><b>Greeting</b><span>"Hi [first name]," — always first name, even for new enquiries. Never "Dear".</span></div>
+        <div class="vrow"><b>Sign-off</b><span>"Best, Adaeze" for clients. "Thanks, Adaeze" for suppliers. Never "Warm regards".</span></div>
+        <div class="vrow"><b>Contractions</b><span>Yes, throughout. "I'll", "you're", "that's". She is not formal.</span></div>
+        <div class="vrow"><b>Length</b><span>Short. Three or four sentences. Breaks paragraphs often. Never a wall of text.</span></div>
+        <div class="vrow"><b>Exclamations</b><span>Rare — roughly one in five emails, and only genuine warmth, never enthusiasm about admin.</span></div>
+        <div class="vrow"><b>Never says</b><span>"Kindly". "Please be advised". "As per". "Hope this finds you well". No emoji to clients.</span></div>
+        <div class="vrow"><b>Saying no</b><span>Warm, brief, no long apology, always offers the alternative: <em>"I can't do Thursdays at the moment, but I've got 2pm Wednesday or 10am Friday if either works."</em></span></div>
+        <div class="vrow"><b>Apologising</b><span>Once, plainly, then straight to the fix. Does not over-explain. <em>"Sorry, that's my mistake — I've moved it to 3pm."</em></span></div>
+        <div class="vrow"><b>Sensitive topics</b><span>Slower, more spacious, no contractions, never rushes to a next step. Match this and never speed it up.</span></div>
+        <div class="vrow"><b>Money</b><span>Direct, no hedging, no apologising for the amount. States it and stops.</span></div>
+      </div>
+
+      <h3>The two rules that keep you safe</h3>
+
+      <p><strong>Match the register, not the personality.</strong> You are not performing Adaeze. You are matching formality, warmth and length so nothing jars. Nobody reading a reschedule confirmation is analysing prose style — they notice only when something feels <em>off</em>, and "off" is almost always a mismatch in these mechanics.</p>
+
+      <p><strong>Never fake certainty in her voice.</strong> If you do not know whether she takes a particular insurance, do not write a confident sentence about it. Write the reply she would write if she also did not know: <em>"Let me check that and come back to you today."</em> Then check. A voice file governs how something is said. It never authorises you to invent what is said.</p>
+
+      <div class="ex">
+        <div class="ex-h">The same reply, wrong voice and right</div>
+        <div class="split">
+          <div>
+            <span class="who">Wrong</span>
+            <p class="quote">"Dear Chinelo,<br><br>Kindly be informed that your request to reschedule has been received and duly processed. Your appointment has now been moved to Friday at 2:00pm.<br><br>Warm regards,<br>Adaeze"</p>
+            <p style="color:var(--muted);font-size:.9rem">Nothing here is inaccurate. But Chinelo, who has been seeing Adaeze for a year, will read it and feel that something has changed — and what she will conclude is that she is now dealing with an office rather than a person.</p>
+          </div>
+          <div class="bad">
+            <span class="who">Right</span>
+            <p class="quote">"Hi Chinelo,<br><br>That's no problem — I've moved you to Friday at 2pm.<br><br>See you then.<br><br>Best,<br>Adaeze"</p>
+            <p style="color:var(--muted);font-size:.9rem">Contractions, first name, short, no ceremony. Chinelo notices nothing at all, which is exactly the goal. The best inbox work is invisible.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>Where AI fits, and where it does not</h3>
+
+      <p>A language model will happily draft either version above. Paste your voice file into it and the drafts improve immediately — this is one of the genuinely good uses, and module 7 covers the mechanics properly.</p>
+
+      <p>But notice what just happened: <strong>the value was in the voice file, and a human made that by reading twenty emails and noticing things.</strong> The tool applied it. That is the supervision relationship from lesson 1.3, in the most ordinary possible setting, and it is why the assistant who builds the file is worth more than the one who pastes the raw email into a chatbot and hopes.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Voice is researched, not guessed. Read twenty sent emails and write down the mechanics.</li>
+          <li>Contractions, greeting, sign-off and length do most of the work. Absences matter as much as habits.</li>
+          <li>Capture how she says no and how she apologises — those are the two you cannot improvise.</li>
+          <li>Match register, never invent content. "Let me check and come back to you today" is always available.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 25 minutes</span>
+        <p>Build a voice file for someone whose writing you can read — a boss, a lecturer, a group admin, a family member who emails. Use the ten rows above. Then write one short reply in their voice, show it to someone who knows them, and ask whether it sounds like them. Their hesitation tells you which row you got wrong.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l4">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 2.4</b><span class="label">13 minutes</span></div>
+      <h2>Which replies need a template, and which need a human decision</h2>
+    </div>
+
+    <div class="flow">
+      <p>By week three with Adaeze you will notice something: you are writing the same six emails over and over. Rates. Availability. Where the office is. What happens if you cancel late. Whether she takes a particular insurance. How to pay.</p>
+
+      <p>This is good news, and it is where most of your time savings will come from. But it is also where assistants get themselves into trouble, by templating something that should never have been templated.</p>
+
+      <h3>The test</h3>
+
+      <p class="pull">Does the answer change depending on facts only the client knows, or on how this particular person is going to feel?</p>
+
+      <p>If no to both — template it. If yes to either — it is a Draft, and a human decides.</p>
+
+      <p>"What are your rates?" — the answer is the same for everyone and nobody's feelings are engaged. Template. "I've been struggling since our last session, can I move to twice a week?" — the answer depends on her clinical judgement and this person is fragile. Never template, never automate, and be careful even drafting it.</p>
+
+      <h3>The four that are never templates</h3>
+
+      <ul class="list">
+        <li><strong>Money leaving or changing.</strong> A refund, a discount, a rate change, a payment plan. Even when you are confident, this is a Draft. The cost of being wrong is direct and the client will remember it.</li>
+        <li><strong>Anything legal or contractual.</strong> A cancellation dispute, a complaint that mentions a lawyer, anything touching a signed agreement. Escalate immediately and do not soften it on the way.</li>
+        <li><strong>A complaint or an upset person.</strong> Even a small one. A templated reply to a real grievance reads as contempt, and it converts an annoyed person into an angry one.</li>
+        <li><strong>Any promise about the future.</strong> "Yes, she can start Monday." "Yes, we can do that." You do not own her calendar's reasons or her capacity. Draft it, let her approve it, then send.</li>
+      </ul>
+
+      <h3>Templates with holes</h3>
+
+      <p>A flat template sounds like a form letter, which loses you the warmth that made the client hire a person. The fix is to build every template with two or three gaps you must fill by hand.</p>
+
+      <div class="ex">
+        <div class="ex-h">Template — new enquiry, availability</div>
+        <div class="ex-b">
+          <p class="quote">Hi [FIRST NAME],<br><br>Thanks for getting in touch — [ONE SPECIFIC LINE RESPONDING TO WHAT THEY ACTUALLY SAID].<br><br>I've currently got space on [DAY] at [TIME] and [DAY] at [TIME]. Sessions are 50 minutes and ₦[X].<br><br>If either suits, let me know and I'll hold it for you. If neither does, tell me roughly when works and I'll see what I can do.<br><br>Best,<br>Adaeze</p>
+          <p style="color:var(--muted);font-size:.9rem">The second line is the whole difference. "You mentioned things have been hard since your move — I'm glad you reached out" takes fifteen seconds and makes the other four lines read as a person rather than a system. A template without a hole in it is a form letter with extra steps.</p>
+        </div>
+      </div>
+
+      <p>Keep your templates in a shared document the client can see, not locked in your head. Two reasons: she can correct them, and it is visible evidence of work she would otherwise never notice you doing.</p>
+
+      <h3>Escalation: what you decide, and how fast</h3>
+
+      <p>The judgement you are really being paid for is knowing when to stop and ask. A simple, defensible standard:</p>
+
+      <ol class="numlist">
+        <li><strong>Decide it yourself</strong> if it is reversible, costs under an agreed amount, and matches something she has said or done before. Log it, tell her in the summary, move on.</li>
+        <li><strong>Draft and ask</strong> if it is reversible but you have no precedent. She replies with one word and now you have precedent for next time.</li>
+        <li><strong>Stop and escalate immediately</strong> if it is irreversible, involves money above the line, is legal, or involves someone's wellbeing. Do not wait for the end-of-day summary. Message her.</li>
+      </ol>
+
+      <p>Agree that "line" in your first week — a specific number. <em>"Anything under ₦20,000 I'll just handle and tell you about; anything over I'll ask first."</em> Clients almost never think to set this and are relieved when you do, because it is the thing they were quietly worried about.</p>
+
+      <div class="aside">
+        <span>The line that saves you</span>
+        <p>When you are genuinely unsure and she is unreachable, there is always one safe move: acknowledge without committing. <em>"Thanks for this — let me look into it and come back to you today."</em> It buys hours, costs nothing, and is infinitely better than either guessing or leaving someone in silence.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Template it only if the answer never changes and nobody's feelings are engaged.</li>
+          <li>Money, legal, complaints and future promises are never templates.</li>
+          <li>Build every template with two or three holes you fill by hand — the specific line is what makes it human.</li>
+          <li>Agree a value threshold in week one so you know what you may decide alone.</li>
+          <li>"Let me look into it and come back to you today" is always available and always safe.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 20 minutes</span>
+        <p>Write three templates for a business you know — a school, a shop, a clinic, a church. Mark the holes explicitly in capitals. Then write one sentence for each explaining what would have to be true in a message for you <em>not</em> to use the template. That sentence is your judgement, written down.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l5">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 2.5</b><span class="label">11 minutes</span></div>
+      <h2>The end-of-day summary that makes a client keep you</h2>
+    </div>
+
+    <div class="flow">
+      <p>You have had a good day. You sorted 340 messages, handled 60, drafted 8, killed 190. Adaeze has no idea. From where she sits, her inbox is quieter and she does not know why, or whether it will still be quiet tomorrow.</p>
+
+      <p>This is the gap that gets competent assistants let go. <strong>Clients cannot see effort. They can only see output, and only if you show it to them.</strong> The end-of-day summary is how you show it, and it takes four minutes.</p>
+
+      <h3>The shape</h3>
+
+      <p>Three sections, always the same order, always under 150 words. Same order every day matters more than you would think — she learns where to look and stops reading it properly, which is the goal.</p>
+
+      <div class="ex">
+        <div class="ex-h">6:00pm — Tuesday</div>
+        <div class="ex-b">
+          <span class="who">You → Adaeze</span>
+          <p class="quote"><strong>Handled (14)</strong><br>Reschedules for Chinelo, Ify and two others. Rate questions ×3. Confirmed Thursday's supplier order. Cleared 190 newsletters and receipts.<br><br><strong>Waiting on you (2)</strong><br>1. HealthPlan rejected claim 4471 — 14-day deadline, so Friday at the latest. I've drafted an appeal, it's in your drafts. Say "send" and it goes.<br>2. Speaking invitation for 14 Nov, they need an answer by Friday. Your diary is clear that day. I'd say yes — happy to draft the reply either way.<br><br><strong>Tomorrow</strong><br>Chasing three unpaid invoices, and I'll set up templates for the rate question — it's come up eight times this week.</p>
+        </div>
+      </div>
+
+      <h3>What that message is doing</h3>
+
+      <ul class="list">
+        <li><strong>It makes invisible work visible.</strong> "Cleared 190 newsletters" costs one line and quietly justifies your fee.</li>
+        <li><strong>Every question arrives with a recommendation.</strong> This is the single most important rule in the lesson. "Say send and it goes" is a decision she makes in two seconds. "What should I do about the insurance claim?" is homework.</li>
+        <li><strong>It carries the deadlines.</strong> She does not have to remember that Friday matters. You are holding it, and she can feel that you are.</li>
+        <li><strong>It ends with tomorrow.</strong> One line showing you are working from a plan rather than reacting. This is the line that quietly moves you up the trust ladder.</li>
+        <li><strong>It is short.</strong> A long summary is another thing to read, and reading is what she is paying to do less of.</li>
+      </ul>
+
+      <p class="pull">Never send a question without a recommended answer attached. It is the difference between an assistant and another person who needs managing.</p>
+
+      <h3>What to leave out</h3>
+
+      <p>Do not report process — "I spent the morning going through the backlog" tells her nothing she can use. Do not list every single item; count them and name the notable ones. Do not include problems you have already solved, unless she would find out anyway or it might recur. And do not apologise for what you did not finish. State it plainly in Tomorrow and move on.</p>
+
+      <p>One thing you must always include, however uncomfortable: <strong>a mistake you made.</strong> Same day, one line, with the fix already done. <em>"I sent Bola the wrong time for Thursday — caught it, corrected it, she's fine."</em> An assistant who reports her own errors becomes someone whose reports can be trusted entirely. An assistant who hides a small one has taught the client to verify everything, and you will never recover that.</p>
+
+      <h3>Adjusting to the client</h3>
+
+      <p>Some clients want this daily; some find daily oppressive and want it Friday. Ask in week one: <em>"Would you rather have a short end-of-day note, or one summary on Fridays?"</em> Then stick to whatever they choose, on time, including the days when there is almost nothing to report. <strong>Consistency is what is being tested at rung two.</strong> A summary that arrives every day for three weeks and then stops tells the client, accurately, that your attention has moved elsewhere.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Clients see output, never effort. The summary is how effort becomes visible.</li>
+          <li>Three sections, same order, under 150 words: Handled, Waiting on you, Tomorrow.</li>
+          <li>Every question carries your recommendation. Never hand back homework.</li>
+          <li>Report your own mistakes the same day, with the fix attached.</li>
+          <li>Send it on the quiet days too — the rhythm is the point.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 10 minutes</span>
+        <p>Write an end-of-day summary for your own day today, in the three-section format, under 150 words. Include one thing you did not finish and one thing you got wrong. It will feel strange to write about your own day this way, which is the exercise — the format is a habit of thought before it is a message.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="drill-sec" id="drill">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Module 2 drill</b><span class="label">one hour, timed</span></div>
+      <h2>Sixty messages, one hour</h2>
+    </div>
+
+    <div class="flow">
+      <p>You are given one week of Adaeze's real inbox: sixty messages, downloadable, exactly as messy as it sounds. Two clients have written three times about the same thing. One message is genuinely urgent and does not look it. One is from someone in distress. One is a supplier chasing an invoice that was already paid. Two are near-identical enquiries from the same person under different addresses.</p>
+
+      <p>The clock is the point. An hour is enough if you sort first and too little if you do not, which is the lesson working rather than being explained.</p>
+
+      <h3>Deliver three things</h3>
+
+      <ol class="numlist">
+        <li><strong>The sorted inbox.</strong> All sixty labelled Handle, Draft, Ask or Kill, and every Handle actually replied to using the supplied voice file.</li>
+        <li><strong>A decision log.</strong> One line for every judgement call: what you decided, and why. Include the ones you got wrong when you realised later — that is what the log is for.</li>
+        <li><strong>The end-of-day summary.</strong> Under 150 words, three sections, every question carrying a recommendation.</li>
+      </ol>
+
+      <h3>How it is marked</h3>
+
+      <ul class="list">
+        <li><strong>Did you find the urgent one?</strong> It is in there, worded blandly, sitting in the middle. This is the single highest-weighted item.</li>
+        <li><strong>Did you leave the distressed message alone?</strong> Anyone who templated a reply to it fails the drill regardless of everything else. Correct answer: Ask, escalated immediately, not held for the summary.</li>
+        <li><strong>Is your Ask pile small?</strong> More than four items means you pushed work back at her.</li>
+        <li><strong>Does every question have a recommendation?</strong> Any that does not is homework, not help.</li>
+        <li><strong>Does the voice hold?</strong> Read your replies beside her real ones. Contractions and greetings are where people slip.</li>
+        <li><strong>Did you log the thing you got wrong?</strong> There is a trap in the set designed to catch you. Everyone falls into it. What is marked is whether you noticed and wrote it down.</li>
+      </ul>
+
+      <div class="aside">
+        <span>What this drill is really testing</span>
+        <p>Not speed, and not writing. Whether you can tell the difference between what is loud and what is load-bearing — and whether, under time pressure with an incomplete picture, you make decisions and write them down instead of freezing or asking permission. That is the whole job, compressed into an hour.</p>
+      </div>
+
+      <div class="doit">
+        <span>Before module 3</span>
+        <p>You should now have: a working delegated inbox you have set up yourself, a voice file for a real person, three templates with the holes marked, and one end-of-day summary you have written for your own day. Module 3 takes the calendar, and it assumes you already understand how a Draft reaches a client — because half of calendar work arrives as email.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Module 02 of 10 · The Assistant They Can't Replace</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

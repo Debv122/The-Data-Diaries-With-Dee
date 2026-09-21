@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meetings, and What Happens After Them</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- download callout ---------- */
+
+  .dl-callout{
+    margin-top:clamp(22px,3vw,32px);
+    display:flex;flex-wrap:wrap;gap:16px 20px;align-items:center;
+    border:1px solid var(--line);border-radius:12px;
+    background:var(--surface);padding:16px 20px;
+  }
+  .dl-callout .dl-text{flex:1;min-width:200px}
+  .dl-callout .dl-text b{display:block;font-size:.98rem;color:var(--ink);font-weight:600;margin-bottom:2px}
+  .dl-callout .dl-text span{font-size:.88rem;color:var(--muted)}
+  .dl-btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    height:42px;padding:0 20px;border-radius:999px;flex:none;
+    border:1px solid var(--ember);background:var(--ember);color:#160C08;
+    font-size:.86rem;font-weight:500;letter-spacing:-.01em;cursor:pointer;
+    font-family:inherit;transition:background .2s ease,transform .2s ease;
+  }
+  .dl-btn:hover{background:#EE9679;transform:translateY(-1px)}
+  .dl-btn:disabled{opacity:.55;cursor:default;transform:none}
+  .dl-status{font-family:var(--mono);font-size:.72rem;color:var(--faint);flex:none}
+  .dl-status.ok{color:var(--ember)}
+</style>
+<style>
+  .tree{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .tree .t-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .tree .t-b{padding:16px 18px;font-family:var(--mono);font-size:.85rem;line-height:1.85;color:var(--body);white-space:pre}
+  .tree .t-b .d{color:var(--ember)}
+  .tree .t-b .f{color:var(--muted)}
+  .tree .t-b .c{color:var(--faint);font-family:var(--sans);font-style:italic}
+
+  .namerow{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .namerow .n-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .nrow{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr);gap:6px 14px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:center;font-family:var(--mono);font-size:.84rem}
+  .nrow:last-child{border-bottom:0}
+  .nrow .bad{color:var(--dusk);text-decoration:line-through;text-decoration-color:var(--dusk);opacity:.7}
+  .nrow .good{color:var(--ink);font-weight:500}
+  .nrow .arrow{color:var(--ember);text-align:center;font-family:var(--sans)}
+  @media (max-width:560px){.nrow{grid-template-columns:minmax(0,1fr)}.nrow .arrow{display:none}}
+
+  .stagebox{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .stagebox .s-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .srow{display:grid;grid-template-columns:120px minmax(0,1fr);gap:6px 16px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:baseline;font-size:.92rem}
+  .srow:last-child{border-bottom:0}
+  .srow b{font-family:var(--mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ember)}
+  .srow span{color:var(--body)}
+  @media (max-width:560px){.srow{grid-template-columns:minmax(0,1fr)}}
+</style>
+
+
+</head>
+<body>
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">The Assistant They Can't Replace</span>
+      <span class="sep">/</span>
+      <span class="label">Module 05</span>
+    </div>
+    <h1>Meetings, and what happens after them</h1>
+    <p class="standfirst">Five lessons, about an hour. A meeting that produces no written record is a meeting that happened to nobody. This module is the discipline that turns an hour of talk into an agenda that made it shorter, notes worth keeping, actions with names and dates on them, and the follow-through that gets them actually done.</p>
+
+    <nav class="toc">
+      <a href="#l1"><i>5.1</i><span>The agenda that makes a meeting shorter</span><u>14 min</u></a>
+      <a href="#l2"><i>5.2</i><span>Notes: what to capture, and the 80% you should ignore</span><u>12 min</u></a>
+      <a href="#l3"><i>5.3</i><span>Turning talk into owned actions with names and dates on them</span><u>13 min</u></a>
+      <a href="#l4"><i>5.4</i><span>Transcription tools, and the specific errors they make</span><u>12 min</u></a>
+      <a href="#l5"><i>5.5</i><span>Chasing people without becoming the person they avoid</span><u>11 min</u></a>
+      <a href="#drill"><i>D</i><span>Drill: a messy transcript, a clean record</span><u>60 min</u></a>
+    </nav>
+
+    <div class="dl-callout">
+      <div class="dl-text">
+        <b>Module 5 worksheets</b>
+        <span>The five fill-in pages this module refers to — agenda template, notes sorted into buckets, the action converter, a transcript check log and the escalation ladder. One .docx, five pages.</span>
+      </div>
+      <button class="dl-btn" id="dl-m5" type="button">Save worksheets (.docx)</button>
+      <span class="dl-status" id="dl-m5-status"></span>
+    </div>
+  </div>
+</header>
+
+<section class="lesson" id="l1">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 5.1</b><span class="label">14 minutes</span></div>
+      <h2>The agenda that makes a meeting shorter</h2>
+    </div>
+
+    <div class="flow">
+      <p>Adaeze has a call booked with MedSupply — the equipment supplier from module 4's handover file — to renegotiate a contract that renews automatically in three weeks. Thirty minutes on the calendar. No agenda. Left to itself, this call will run forty-five minutes, cover the pricing question twice because nobody wrote down that it got answered the first time, and end with "let's circle back" on the one thing that actually needed a decision.</p>
+
+      <p>An agenda is not a formality you add to look organised. It is the single intervention most likely to make a meeting shorter, because it forces the decision about what the meeting is <em>for</em> to happen before the meeting, when there is time to think, instead of during it, when there is not.</p>
+
+      <p class="pull">A meeting without an agenda is a conversation. A meeting with one is a piece of work with a start and an end.</p>
+
+      <h3>Four things, every time</h3>
+
+      <p>A working agenda is short enough to read in the time it takes to sit down. It has four parts, in this order:</p>
+
+      <ol class="numlist">
+        <li><strong>Objective.</strong> One sentence: what decision or outcome this meeting exists to produce. If you cannot write this sentence, the meeting probably should not be thirty minutes on someone's calendar — it should be an email.</li>
+        <li><strong>Topics, each with an owner and a time box.</strong> Not "pricing" — "pricing: renewal rate, MedSupply to present, 10 min." A time box next to every topic is what stops the first topic eating the whole meeting.</li>
+        <li><strong>Pre-reads.</strong> Anything a participant needs to have looked at beforehand, named specifically, sent with the agenda — not "the usual documents."</li>
+        <li><strong>Decisions needed.</strong> The one or two things that must be decided before anyone leaves, stated as questions with a yes/no or a choice, not as open topics. "Do we accept the 8% increase or counter at 4%?" — not "discuss pricing."</li>
+      </ol>
+
+      <h3>Worked example</h3>
+
+      <p>For the MedSupply renewal call, the objective read: <em>decide whether to accept the proposed 8% increase, counter, or move to the alternative supplier scoped in June.</em> Three topics, each timed — MedSupply presents the increase, we compare it against the June quote, then decide — and one decision needed by the end: accept at 8%, counter at a number, or give 30-day notice today, since the window closes in three weeks. The full template, ready to fill in for your own meetings, is in the worksheet pack above.</p>
+
+      <p>Notice what this does before the call even starts. MedSupply now knows they need to justify the number, not just state it. Adaeze knows the meeting cannot end vaguely — one of three named outcomes has to happen. And you, taking notes, already know the shape of what you are listening for.</p>
+
+      <h3>Send it the day before, not the morning of</h3>
+
+      <p>An agenda sent an hour before a call is barely better than no agenda — nobody has time to look at the pre-read or think about the decision in advance, so the meeting still does that thinking live, which is exactly what the agenda was meant to prevent. Twenty-four hours is the useful minimum. For anything with a pre-read longer than a page, give it two working days.</p>
+
+      <h3>When there is no agenda and you cannot get one made</h3>
+
+      <p>Sometimes the other side calls the meeting and won't produce an agenda — a client's accountant, say, who "just wants to chat through a few things." You can still impose structure from your side: send a one-line note beforehand — "Ahead of tomorrow, is there anything specific you'd like Adaeze to have looked at, or a decision you're hoping to reach?" — which usually surfaces the real objective even when the other party hadn't named it to themselves.</p>
+
+      <div class="aside">
+        <span>The tell that an agenda is doing its job</span>
+        <p>A good agenda gets referenced mid-meeting — someone says "we're on the pricing topic, let's park the delivery-schedule question for its own slot." A bad one gets sent and never mentioned again, because it was written to satisfy a checklist rather than to actually run the meeting. If nobody refers back to it, the objective and decisions sections probably weren't specific enough.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Four parts: objective, topics with owner and time box, pre-reads, decisions needed.</li>
+          <li>Decisions needed are questions with a specific answer shape — never open topics.</li>
+          <li>Send 24 hours ahead minimum; two working days if there's a real pre-read.</li>
+          <li>An agenda that never gets referenced mid-meeting wasn't specific enough.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 10 minutes</span>
+        <p>Take a real meeting you have coming up this week — yours, a client's, anyone's. Write the objective sentence first. If you can't write it in one sentence without the word "discuss," that's the sign the meeting itself needs rescoping before the agenda does.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l2">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 5.2</b><span class="label">12 minutes</span></div>
+      <h2>Notes: what to capture, and the 80% you should ignore</h2>
+    </div>
+
+    <div class="flow">
+      <p>The MedSupply call happens. Thirty-eight minutes of talk: pleasantries, a story about a shipping delay in April, the actual pricing negotiation, a tangent about a trade show, and finally the decision. A transcript of all of it would run to nine pages. Nobody will ever read a nine-page account of this call — not Adaeze, not you, not future-you trying to remember what was agreed six months from now.</p>
+
+      <p class="pull">Meeting notes are not a record of what was said. They are a record of what changes because of what was said.</p>
+
+      <h3>The test for every sentence</h3>
+
+      <p>Before writing anything down during a meeting, run it through one question: <em>if this sentence didn't exist, would anything Adaeze does next week be different?</em> If yes, capture it. If no — however interesting, however true — leave it out. The shipping-delay story is genuinely interesting. It changes nothing about what happens next. It does not belong in the notes.</p>
+
+      <h3>Four categories, and only four</h3>
+
+      <p>Good meeting notes sort everything into four buckets. Nothing else earns a line:</p>
+
+      <ol class="numlist">
+        <li><strong>Decisions.</strong> What was actually decided, stated as a fact, not a discussion. "Accepted MedSupply's renewal at 5%, countered down from their initial 8%" — not "we talked about pricing for a while."</li>
+        <li><strong>Actions.</strong> Who does what, by when. Covered in full in lesson 5.3 — this is where the meeting's talk becomes someone's task list.</li>
+        <li><strong>Open questions.</strong> Things raised but not resolved, that need an answer from someone not in the room, or more information before a decision can be made.</li>
+        <li><strong>The parking lot.</strong> Things that came up, matter to someone, but are out of scope for this meeting. Written down so the person who raised it feels heard, and so it doesn't get raised again next meeting because it was never acknowledged.</li>
+      </ol>
+
+      <h3>Worked example: the same 38 minutes, two ways</h3>
+
+      <div class="ex">
+        <div class="ex-h">What was said, versus what got written down</div>
+        <div class="split">
+          <div>
+            <span class="who">Everything said — unusable</span>
+            <p style="color:var(--muted);font-size:.9rem">"So yeah, we had that issue back in April with the shipment, took like three weeks longer than expected, real headache honestly. Anyway on pricing — so we're looking at, I think it's an 8% increase this year, mostly freight costs, everyone's dealing with that. Bola mentioned she saw a trade show in Lagos next month, might be worth attending. Adaeze pushed back a bit, asked if there was room to move — MedSupply said they'd need to check with their finance team but could probably do 5% if we signed today rather than at renewal. Adaeze said yes to that. Oh, and someone needs to check whether the current contract has an early-termination clause, wasn't sure. Also delivery schedule for Q4 still needs sorting, that's a separate conversation apparently."</p>
+          </div>
+          <div class="bad">
+            <span class="who">Sorted into four buckets — usable</span>
+            <p style="color:var(--muted);font-size:.9rem"><strong>Decision:</strong> Accepted 5% renewal increase (countered down from 8%), effective immediately rather than at the automatic renewal date.<br><br><strong>Action:</strong> You — confirm the 5% in writing with MedSupply and update the contract file, by end of day.<br><br><strong>Open question:</strong> Does the current contract have an early-termination clause? Needs checking before next renewal cycle.<br><br><strong>Parking lot:</strong> Q4 delivery schedule — separate conversation, not this call. Lagos trade show next month — Bola to send details if relevant.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Notice the shipping-delay story and the pleasantries appear nowhere in the right-hand column. That is not an oversight — it is the whole discipline. Ninety seconds of the call mattered. The rest was the social fabric that makes people willing to have the conversation at all, valuable in the room, worthless on paper afterward.</p>
+
+      <h3>Capture live, clean up within the hour</h3>
+
+      <p>Write the four buckets as headings before the meeting starts, and drop lines under them as things happen — you will not remember the exact wording of a decision made forty minutes ago if you wait until the call ends to start writing. Then clean the raw version into the sent-out version within the hour, while the context is still fresh enough to fix anything ambiguous.</p>
+
+      <div class="aside">
+        <span>What "clean" does not mean</span>
+        <p>Cleaning up notes means removing what doesn't matter and sharpening the wording of what does — it does not mean softening a decision that was actually made, or turning a firm "no" into "we'll consider it" because that reads more diplomatically. Notes that quietly rewrite what happened are worse than no notes, because everyone believes them.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>The test: if this sentence didn't exist, would next week look different? If not, leave it out.</li>
+          <li>Four buckets only — decisions, actions, open questions, parking lot.</li>
+          <li>Write the headings before the meeting; fill them live; clean up within the hour.</li>
+          <li>Clean means sharper, never softer. Don't quietly rewrite what was decided.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 10 minutes</span>
+        <p>Find notes from any meeting you've sat in recently — a class, a call, anything with a written record. Re-sort them into the four buckets. Whatever's left over that doesn't fit any of the four is very likely the part nobody needed written down.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l3">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 5.3</b><span class="label">13 minutes</span></div>
+      <h2>Turning talk into owned actions with names and dates on them</h2>
+    </div>
+
+    <div class="flow">
+      <p>"We should look into whether the insurance portal can be set up for automatic renewals." Someone said this in a meeting, everyone nodded, and it will never happen — because it is not an action. It is a thought wearing the costume of an action. Nobody owns it, nothing is due, and "look into" doesn't describe a task anyone could actually finish and check off.</p>
+
+      <p class="pull">Talk becomes work only when it has a verb, an owner, and a date. Remove any one of the three and it quietly reverts to a thought.</p>
+
+      <h3>The shape every action needs</h3>
+
+      <p>Every line in the actions bucket from lesson 5.2 should be checkable against this shape before it's written down:</p>
+
+      <div class="stagebox">
+        <div class="s-h">Three parts, in order</div>
+        <div class="srow"><b>Verb</b><span>A concrete action someone can point to as done or not done — "email," "confirm," "draft," "book." Not "look into," "consider," or "follow up on," which describe a direction of attention, not a finishable task.</span></div>
+        <div class="srow"><b>Owner</b><span>One named person. "The team will" is not an owner — it's an escape hatch nobody feels responsible for. If two people are genuinely needed, name a single owner for coordinating the two.</span></div>
+        <div class="srow"><b>Date</b><span>A specific date, not "soon" or "this week." If nobody stated one in the meeting, that is itself worth flagging back to the room rather than inventing one.</span></div>
+      </div>
+
+      <h3>Worked example: vague to owned</h3>
+
+      <div class="ex">
+        <div class="ex-h">The same five things said in the meeting, fixed</div>
+        <div class="ex-b">
+          <div class="nrow"><span class="bad">We should look into automatic renewal for the insurance portal.</span><span class="arrow">→</span><span class="good">You: research whether the insurance portal supports auto-renewal — by Fri 11 Sept.</span></div>
+          <div class="nrow"><span class="bad">Someone needs to check the early-termination clause.</span><span class="arrow">→</span><span class="good">You: check the MedSupply contract for an early-termination clause — by end of day.</span></div>
+          <div class="nrow"><span class="bad">Bola will follow up on the trade show.</span><span class="arrow">→</span><span class="good">Bola: send trade show dates and cost to Adaeze — by Wed 9 Sept.</span></div>
+          <div class="nrow"><span class="bad">We'll circle back on Q4 delivery.</span><span class="arrow">→</span><span class="good">Adaeze: schedule a separate 20-min call on Q4 delivery — by Fri 11 Sept.</span></div>
+          <div class="nrow"><span class="bad">MedSupply will get back to us on the finance approval.</span><span class="arrow">→</span><span class="good">MedSupply (Tunde): confirm 5% approved by their finance team, in writing — by Thu 10 Sept.</span></div>
+        </div>
+      </div>
+
+      <p>Notice the fourth and fifth lines have owners who were not you or Adaeze. That is deliberate — an action list only for your own side's tasks is half a record. If MedSupply's Tunde owes a confirmation, write it down with his name on it, same as anyone else's. It is what makes the follow-up in lesson 5.5 possible at all: you cannot chase a debt nobody wrote down.</p>
+
+      <h3>When the meeting doesn't give you a date</h3>
+
+      <p>People often agree to do something without naming when. Don't quietly assign a date yourself and hope nobody minds — ask, in the room if you can, or in the follow-up note if you can't: "By when should we expect the early-termination check?" A date supplied afterward, in writing, that nobody objects to, functions the same as one agreed live. A date you invented and nobody confirmed does not — it just moves the ambiguity from "when" to "did we actually agree to that."</p>
+
+      <h3>Send the list within the hour, and ask for silence to mean agreement</h3>
+
+      <p>The follow-up note — decisions, actions with owners and dates, open questions — should go out within an hour of the meeting ending, while everyone still remembers agreeing to it. Close it with one line: "Flag anything here that doesn't match your understanding — otherwise I'll take this as agreed." That single sentence turns a passive record into an active one: silence becomes confirmation, not ambiguity.</p>
+
+      <div class="aside">
+        <span>Why this is the single highest-leverage habit in the module</span>
+        <p>Everything else in this module — good agendas, clean notes — exists to make this step possible. A meeting can have a perfect agenda and beautifully sorted notes and still produce nothing, if the actions inside it stay vague. This is the step where the meeting's value actually gets banked.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Every action needs a verb, a named owner, and a specific date — missing any one, it isn't an action yet.</li>
+          <li>"Look into," "consider," "follow up on" are thoughts, not tasks. Replace with a checkable verb.</li>
+          <li>Record actions owed by the other side too, with their names on them.</li>
+          <li>Send the follow-up within the hour, and ask for silence to mean agreement.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 10 minutes</span>
+        <p>Take the "everything said" transcript from lesson 5.2's worked example. Find the two implied actions buried in it that never made it into the right-hand column — one is the trade show, one is the early-termination clause. Write both out in full verb-owner-date form.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l4">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 5.4</b><span class="label">12 minutes</span></div>
+      <h2>Transcription tools, and the specific errors they make</h2>
+    </div>
+
+    <div class="flow">
+      <p>An automatic transcription or note-taking tool can join a call, produce a rolling transcript, and hand you a first draft of a summary before you've even finished typing your own notes. Used well, it is a genuine time-saver. Used as a replacement for paying attention, it will eventually put a wrong number in front of a client and your name will be on the email that sent it.</p>
+
+      <p class="pull">A transcript is a first draft, never a final record. It listened to the audio. It did not understand the meeting.</p>
+
+      <h3>Where these tools are strong</h3>
+
+      <p>Automatic transcription is genuinely reliable at catching the general shape of a conversation — who spoke roughly when, the rough sequence of topics, and a searchable text version of a call you might otherwise have no record of at all. For a low-stakes internal check-in, the raw transcript is often good enough on its own. The failure modes below matter most exactly where the stakes are highest: numbers, names, and who-said-what in a negotiation.</p>
+
+      <h3>The five errors worth specifically watching for</h3>
+
+      <ol class="numlist">
+        <li><strong>Numbers and percentages, misheard or mis-transcribed.</strong> "8 percent" and "80 percent" sound close enough on a mediocre connection that either can come out wrong, and a wrong number in a pricing note is the single most expensive kind of transcription error in this whole module. Verify every number that affects money or a deadline against your own live notes.</li>
+        <li><strong>Proper nouns and acronyms, mangled.</strong> Names the tool hasn't seen before — "Tunde," "MedSupply," "HealthPlan" — get autocorrected into the nearest dictionary word, or spelled a different way each time they're said. A transcript with three spellings of the same supplier's name across one call is common, not a fluke.</li>
+        <li><strong>Speaker attribution, wrong during overlap.</strong> When two people talk over each other — common in the moment someone jumps in to push back on a price — the tool often assigns the interjection to the wrong speaker, or merges both into one. This matters enormously for a negotiation, where "who actually said 5%" is the whole point.</li>
+        <li><strong>Accents and audio quality, systematically worse for some speakers.</strong> Transcription accuracy is not evenly distributed — it tends to be measurably worse for accents underrepresented in the tool's training data, and worse again on a poor mobile connection. In practice this means the same call can produce a clean transcript for one participant and a garbled one for another, for reasons that have nothing to do with how clearly either person spoke.</li>
+        <li><strong>Silent gaps, not flagged as gaps.</strong> When a connection drops for a few seconds, some tools simply skip the missing audio rather than marking a gap — so the transcript reads as continuous when a chunk of the conversation, possibly including a decision, is simply missing. A transcript that looks complete is not proof that it is.</li>
+      </ol>
+
+      <h3>Worked example: the same line, three ways</h3>
+
+      <div class="ex">
+        <div class="ex-h">What was actually said, what the tool produced, what you should send</div>
+        <div class="ex-b">
+          <p class="quote"><strong>Actually said</strong> (MedSupply's Tunde): "We could probably do 5% if you sign today rather than waiting for the renewal date."<br><br><strong>Auto-transcript:</strong> "We could probably do 5% Tunday if you can wait for it, renewal date."<br><br><strong>What went wrong:</strong> "sign today" became "5% Tunday" — the tool heard a name-shaped sound and guessed a name, and inverted the meaning of "rather than waiting" into "if you can wait." Read on its own, the transcript now says roughly the opposite of what was agreed.<br><br><strong>What you send:</strong> The version from your own live notes, cross-checked against the transcript only for anything you weren't certain you'd heard right — never the raw transcript, pasted in.</p>
+        </div>
+      </div>
+
+      <h3>The rule that makes this safe to use at all</h3>
+
+      <p>Use the tool for what it's actually good at — a searchable backup, a way to catch something you missed live, a first pass at a rough summary you'll edit rather than send. Never paste its output directly into a client-facing note without reading every number, name, and disputed point against your own live notes first. Your live notes from lesson 5.2, imperfect and human, are the source of truth for anything with money or a decision attached. The transcript is a second opinion, not a substitute.</p>
+
+      <div class="aside">
+        <span>Tell Adaeze what the tool is, and isn't</span>
+        <p>If you use a transcription tool on client calls, say so plainly and get consent before recording — this is a baseline courtesy, and in many contexts a legal requirement, not optional politeness. And be honest with Adaeze about what the tool guarantees: a rough draft, checked by you, not a verbatim legal record. Overselling its reliability is how a wrong number ends up believed simply because "the transcript said so."</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Strong for search and backup. Weak on numbers, names, overlapping speech, and silent gaps.</li>
+          <li>Never send raw transcript text to a client without checking it against your own live notes.</li>
+          <li>Accuracy is uneven across accents and connection quality — don't treat a clean-looking transcript as proof nothing was missed.</li>
+          <li>Get consent before recording. Be honest that the tool produces a draft, not a verbatim record.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 8 minutes</span>
+        <p>If you have access to any transcription tool, record two minutes of yourself reading a made-up sentence with a number, a percentage, and an unusual name in it. Read the transcript back. Count the errors. This takes eight minutes and will change how much you trust the next one you see.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l5">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 5.5</b><span class="label">11 minutes</span></div>
+      <h2>Chasing people without becoming the person they avoid</h2>
+    </div>
+
+    <div class="flow">
+      <p>MedSupply's Tunde owed written confirmation of the 5% by Thursday. It's now Monday. You need that confirmation — without it, the contract renewal in three weeks is unprotected — but you also need Tunde to keep answering your emails for the next two years of this supplier relationship. Chase too softly and it never arrives. Chase too hard and you become the sender whose name makes people's stomach sink, which costs you every future ask.</p>
+
+      <p class="pull">The goal of a follow-up is never to make someone feel bad for being late. It's to make responding easier than continuing to ignore it.</p>
+
+      <h3>An escalation ladder, not a single tone</h3>
+
+      <p>The mistake most people make is picking one tone and repeating it — three increasingly polite emails, or three increasingly terse ones. Neither works, because each message should do a different job. Use a ladder that gets more specific and more visible at each step, never more emotional:</p>
+
+      <ol class="numlist">
+        <li><strong>Friendly reminder, assuming good faith.</strong> One line. Assumes it slipped their mind, not that they're avoiding you. "Hi Tunde — just checking this hasn't slipped through the cracks: could you confirm the 5% in writing when you get a moment?"</li>
+        <li><strong>Specific ask with a real deadline and the cost of missing it named plainly.</strong> Still polite, now concrete about why the date matters. "The renewal window closes on the 24th — I'd like to have written confirmation before then so nothing defaults to the old terms. Could you send it by Wednesday?"</li>
+        <li><strong>Widen who sees it.</strong> Cc a decision-maker on their side, or loop in Adaeze on yours — not as a threat, framed as normal process. "Looping Adaeze in here so we're all aligned ahead of the renewal date." Being seen by one more person is often the single most effective lever, and it costs the recipient nothing to respond to.</li>
+        <li><strong>Flag it to Adaeze as a risk, with a recommendation.</strong> If step three doesn't move it and the deadline is close, this stops being a task you're chasing and becomes a decision Adaeze needs to make — extend, escalate further, or accept the old terms by default. Bring her the situation and a recommendation, not just the problem.</li>
+      </ol>
+
+      <h3>Worked example: the ladder in practice</h3>
+
+      <p>Over eight days chasing MedSupply's Tunde for that written 5% confirmation: Monday, a friendly one-liner assuming it slipped his mind. Wednesday, no reply — a specific ask naming the 24th deadline. Friday, still nothing — Adaeze gets cc'd, widening who sees it. Monday again, still silence — that stops being a message to Tunde at all, and becomes a note to Adaeze: what's outstanding, how long it's been, and a recommendation to call rather than email, with the early-termination notice as a fallback. Four fill-in-the-blank versions of this ladder are in the worksheet pack above.</p>
+
+      <h3>Never let silence look like your fault</h3>
+
+      <p>Every chase should be visible in the record — sent from the account, dated, saved. If a relationship later sours and someone claims "nobody told us the deadline," a paper trail of four increasingly specific, entirely reasonable messages is the difference between that being their problem and it becoming yours. This is also, quietly, self-protection: you did your job at every step, and it is documented.</p>
+
+      <h3>Know when it isn't your call anymore</h3>
+
+      <p>Step four exists for a reason: at a certain point, the decision about how hard to push, or whether to accept a missed deadline, stops being an assistant's judgment call and becomes the business owner's. The skill is not chasing forever — it's recognising the exact point where continuing to escalate on your own authority would be overstepping, and handing the decision back with enough context that Adaeze can make it in thirty seconds rather than needing to reconstruct the whole story.</p>
+
+      <div class="aside">
+        <span>The same ladder works internally, not just with vendors</span>
+        <p>This applies just as much to a client who owes Adaeze a signed form, or a colleague who owes you something for a shared project. The tone shifts slightly with the relationship, but the shape doesn't: assume good faith, get specific, widen visibility, then hand it up if it still isn't moving.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Four steps, each doing a different job: friendly reminder, specific deadline, widen visibility, escalate to a decision.</li>
+          <li>Never repeat the same tone three times — it either does nothing or damages the relationship.</li>
+          <li>Keep every chase in writing, dated, so the record protects you if it's ever disputed.</li>
+          <li>Know the point where it stops being your call and becomes the business owner's.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 10 minutes</span>
+        <p>Think of something you're currently waiting on from someone — a reply, a document, a decision. Draft your own four-step ladder for it now, before you need step two. Having steps two through four written in advance is what stops step one's reminder from turning testy out of frustration.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="drill-sec" id="drill">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Module 5 drill</b><span class="label">one hour</span></div>
+      <h2>A messy transcript, a clean record</h2>
+    </div>
+
+    <div class="flow">
+      <p>You are given a rough 35-minute auto-generated transcript of a real call — the kind riddled with the exact errors lesson 5.4 named: a mangled supplier name spelled three different ways, one percentage that's plainly wrong given the rest of the conversation, two speakers merged into one during a stretch of overlapping talk, and a six-second silent gap where the transcript simply skips from one sentence to an unrelated one with no marker that anything was dropped. There was no agenda — this was a call booked last-minute.</p>
+
+      <h3>Deliver three things</h3>
+
+      <ol class="numlist">
+        <li><strong>Corrected meeting notes.</strong> Sorted into the four buckets from lesson 5.2 — decisions, actions, open questions, parking lot — with every transcription error caught and fixed, and the silent gap flagged rather than papered over.</li>
+        <li><strong>A clean action list.</strong> Every action in verb-owner-date form from lesson 5.3, including the two owed by the other side, not just your own.</li>
+        <li><strong>The first chase email.</strong> Step one of the escalation ladder from lesson 5.5, for whichever action has the nearest deadline and no confirmed owner response yet.</li>
+      </ol>
+
+      <h3>How it is marked</h3>
+
+      <ul class="list">
+        <li><strong>Did you catch the wrong percentage?</strong> It's inconsistent with a number stated plainly two sentences later in the transcript — the same kind of internal-consistency check lesson 5.4 asked for. Worth the most marks in this drill.</li>
+        <li><strong>Did you flag the silent gap rather than ignore it?</strong> A clean-looking transcript with a chunk missing is the exact trap the lesson named. Notes that don't mention the gap at all have failed the same test module 4's drill set for a buried file — did you notice something was missing.</li>
+        <li><strong>Are all actions in full verb-owner-date form?</strong> Including at least one owed by the other party, correctly attributed despite the speaker-merge error in the transcript.</li>
+        <li><strong>Does the chase email match step one's tone?</strong> Assumes good faith, one line, no hint of the later steps' firmness. A step-three email sent as step one fails this the same way an over-eager escalation would in real life.</li>
+        <li><strong>Did anything from the "everything said" noise leak into the final notes?</strong> Small talk, tangents, or the corrected-but-irrelevant version of the mangled name showing up where it doesn't need to — the lesson 5.2 discipline applies here too.</li>
+      </ul>
+
+      <div class="aside">
+        <span>What this drill is really testing</span>
+        <p>Whether you can take a genuinely unreliable source — a machine transcript with real errors baked in — and produce a record someone could act on without re-listening to the call themselves. Every module's drill has tested judgement under a different kind of mess: an inbox, a calendar, a filing system, and now a conversation nobody wrote down properly. The tool changes. The discipline of sorting signal from noise doesn't.</p>
+      </div>
+
+      <div class="doit">
+        <span>Before module 6</span>
+        <p>You should now have: a four-part agenda template, a set of meeting notes sorted into the four buckets, an action list in verb-owner-date form, and a four-step chase ladder you've used at least once for real. Module 6 turns to research — turning a vague ask into a question with a stopping point, and building the client's trust that what you hand back is actually right.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Module 05 of 10 · The Assistant They Can't Replace</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+(function () {
+  const FILE = { filename: 'VA-Course-Module5-Worksheets.docx', b64: "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" };
+
+  function saveBlob(filename, bytes) {
+    const blob = new Blob([bytes], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+
+  (async function wire() {
+    const btn = document.getElementById('dl-m5');
+    const status = document.getElementById('dl-m5-status');
+    if (!btn) return;
+
+        btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Saving\u2026';
+      if (status) { status.textContent = ''; status.classList.remove('ok'); }
+      try {
+        const bytes = b64ToBytes(FILE.b64);
+        saveBlob(FILE.filename, bytes);
+        if (status) { status.textContent = 'Saved.'; status.classList.add('ok'); }
+      } catch (err) {
+        const code = err && err.code ? err.code : 'unavailable';
+        if (status) status.textContent = code === 'declined' ? 'Cancelled.' : 'Could not save (' + code + ').';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+  })();
+})();
+</script>
+
+</body>
+</html>

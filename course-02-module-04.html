@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Channels: One Problem, Five Sets of Rules</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- download callout ---------- */
+
+  .dl-callout{
+    margin-top:clamp(22px,3vw,32px);
+    display:flex;flex-wrap:wrap;gap:16px 20px;align-items:center;
+    border:1px solid var(--line);border-radius:12px;
+    background:var(--surface);padding:16px 20px;
+  }
+  .dl-callout .dl-text{flex:1;min-width:200px}
+  .dl-callout .dl-text b{display:block;font-size:.98rem;color:var(--ink);font-weight:600;margin-bottom:2px}
+  .dl-callout .dl-text span{font-size:.88rem;color:var(--muted)}
+  .dl-btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    height:42px;padding:0 20px;border-radius:999px;flex:none;
+    border:1px solid var(--ember);background:var(--ember);color:#160C08;
+    font-size:.86rem;font-weight:500;letter-spacing:-.01em;cursor:pointer;
+    font-family:inherit;transition:background .2s ease,transform .2s ease;
+  }
+  .dl-btn:hover{background:#EE9679;transform:translateY(-1px)}
+  .dl-btn:disabled{opacity:.55;cursor:default;transform:none}
+  .dl-status{font-family:var(--mono);font-size:.72rem;color:var(--faint);flex:none}
+  .dl-status.ok{color:var(--ember)}
+</style>
+<style>
+  .tree{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .tree .t-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .tree .t-b{padding:16px 18px;font-family:var(--mono);font-size:.85rem;line-height:1.85;color:var(--body);white-space:pre}
+  .tree .t-b .d{color:var(--ember)}
+  .tree .t-b .f{color:var(--muted)}
+  .tree .t-b .c{color:var(--faint);font-family:var(--sans);font-style:italic}
+
+  .namerow{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .namerow .n-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .nrow{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr);gap:6px 14px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:center;font-family:var(--mono);font-size:.84rem}
+  .nrow:last-child{border-bottom:0}
+  .nrow .bad{color:var(--dusk);text-decoration:line-through;text-decoration-color:var(--dusk);opacity:.7}
+  .nrow .good{color:var(--ink);font-weight:500}
+  .nrow .arrow{color:var(--ember);text-align:center;font-family:var(--sans)}
+  @media (max-width:560px){.nrow{grid-template-columns:minmax(0,1fr)}.nrow .arrow{display:none}}
+
+  .stagebox{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .stagebox .s-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .srow{display:grid;grid-template-columns:120px minmax(0,1fr);gap:6px 16px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:baseline;font-size:.92rem}
+  .srow:last-child{border-bottom:0}
+  .srow b{font-family:var(--mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ember)}
+  .srow span{color:var(--body)}
+  @media (max-width:560px){.srow{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">The Ticket That Doesn't Come Back</span>
+      <span class="sep">/</span>
+      <span class="label">Module 04</span>
+    </div>
+    <h1>Channels: one problem, five sets of rules</h1>
+    <p class="standfirst">Five lessons, about an hour. The same complaint means something different depending on where it lands. This module is about reading each channel's actual rules — what speed it demands, what tone it forgives, what leaves a trail and what doesn't — so the same judgement from modules 2 and 3 lands right wherever the customer chose to write.</p>
+
+    <nav class="toc">
+      <a href="#l1"><i>4.1</i><span>Email: the paper trail, and writing for someone who'll reread it</span><u>12 min</u></a>
+      <a href="#l2"><i>4.2</i><span>Live chat: speed without sloppiness</span><u>13 min</u></a>
+      <a href="#l3"><i>4.3</i><span>WhatsApp and social DMs: informal tone, real boundaries</span><u>12 min</u></a>
+      <a href="#l4"><i>4.4</i><span>Voice notes and calls: no undo button</span><u>11 min</u></a>
+      <a href="#l5"><i>4.5</i><span>Choosing the right channel to move to</span><u>10 min</u></a>
+      <a href="#drill"><i>D</i><span>Drill: one complaint, four channels, one afternoon</span><u>55 min</u></a>
+    </nav>
+
+    <div class="dl-callout">
+      <div class="dl-text">
+        <b>Module 4 worksheets</b>
+        <span>A channel-rules reference card, a live-chat speed drill sheet, a WhatsApp boundary key, a voice-note checklist, and a channel-switch script. One .docx, five pages.</span>
+      </div>
+      <button class="dl-btn" id="dl-m4" type="button">Save worksheets (.docx)</button>
+      <span class="dl-status" id="dl-m4-status"></span>
+    </div>
+  </div>
+</header>
+
+<section class="lesson" id="l1">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 4.1</b><span class="label">12 minutes</span></div>
+      <h2>Email: the paper trail, and writing for someone who'll reread it</h2>
+    </div>
+
+    <div class="flow">
+      <p>Email is the one channel where the customer, and sometimes a colleague, a lawyer, or the customer's own future self, might reread exactly what you wrote, days or months later, with no memory of the tone you meant. That changes what "good" looks like here more than on any other channel.</p>
+
+      <p class="pull">Write every email as if it will be forwarded to someone who wasn't in the conversation.</p>
+
+      <h3>What that actually means in practice</h3>
+
+      <p>State the outcome plainly near the top, not buried in paragraph three — a reread skims. Avoid a tone that depends on being heard rather than read; a line that would sound warm spoken aloud can read as curt on a screen with no vocal inflection to soften it. And be precise about commitments, because email is the channel where "I'll look into it" versus "I'll have an answer by Thursday" gets held against you literally, in writing, later.</p>
+
+      <h3>Worked example: the same update, skimmable versus buried</h3>
+
+      <div class="ex">
+        <div class="ex-h">A refund update, two ways</div>
+        <div class="split">
+          <div>
+            <span class="who">Buried</span>
+            <p style="color:var(--muted);font-size:.9rem">"Hi! Thanks so much for your patience on this. We've been looking into your order and after checking with our warehouse team we can confirm that we are able to process a refund for you, which should appear in your account within..."</p>
+          </div>
+          <div class="bad">
+            <span class="who">Skimmable</span>
+            <p style="color:var(--muted);font-size:.9rem">"Hi Funmi — good news: your refund is approved and processing, you'll see it in 3–5 business days. (Details: I checked with the warehouse, the item was confirmed damaged in transit.) Let me know if it's not showing by next Tuesday."</p>
+          </div>
+        </div>
+      </div>
+
+      <p>The second version front-loads the outcome, then gives the reasoning for anyone who wants it — including a future reread that only needs the first line to understand what happened.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Write every email as if it'll be reread cold, without your tone of voice.</li>
+          <li>State the outcome in the first line or two, then the reasoning after.</li>
+          <li>Be precise with commitments — email is the channel where wording gets held against you literally.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 7 minutes</span><p>Take an email reply you've written recently, for this or any context, and rewrite its first two lines so the outcome is stated immediately.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l2">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 4.2</b><span class="label">13 minutes</span></div>
+      <h2>Live chat: speed without sloppiness</h2>
+    </div>
+
+    <div class="flow">
+      <p>Chat sets an expectation email never does: the customer is watching a "typing..." indicator, in real time, and a long silence reads as being ignored even when you're legitimately checking something. The pressure this creates is exactly what causes chat's most common failure — replies sent fast enough to hit the clock, but sloppy enough to need a second message fixing the first.</p>
+
+      <h3>The habit that resolves the tension</h3>
+
+      <p>Send a holding message the moment you need more than a few seconds — "Checking that for you now, one moment" — rather than going silent while you look something up. This costs nothing and converts a silence that reads as neglect into a wait that reads as being handled. Then take the extra ten seconds to make the actual answer right the first time, because a correction message in chat reads worse than a slightly slower first reply would have.</p>
+
+      <div class="ex">
+        <div class="ex-h">A lookup, handled with and without a holding message</div>
+        <div class="split">
+          <div>
+            <span class="who">Silence, then a rushed answer</span>
+            <p style="color:var(--muted);font-size:.9rem">[40 seconds of nothing] "yes it ships to Kenya" [30 seconds later] "sorry, actually let me double check that, one sec" [correction follows]</p>
+          </div>
+          <div class="bad">
+            <span class="who">Holding message, then a right answer</span>
+            <p style="color:var(--muted);font-size:.9rem">"Checking our Kenya shipping zones now, one moment" [45 seconds] "Yes! We ship to Kenya via DHL, 8–12 working days, duties included at checkout."</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="aside">
+        <span>A macro in chat still needs the five-second edit</span>
+        <p>Lesson 2.4's macro test applies here too, under more time pressure — which is exactly when it's most tempting to paste a saved reply unedited and hope it fits.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Send a holding message the moment you need more than a few seconds.</li>
+          <li>A right answer forty-five seconds late beats a wrong one sent fast.</li>
+          <li>Chat's time pressure makes the macro-edit habit from 2.4 easier to skip — resist that.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 5 minutes</span><p>Write your default holding message, ready to paste, for the next time you need to look something up mid-chat.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l3">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 4.3</b><span class="label">12 minutes</span></div>
+      <h2>WhatsApp and social DMs: informal tone, real boundaries</h2>
+    </div>
+
+    <div class="flow">
+      <p>A customer messaging on WhatsApp or Instagram DM is usually writing the way they'd text a friend — lowercase, no punctuation, voice notes, emoji. Matching that register too rigidly the other way, with a formal corporate reply, reads as jarring and cold on a channel built for informality. But informal tone is not the same as no boundaries, and this is where beginners overcorrect.</p>
+
+      <h3>What stays professional even in a casual register</h3>
+
+      <p>You can be warm and relaxed in wording while still: confirming order details precisely rather than casually, never promising something you can't verify just because the tone feels friendly, and keeping a record — WhatsApp Business and most DM tools log conversations, but if a customer moves to a personal number, note the key facts somewhere they're not lost when the chat disappears from view.</p>
+
+      <div class="ex">
+        <div class="ex-h">Casual tone, still precise</div>
+        <div class="ex-b">
+          <p class="quote">Customer: "hii do u guys still have the rose clay mask in stock 👀" Reply: "heyy yes we do! 🌸 just added more stock this week, want me to hold one for you while you check out?"</p>
+        </div>
+      </div>
+
+      <p>Warm, on-brand, uses emoji the way the customer did — and still confirms a specific, checkable fact (stock, this week) rather than a vague "probably!"</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Match the customer's informal register — it's what the channel is for.</li>
+          <li>Informal tone doesn't mean vague facts or unverifiable promises.</li>
+          <li>Log key details somewhere durable if the conversation itself might disappear from view.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 6 minutes</span><p>Write a casual, on-brand WhatsApp reply to a stock question, keeping the facts precise.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l4">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 4.4</b><span class="label">11 minutes</span></div>
+      <h2>Voice notes and calls: what changes when there's no undo button</h2>
+    </div>
+
+    <div class="flow">
+      <p>Every other channel gives you a moment to reread before sending. A live call, and to a lesser extent a voice note, doesn't — the words are out the instant they're said, in a tone the listener actually hears rather than reads. This is where the acknowledge-own-act shape from module 3 needs to already be second nature, because there's no editing pass.</p>
+
+      <h3>The preparation that replaces the missing undo button</h3>
+
+      <p>Before answering a call about a known difficult situation, take fifteen seconds to decide your opening line — the acknowledge move from 3.2 — so it's ready rather than improvised under the pressure of a live voice on the other end. And when leaving a voice note yourself, a short pause before speaking and a slower pace than feels natural both compensate for the listener not being able to reread if they miss something the first time.</p>
+
+      <div class="aside">
+        <span>A call is also where a customer's real emotion is most visible</span>
+        <p>Tone of voice carries information text doesn't — a customer who sounds tired versus one who sounds sharp with anger may need genuinely different responses even to the same words. Listen for it, not just for the content of what's said.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>No undo button — prepare your opening line before answering a known-difficult call.</li>
+          <li>Pause before speaking in a voice note; slow down slightly from your natural pace.</li>
+          <li>Listen for tone, not just words — it carries real information text doesn't.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 5 minutes</span><p>Say out loud — record yourself if you can — the acknowledge line you'd open with for a customer calling about a late order. Listen back once.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l5">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 4.5</b><span class="label">10 minutes</span></div>
+      <h2>Choosing the right channel to move a conversation to</h2>
+    </div>
+
+    <div class="flow">
+      <p>Sometimes the best move isn't a better reply on the current channel — it's moving the conversation somewhere else entirely. A heated public comment thread cools down remarkably fast the moment it moves to a DM, partly because the audience disappears and partly because switching channels itself signals "I'm taking this seriously enough to handle it properly."</p>
+
+      <h3>When to switch, and how to ask</h3>
+
+      <p>Move to a slower, more permanent channel (email) when a commitment needs a written record. Move to a faster, more personal one (a call) when text has gone back and forth twice without landing and a real-time conversation would resolve it in two minutes. And move to a private one whenever the current channel is public. Always name the switch explicitly rather than just going quiet on the original thread — "I'm going to email you directly so we have this in writing" tells the customer what's happening and why.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>A channel switch itself can defuse tension, not just what you say once you're there.</li>
+          <li>Move to email for a written record, to a call when text isn't landing, to private whenever public.</li>
+          <li>Always name the switch — don't just go quiet on the original channel.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 5 minutes</span><p>Write the one-line message you'd use to move a public complaint to a private channel, naming the switch plainly.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="drill-sec" id="drill">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Module 4 drill</b><span class="label">fifty-five minutes</span></div>
+      <h2>One complaint, four channels, one afternoon</h2>
+    </div>
+
+    <div class="flow">
+      <p>The same underlying complaint — a delayed order — arrives from the same customer on four channels within one afternoon: an email, a live chat message, a WhatsApp text, and a comment on a public post. Reply to each appropriately without contradicting yourself across channels.</p>
+
+      <h3>Deliver four replies</h3>
+
+      <ol class="numlist">
+        <li><strong>The email</strong> — skimmable, precise, using 4.1's shape.</li>
+        <li><strong>The live chat</strong> — with a holding message if you need to check anything, using 4.2.</li>
+        <li><strong>The WhatsApp message</strong> — matching the customer's casual register while staying precise, using 4.3.</li>
+        <li><strong>The public comment</strong> — brief and warm, moving to a private channel, using 4.5, plus the private follow-up it promises.</li>
+      </ol>
+
+      <h3>How it is marked</h3>
+
+      <ul class="list">
+        <li><strong>Do all four replies agree with each other?</strong> A customer who compares your email and your WhatsApp reply should not find a contradiction.</li>
+        <li><strong>Does the tone actually shift per channel, not just the wording?</strong> The email and the WhatsApp reply should read like they were written for genuinely different moments, not the same paragraph copy-pasted four times.</li>
+        <li><strong>Does the public reply move to private convincingly?</strong> Vague ("we'll be in touch") fails; specific and warm passes.</li>
+        <li><strong>Is anything promised in one channel that isn't honoured in another?</strong> This is the single most damaging failure a real brand can have across channels.</li>
+      </ul>
+
+      <div class="aside">
+        <span>What this drill is really testing</span>
+        <p>Whether the same judgement holds its shape across very different registers under real time pressure — not whether you know five sets of rules in the abstract.</p>
+      </div>
+
+      <div class="doit">
+        <span>Before module 5</span>
+        <p>You should now have: an email shape built for a reread, a chat holding-message habit, a sense of WhatsApp's tone-without-vagueness balance, prepared openings for calls, and a channel-switch script. Module 5 turns to the judgement behind the reply itself — refunds, returns, and reading a policy the way it's meant to be read.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Module 04 of 10 · The Ticket That Doesn't Come Back</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+<script>
+(function () {
+  const FILE = { filename: 'C2-Module4-Worksheets.docx', b64: "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" };
+
+  function saveBlob(filename, bytes) {
+    const blob = new Blob([bytes], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+
+  (async function wire() {
+    const btn = document.getElementById('dl-m4');
+    const status = document.getElementById('dl-m4-status');
+    if (!btn) return;
+
+        btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Saving…';
+      if (status) { status.textContent = ''; status.classList.remove('ok'); }
+      try {
+        const bytes = b64ToBytes(FILE.b64);
+        saveBlob(FILE.filename, bytes);
+        if (status) { status.textContent = 'Saved.'; status.classList.add('ok'); }
+      } catch (err) {
+        const code = err && err.code ? err.code : 'unavailable';
+        if (status) status.textContent = code === 'declined' ? 'Cancelled.' : 'Could not save (' + code + ').';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+  })();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Ticket That Doesn't Come Back</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.09);
+    --ember-edge:rgba(176,82,47,.28);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.10);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --col:1180px;
+    --pad:clamp(20px,5vw,56px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#191320;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.11);
+      --ember-edge:rgba(228,144,111,.30);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.12);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#191320;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.11);
+    --ember-edge:rgba(228,144,111,.30);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.12);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:16.5px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  .wrap{width:100%;max-width:var(--col);margin-inline:auto;padding-inline:var(--pad)}
+
+  h1,h2,h3,h4{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- masthead ---------- */
+
+  .masthead{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(36px,6vw,68px) clamp(28px,4vw,44px);
+    background:
+      radial-gradient(110% 90% at 90% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(90% 85% at 2% 10%,var(--ember-wash),transparent 58%);
+  }
+  .mast-top{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:baseline;padding-bottom:clamp(20px,3vw,32px)}
+  .mast-top .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.3rem,6.2vw,4.2rem);
+    line-height:1.02;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:15ch;
+  }
+  h1 em{font-style:italic;color:var(--ember)}
+
+  .promise{
+    margin-top:clamp(18px,3vw,28px);
+    font-size:clamp(1.02rem,1.5vw,1.2rem);
+    color:var(--muted);max-width:58ch;line-height:1.58;
+  }
+
+  .spec{
+    margin-top:clamp(26px,4vw,38px);
+    padding-top:20px;border-top:1px solid var(--line-soft);
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px 28px;
+  }
+  .spec div{display:flex;flex-direction:column;gap:3px}
+  .spec b{
+    font-family:var(--display);font-weight:600;font-size:1.35rem;
+    color:var(--ink);letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.2;
+  }
+
+  /* ---------- sections ---------- */
+
+  .section{padding-block:clamp(44px,6vw,76px);border-bottom:1px solid var(--line)}
+  .grid{
+    display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr);
+    gap:clamp(16px,4vw,52px);align-items:start;
+  }
+  .rail{padding-top:.5em}
+  .section h2{font-size:clamp(1.5rem,3vw,2.05rem);line-height:1.14;letter-spacing:-.02em;max-width:22ch}
+  .prose{display:flex;flex-direction:column;gap:15px;max-width:62ch;margin-top:16px}
+  .prose p{color:var(--body)}
+  .prose strong{font-weight:600;color:var(--ink)}
+
+  .dl-grid{
+    margin-top:clamp(24px,3vw,32px);
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:16px;max-width:62ch;
+  }
+  .dl-card{
+    display:flex;flex-direction:column;gap:12px;
+    border:1px solid var(--line);border-radius:var(--r-lg,14px);
+    background:var(--card);padding:20px 22px;
+  }
+  .dl-card .dl-kind{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--ember);
+  }
+  .dl-card h3{font-size:1.08rem;letter-spacing:-.01em}
+  .dl-card p{font-size:.9rem;color:var(--muted);flex:1}
+  .dl-btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    height:42px;padding:0 20px;border-radius:999px;
+    border:1px solid var(--ember);background:var(--ember);color:#160C08;
+    font-size:.88rem;font-weight:500;letter-spacing:-.01em;cursor:pointer;
+    font-family:inherit;transition:background .2s ease,transform .2s ease;
+  }
+  .dl-btn:hover{background:#EE9679;transform:translateY(-1px)}
+  .dl-btn:disabled{opacity:.55;cursor:default;transform:none}
+  .dl-status{font-family:var(--mono);font-size:.74rem;color:var(--faint);min-height:1.2em}
+  .dl-status.ok{color:var(--ember)}
+
+  .pullquote{
+    font-family:var(--display);font-size:clamp(1.15rem,2vw,1.42rem);
+    line-height:1.32;letter-spacing:-.015em;color:var(--ink);
+    padding-left:18px;border-left:2px solid var(--ember);
+    font-variation-settings:"SOFT" 14;
+    max-width:34ch;
+  }
+
+  /* ---------- module ledger ---------- */
+
+  .ledger{margin-top:clamp(28px,4vw,42px);border-top:1px solid var(--ink)}
+
+  .mod{border-bottom:1px solid var(--line-soft)}
+  .mod > summary{
+    list-style:none;cursor:pointer;
+    display:grid;
+    grid-template-columns:46px minmax(0,1fr) auto 14px;
+    gap:0 18px;align-items:baseline;
+    padding:17px 6px;
+    transition:background .2s ease;
+  }
+  .mod > summary::-webkit-details-marker{display:none}
+  .mod > summary:hover{background:var(--ember-wash)}
+  .mnum{
+    font-family:var(--mono);font-size:.78rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .mtitle{
+    font-family:var(--display);font-size:clamp(1.02rem,1.7vw,1.22rem);
+    color:var(--ink);letter-spacing:-.015em;line-height:1.3;
+  }
+  .mmeta{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;
+    color:var(--faint);text-transform:uppercase;white-space:nowrap;
+  }
+  .caret{
+    width:8px;height:8px;align-self:center;
+    border-right:1.5px solid var(--faint);border-bottom:1.5px solid var(--faint);
+    transform:rotate(45deg);transition:transform .25s ease;
+  }
+  .mod[open] .caret{transform:rotate(-135deg)}
+
+  .mbody{padding:2px 6px 24px 64px;display:flex;flex-direction:column;gap:0}
+  .lsn{
+    display:grid;grid-template-columns:44px minmax(0,1fr);gap:0 16px;
+    padding:9px 0;border-top:1px solid var(--line-soft);
+    font-size:.95rem;color:var(--body);
+  }
+  .lsn:first-child{border-top:0}
+  .lsn i{
+    font-style:normal;font-family:var(--mono);font-size:.7rem;
+    color:var(--faint);font-variant-numeric:tabular-nums;padding-top:.22em;
+  }
+  .drill{
+    display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;
+    align-items:start;margin-top:16px;
+    background:var(--ember-wash);border:1px solid var(--ember-edge);
+    border-radius:10px;padding:13px 15px;font-size:.92rem;color:var(--body);
+  }
+  .drill b{
+    font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ember);font-weight:500;padding-top:.28em;
+  }
+
+  .mod.capstone > summary{background:var(--dusk-wash)}
+  .mod.capstone .mnum{color:var(--dusk)}
+  .mod.capstone .drill{background:var(--dusk-wash);border-color:var(--line)}
+  .mod.capstone .drill b{color:var(--dusk)}
+
+  /* ---------- module one, written ---------- */
+
+  .written{padding-block:clamp(44px,6vw,76px);border-bottom:1px solid var(--line)}
+  .written-head{border-bottom:2px solid var(--ink);padding-bottom:14px}
+  .written-head h2{max-width:26ch}
+  .written-head .sub{margin-top:10px;color:var(--muted);max-width:60ch;font-size:1rem}
+
+  .lesson{
+    display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr);
+    gap:clamp(12px,4vw,52px);
+    padding-block:clamp(26px,3.5vw,38px);
+    border-bottom:1px solid var(--line-soft);
+  }
+  .lesson-rail{display:flex;flex-direction:column;gap:7px;padding-top:.35em}
+  .lesson-rail .n{
+    font-family:var(--mono);font-size:1.1rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+  .lesson-rail .run{font-family:var(--mono);font-size:.68rem;color:var(--faint);letter-spacing:.08em}
+
+  .lesson h3{
+    font-size:clamp(1.22rem,2.2vw,1.56rem);line-height:1.24;letter-spacing:-.02em;
+    font-variation-settings:"SOFT" 14;max-width:26ch;
+  }
+  .lesson .copy{display:flex;flex-direction:column;gap:14px;margin-top:14px;max-width:62ch}
+  .lesson .copy p{color:var(--body)}
+  .lesson .copy strong{font-weight:600;color:var(--ink)}
+  .lesson .copy em{font-style:italic}
+
+  .beats{
+    margin:4px 0 0;padding:16px 18px;
+    list-style:none;
+    background:var(--surface);
+    border:1px solid var(--line-soft);
+    border-radius:10px;
+    display:flex;flex-direction:column;gap:9px;
+    font-size:.94rem;color:var(--body);
+    max-width:62ch;
+  }
+  .beats li{position:relative;padding-left:18px}
+  .beats li::before{
+    content:"";position:absolute;left:0;top:.62em;
+    width:5px;height:5px;border-radius:50%;background:var(--ember);
+  }
+  .beats .head{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);display:block;
+  }
+  .beats .head{padding-left:0}
+  .beats .head::before{display:none}
+
+  .task{
+    margin-top:16px;max-width:62ch;
+    border-left:2px solid var(--dusk);padding-left:16px;
+    display:flex;flex-direction:column;gap:5px;
+  }
+  .task span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .task p{font-size:.95rem;color:var(--muted)}
+
+  /* ---------- open decisions ---------- */
+
+  .decisions{display:flex;flex-direction:column;gap:20px;max-width:64ch;margin-top:18px}
+  .dec{display:flex;flex-direction:column;gap:5px;padding-left:16px;border-left:2px solid var(--ember)}
+  .dec h4{font-family:var(--sans);font-size:1rem;font-weight:600;letter-spacing:-.005em}
+  .dec p{color:var(--muted);font-size:.96rem}
+
+  /* ---------- sources ---------- */
+
+  .sources{padding-block:clamp(36px,5vw,56px)}
+  .src-list{display:flex;flex-direction:column;gap:10px;max-width:70ch;margin-top:16px}
+  .src-list a{
+    color:var(--body);font-size:.93rem;text-decoration:none;
+    border-bottom:1px solid var(--line);padding-bottom:9px;
+  }
+  .src-list a:hover{color:var(--ember);border-bottom-color:var(--ember-edge)}
+  .src-list a span{
+    font-family:var(--mono);font-size:.68rem;color:var(--faint);
+    letter-spacing:.06em;display:block;margin-top:2px;
+  }
+  .colophon{
+    margin-top:32px;padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:820px){
+    .grid,.lesson{grid-template-columns:minmax(0,1fr)}
+    .rail,.lesson-rail{padding-top:0}
+    .lesson-rail{flex-direction:row;align-items:baseline;gap:12px}
+    .mbody{padding-left:8px}
+    .mod > summary{grid-template-columns:38px minmax(0,1fr) 14px;gap:0 12px}
+    .mmeta{grid-column:2;padding-top:4px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap">
+    <div class="mast-top">
+      <span class="label">Course 02 · Customer Support</span>
+      <span class="sep">/</span>
+      <span class="label">The Everyday Digital Navigator</span>
+      <span class="sep">/</span>
+      <span class="label">Draft curriculum</span>
+    </div>
+    <h1>The ticket that <em>doesn't</em> come back</h1>
+    <p class="promise">Ten modules that take someone from no remote work experience to a paid customer support rep who keeps customers instead of just closing tickets — because the reply-fast, script-the-answer half of this job is already being handled by a chatbot.</p>
+
+    <div class="spec">
+      <div><span class="label">Modules</span><b>10 + capstone</b></div>
+      <div><span class="label">Lessons</span><b>50</b></div>
+      <div><span class="label">Run time</span><b>~10h</b></div>
+      <div><span class="label">Prerequisites</span><b>None</b></div>
+      <div><span class="label">Free preview</span><b>Module 1</b></div>
+    </div>
+  </div>
+</header>
+
+<section class="section">
+  <div class="wrap grid">
+    <div class="rail"><span class="label">The thesis</span></div>
+    <div>
+      <h2>Every other support course teaches the script. AI now writes the script.</h2>
+      <div class="prose">
+        <p>Answering an order-status question, drafting a first-pass reply, finding the right help-centre article, summarising a long thread before a handover — these are the tasks a beginner support course spends most of its length on, and they are exactly the ones a chatbot or an AI copilot now handles adequately, for a few dollars a month, without a shift pattern. Teaching someone to be a fast, polite ticket-closer in 2026 is teaching them to compete with software on software's terms.</p>
+        <p>What a brand still pays a person for is narrower and much more defensible: <strong>the judgement call on what a complaint is really about, the discretion to handle a customer's sensitive situation without it becoming office gossip, the read on when a policy should bend and when holding the line is what's actually fair, and the relationship with the customer who has bought from this brand for two years and is quietly deciding whether to keep doing so.</strong> A chatbot cannot decide that a "where's my order" message is actually the fourth complaint from someone about to leave a one-star review and go quiet forever.</p>
+        <p class="pullquote">So this course teaches the channels and the tools in order to teach the judgement sitting on top of them — and it never teaches a conversation without teaching what to do when it goes wrong.</p>
+        <p>The sequence is built the same way Course 01's was: it front-loads the two skills every support job post actually tests — running a stacked ticket queue, and staying steady with an angry customer — because a learner who stops halfway has still learned the two things that get someone a trial shift. It puts <em>getting paid</em> at module 9 rather than as a footnote, for the same reason it mattered in Course 01: cross-border payment friction is what makes people quit remote work, not the work itself. And it treats the AI chatbot as a colleague to supervise from module 7 onward, not a threat to out-type — because the rep who reviews and corrects the bot is worth more than the rep the bot quietly replaces.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap grid">
+    <div class="rail"><span class="label">Full outline</span></div>
+    <div>
+      <h2>Ten modules, fifty lessons, eleven drills</h2>
+      <p class="prose" style="margin-top:14px">Every module ends with a drill built from a mess, not a quiz — a stacked queue, a real angry thread, a policy grey area — because that is how support work actually screens people. Open any module to see its lessons.</p>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="ledger">
+
+      <details class="mod" open>
+        <summary>
+          <span class="mnum">01</span>
+          <span class="mtitle">What a support rep is actually paid to keep</span>
+          <span class="mmeta">5 lessons · 55m</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="mbody">
+          <div class="lsn"><i>1.1</i><span>Nobody hires a support rep to close tickets. They hire one to keep customers.</span></div>
+          <div class="lsn"><i>1.2</i><span>The four kinds of support work, and which two actually pay</span></div>
+          <div class="lsn"><i>1.3</i><span>What AI chatbots already do better than you, and what that leaves</span></div>
+          <div class="lsn"><i>1.4</i><span>The trust ladder: from a trial shift to owning the whole queue</span></div>
+          <div class="lsn"><i>1.5</i><span>Your service, in one sentence a founder can repeat to someone else</span></div>
+          <p class="drill"><b>Drill</b><span>Five real support job posts. For each, name what is actually being protected — a rating, a repeat customer, a refund cost — which parts a chatbot would already handle, and what is left that needs a person. Then pick the one you would apply to and say why the other four are traps.</span></p>
+        </div>
+      </details>
+
+      <details class="mod">
+        <summary>
+          <span class="mnum">02</span>
+          <span class="mtitle">The ticket queue</span>
+          <span class="mmeta">5 lessons · 1h 10m</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="mbody">
+          <div class="lsn"><i>2.1</i><span>Getting access without becoming the breach: shared inboxes, permissions, and what never gets shared</span></div>
+          <div class="lsn"><i>2.2</i><span>Triage: severity, channel, and the ten-minute pass through a stacked queue</span></div>
+          <div class="lsn"><i>2.3</i><span>Writing in the brand's voice, and the file that makes it repeatable</span></div>
+          <div class="lsn"><i>2.4</i><span>Macros versus a human reply: when a template is the right call, and when it insults the customer</span></div>
+          <div class="lsn"><i>2.5</i><span>The end-of-shift handover that makes the next person's morning easy</span></div>
+          <p class="drill"><b>Drill</b><span>Sixty stacked tickets across email, chat and WhatsApp, one hour. Clear the queue, keep a log of every judgement call you made, and write the handover the next rep reads.</span></p>
+        </div>
+      </details>
+
+      <details class="mod">
+        <summary>
+          <span class="mnum">03</span>
+          <span class="mtitle">The angry customer</span>
+          <span class="mmeta">5 lessons · 55m</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="mbody">
+          <div class="lsn"><i>3.1</i><span>Why customers escalate, and the three complaints that are never really about the product</span></div>
+          <div class="lsn"><i>3.2</i><span>The de-escalation script: acknowledge, own, act — without over-promising</span></div>
+          <div class="lsn"><i>3.3</i><span>When policy says no and the relationship says be careful</span></div>
+          <div class="lsn"><i>3.4</i><span>The public complaint: same fire, different stage</span></div>
+          <div class="lsn"><i>3.5</i><span>Knowing when you are the wrong person to keep talking, and handing off well</span></div>
+          <p class="drill"><b>Drill</b><span>Three real angry-customer threads — one email, one live-chat transcript, one public review. Respond to each within policy, and keep the customer.</span></p>
+        </div>
+      </details>
+
+      <details class="mod">
+        <summary>
+          <span class="mnum">04</span>
+          <span class="mtitle">Channels: one problem, five sets of rules</span>
+          <span class="mmeta">5 lessons · 1h</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="mbody">
+          <div class="lsn"><i>4.1</i><span>Email: the paper trail, and writing for someone who will reread it later</span></div>
+          <div class="lsn"><i>4.2</i><span>Live chat: speed without sloppiness, and the canned reply that reads canned</span></div>
+          <div class="lsn"><i>4.3</i><span>WhatsApp and social DMs: informal tone, real boundaries, still logged</span></div>
+          <div class="lsn"><i>4.4</i><span>Voice notes and calls: what changes when there is no undo button</span></div>
+          <div class="lsn"><i>4.5</i><span>Choosing the right channel to move a conversation to, and why switching defuses more than it seems</span></div>
+          <p class="drill"><b>Drill</b><span>The same complaint arrives on four channels in one afternoon. Reply appropriately to each without contradicting yourself.</span></p>
+        </div>
+      </details>
+
+      <details class="mod">
+        <summary>
+          <span class="mnum">05</span>
+          <span class="mtitle">Refunds, returns and judgement under policy</span>
+          <span class="mmeta">5 lessons · 1h 5m</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="mbody">
+          <div class="lsn"><i>5.1</i><span>Reading a policy like a lawyer reads a contract — what it actually permits</span></div>
+          <div class="lsn"><i>5.2</i><span>The refund conversation: verifying without accusing</span></div>
+          <div class="lsn"><i>5.3</i><span>Where discretion lives: the calls you make alone, the calls you escalate</span></div>
+          <div class="lsn"><i>5.4</i><span>Goodwill gestures: when they retain a customer, and when they train one to complain</span></div>
+          <div class="lsn"><i>5.5</i><span>Documenting the exception so the next rep is not stuck explaining it</span></div>
+          <p class="drill"><b>Drill</b><span>Ten borderline refund requests against a real policy document. Decide, write the reply, and flag which ones needed escalation.</span></p>
+        </div>
+      </details>
+
+      <details class="mod">
+        <summary>
+          <span class="mnum">06</span>
+          <span class="mtitle">The knowledge base</span>
+          <span class="mmeta">5 lessons · 1h</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="mbody">
+          <div class="lsn"><i>6.1</i><span>Turning a repeated question into a documented answer with a stopping point</span></div>
+          <div class="lsn"><i>6.2</i><span>Auditing an existing help centre for what is outdated, missing, or wrong</span></div>
+          <div class="lsn"><i>6.3</i><span>Writing an article a stressed customer can actually follow</span></div>
+          <div class="lsn"><i>6.4</i><span>Keeping macros and docs in sync as policy changes</span></div>
+          <div class="lsn"><i>6.5</i><span>Reporting the pattern back: when five tickets are actually one product problem</span></div>
+          <p class="drill"><b>Drill</b><span>An outdated help centre with a stale return policy. Find the gaps, rewrite three articles, and flag the pattern worth escalating to the founder.</span></p>
+        </div>
+      </details>
+
+      <details class="mod">
+        <summary>
+          <span class="mnum">07</span>
+          <span class="mtitle">Working with AI as your junior</span>
+          <span class="mmeta">5 lessons · 1h 10m</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="mbody">
+          <div class="lsn"><i>7.1</i><span>What to hand the chatbot, and what must always route to a human</span></div>
+          <div class="lsn"><i>7.2</i><span>Briefing a bot on your knowledge base without letting it invent policy</span></div>
+          <div class="lsn"><i>7.3</i><span>The three-way check: catching a hallucinated promise before the customer does</span></div>
+          <div class="lsn"><i>7.4</i><span>Reviewing AI-suggested replies at speed without rubber-stamping them</span></div>
+          <div class="lsn"><i>7.5</i><span>Confidentiality: what never goes into a prompt</span></div>
+          <p class="drill"><b>Drill</b><span>Ten AI-drafted replies, three of which invent a policy that does not exist. Find them, fix them, and explain the business risk of each.</span></p>
+        </div>
+      </details>
+
+      <details class="mod">
+        <summary>
+          <span class="mnum">08</span>
+          <span class="mtitle">The metrics, and what they hide</span>
+          <span class="mmeta">5 lessons · 55m</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="mbody">
+          <div class="lsn"><i>8.1</i><span>CSAT, first response time, resolution time — what each is actually measuring</span></div>
+          <div class="lsn"><i>8.2</i><span>When chasing a metric makes the service worse</span></div>
+          <div class="lsn"><i>8.3</i><span>Reporting a bad week honestly, with the reasons, not just the numbers</span></div>
+          <div class="lsn"><i>8.4</i><span>Saying no to a target that would mean doing the job badly</span></div>
+          <div class="lsn"><i>8.5</i><span>The one-page weekly report a founder actually reads</span></div>
+          <p class="drill"><b>Drill</b><span>A messy week of ticket data. Compute the real numbers, and write the report that explains the dip honestly.</span></p>
+        </div>
+      </details>
+
+      <details class="mod">
+        <summary>
+          <span class="mnum">09</span>
+          <span class="mtitle">Running yourself as a business</span>
+          <span class="mmeta">5 lessons · 1h 5m</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="mbody">
+          <div class="lsn"><i>9.1</i><span>Hourly, retainer or per-ticket: the arithmetic behind each, and when to use which</span></div>
+          <div class="lsn"><i>9.2</i><span>What your hour actually costs you: data, power, transport, tax, unpaid admin</span></div>
+          <div class="lsn"><i>9.3</i><span>The one-page agreement and the trial-shift rule</span></div>
+          <div class="lsn"><i>9.4</i><span>Getting paid across borders: rails, fees, FX, and the wait that makes people quit</span></div>
+          <div class="lsn"><i>9.5</i><span>Tracking shifts and invoicing without losing your evening to it</span></div>
+          <p class="drill"><b>Drill</b><span>Build your rate card from your real costs, write your one-page agreement, and set up a payment route end to end — proven with a live test transaction, not a screenshot.</span></p>
+        </div>
+      </details>
+
+      <details class="mod">
+        <summary>
+          <span class="mnum">10</span>
+          <span class="mtitle">Getting your first three clients</span>
+          <span class="mmeta">5 lessons · 1h 5m</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="mbody">
+          <div class="lsn"><i>10.1</i><span>Choosing a niche narrow enough that someone remembers you</span></div>
+          <div class="lsn"><i>10.2</i><span>The profile: a LinkedIn page and a one-page service page that do the same job</span></div>
+          <div class="lsn"><i>10.3</i><span>Proof of work when you have never had a support role</span></div>
+          <div class="lsn"><i>10.4</i><span>Outreach: where small brands actually are, and the message that gets a reply</span></div>
+          <div class="lsn"><i>10.5</i><span>The trial shift and the interview: how to be the one they choose</span></div>
+          <p class="drill"><b>Drill</b><span>Twenty real prospects, twenty messages sent, all tracked in one sheet. Report what came back, and what you would change about message twenty-one.</span></p>
+        </div>
+      </details>
+
+      <details class="mod capstone">
+        <summary>
+          <span class="mnum">C</span>
+          <span class="mtitle">Capstone: the backlog</span>
+          <span class="mmeta">2 weeks · assessed</span>
+          <span class="caret"></span>
+        </summary>
+        <div class="mbody">
+          <div class="lsn"><i>·</i><span>A cleared sixty-ticket backlog across three channels, with a written judgement log</span></div>
+          <div class="lsn"><i>·</i><span>A de-escalated public complaint thread that kept the customer</span></div>
+          <div class="lsn"><i>·</i><span>Three rewritten knowledge-base articles, plus the pattern flagged upward</span></div>
+          <div class="lsn"><i>·</i><span>Ten AI-drafted replies reviewed and corrected, with the risk of each explained</span></div>
+          <div class="lsn"><i>·</i><span>One honest weekly metrics report</span></div>
+          <div class="lsn"><i>·</i><span>A five-minute walkthrough, marked on how you handle being challenged</span></div>
+          <p class="drill"><b>Brief</b><span>You are dropped into one fictional new brand's genuinely bad week: a backlog across three channels, a public complaint gaining replies, a policy grey area, and a chatbot that has been quietly promising a discount that does not exist — all at once, with more arriving than you can finish. Marked on judgement and on what you chose to leave undone — not on tidiness.</span></p>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<section class="written">
+  <div class="wrap">
+    <div class="written-head">
+      <span class="label">Module one, written in full</span>
+      <h2 style="margin-top:12px">What a support rep is actually paid to keep</h2>
+      <p class="sub">Five lessons, about fifty-five minutes. This is the free opener, so it has to do two jobs at once: teach something genuinely useful in the first ten minutes, and make the rest of the course feel necessary. The running example throughout modules 1–9 is Tolu Bankole, who runs support for Bumi Naturals — a Lagos skincare and wellness brand shipping across Nigeria and starting to ship to Ghana and Kenya.</p>
+    </div>
+
+    <article class="lesson">
+      <div class="lesson-rail"><span class="n">1.1</span><span class="run">11 min</span></div>
+      <div>
+        <h3>Nobody hires a support rep to close tickets. They hire one to keep customers.</h3>
+        <div class="copy">
+          <p>Here is the first thing to unlearn. You are not being paid to make a number go to zero. A queue at zero tells a founder nothing about whether the customer who wrote in is still going to buy again. Every brand that has ever hired a support person did it at a specific moment: the moment they noticed a customer had gone quiet after a bad experience, or a founder realised they were the one answering "where is my order" at midnight instead of sleeping.</p>
+          <p>That is the thing you are actually being paid for — <strong>the customer who was about to leave, staying instead.</strong> Ticket volume, response time, a tidy inbox: all mechanism. None of it is the job.</p>
+          <p>Why does this matter on day one? Because it changes how you answer. A rep who thinks in tickets closes the "where is my order" message with a tracking link and moves on. A rep who thinks in customers notices this is the third message from the same person this month, checks whether the pattern is a shipping problem worth flagging, and answers the tracking question <em>and</em> the anxiety underneath it — because a customer who has been ignored twice is not really asking about a parcel anymore.</p>
+          <p>One of those reps gets replaced by a chatbot within a year, because a chatbot can send a tracking link. The other becomes the person a founder cannot imagine running the brand without.</p>
+          <p>There is a version of this worth carrying with you: <em>the ticket is the surface, the relationship is the job.</em> A brand can survive a slow reply. It struggles to survive a customer who quietly decides, after one bad interaction, to never mention them to a friend.</p>
+        </div>
+        <ul class="beats">
+          <li class="head">Covered in this lesson</li>
+          <li>Why ticket volume and response time are mechanism, not the actual job</li>
+          <li>Tickets versus customers, and the sentence that gives away which one you are managing</li>
+          <li>Why a repeat contact from the same person is worth more attention than a new one</li>
+          <li>The rep who gets replaced by a chatbot, and the one who does not — what actually separates them</li>
+        </ul>
+        <div class="task"><span>Do this now</span><p>Think of the last time you personally contacted a company with a problem and it went badly. Write down, in one sentence, what would have made you stay a customer anyway. Keep it — you will use it in 1.5.</p></div>
+      </div>
+    </article>
+
+    <article class="lesson">
+      <div class="lesson-rail"><span class="n">1.2</span><span class="run">12 min</span></div>
+      <div>
+        <h3>The four kinds of support work, and which two actually pay</h3>
+        <div class="copy">
+          <p>Beginners lose their first months to the wrong kind of support work. Not to a lack of skill — to taking the first shift offered without noticing which of four very different jobs it actually is.</p>
+          <p><strong>The overwhelmed founder's whole inbox.</strong> A solo skincare brand, a small SaaS tool, a one-person online shop — real revenue, no team, drowning in the same fifteen questions every day. Tolu Bankole's actual first client, Bumi Naturals, is exactly this. They can pay, they decide alone, and they feel the pain every single morning. Best client, and most beginners overlook them because the brand is small.</p>
+          <p><strong>The small business with a growing queue.</strong> Five to twenty staff, one overworked person handling support alongside three other jobs. Slower to bring you on properly, but once you are trusted, the role grows for years.</p>
+          <p><strong>The scaling startup.</strong> Funded, generous when things are going well, volatile when they are not. They will ask you to cover sales chat and onboarding too, and the role can vanish in a funding gap. Take them, but never make them your only client.</p>
+          <p><strong>The ticket farm.</strong> Advertises "support agent needed, must handle 80+ chats a day, $2.50/hr, immediate start." This is not a client, it is a treadmill measured entirely on speed. <strong>Learn to recognise this post in ten seconds and close the tab</strong> — every hour spent here is an hour not spent becoming someone paid for judgement instead of throughput.</p>
+          <p>On rates: entry-level offshore support work commonly sits at the low end of what a task-based platform pays, while a rep trusted with a brand's whole queue and voice reaches considerably more, especially once retained monthly rather than paid per shift. The gap is rarely about typing speed. It is about whether the client believes they are buying replies or buying judgement.</p>
+        </div>
+        <ul class="beats">
+          <li class="head">Covered in this lesson</li>
+          <li>Four client types, with a real job post shown for each</li>
+          <li>The questions that reveal whether someone can actually pay, before you invest an hour</li>
+          <li>Red flags in a support job post: "must handle 80+ chats", no pay named, "immediate start"</li>
+          <li>What actually separates a low-paid ticket-closer from a well-paid support lead</li>
+        </ul>
+        <div class="task"><span>Do this now</span><p>Open any freelance or remote job board and read fifteen customer-support posts without applying to any. Sort them into the four types. Notice how many are ticket farms, and how differently the good ones are written.</p></div>
+      </div>
+    </article>
+
+    <article class="lesson">
+      <div class="lesson-rail"><span class="n">1.3</span><span class="run">13 min</span></div>
+      <div>
+        <h3>What AI chatbots already do better than you, and what that leaves</h3>
+        <div class="copy">
+          <p>This is the lesson other courses will not give you, because it makes their curriculum look thin. Better to hear it in the first hour than after a year of learning the wrong half of the job.</p>
+          <p>AI chatbots and copilots now competently answer routine, repeated questions — order status, return eligibility, how a product is used, opening hours, a first-pass reply to a simple complaint. Those capabilities are already deployed by companies of every size, cost little, and never need a shift covered. If your pitch is "I reply fast and I am polite", you are pricing yourself against something that costs a few dollars a month and answers in two seconds.</p>
+          <p>Now the other half, and it is the half that pays. There are things no bot does well, and they are not small: <strong>judgement about what a complaint is really about</strong> — a bot answers the tracking question; it does not notice this is the fourth message from someone about to churn. <strong>Discretion</strong> — someone has to handle a customer disclosing a health reason for a return, or a complaint that names an employee, and be trusted not to mishandle it. <strong>Reading when policy should bend</strong> — a bot applies the rule; a person notices when applying it exactly would be technically correct and obviously wrong. <strong>Relationships</strong> — a repeat customer wants to feel recognised, not processed by a script that has never met them before.</p>
+          <p>Here is the reframe the whole course rests on: <strong>you are not competing with the chatbot, you are supervising it.</strong> The rep who lets the bot handle routine volume, reviews what it sends before it goes wrong, and steps in for the conversations that need a person is worth more than the rep who answers everything by hand — and worth considerably more than a founder trying to run the bot alone, because the founder does not want to check its work either. Module 7 covers the mechanics of that supervision; this lesson is where you accept the shape of the job.</p>
+        </div>
+        <ul class="beats">
+          <li class="head">Covered in this lesson</li>
+          <li>The honest list: what a chatbot already handles well, next to what has not moved</li>
+          <li>Judgement, discretion, reading policy, relationships — the four things that stay human, with an example of each</li>
+          <li>Supervision as the actual job description, and why it is a promotion rather than a threat</li>
+          <li>Why specialising in one kind of brand raises your rate faster than learning one more helpdesk tool</li>
+        </ul>
+        <div class="task"><span>Do this now</span><p>Take five tickets from a real support job post or help centre and sort each into two columns: "a bot could handle this acceptably" and "this needs a person". Write one line on what would have to go wrong for a column-one ticket to suddenly need a person. That line is where your value lives.</p></div>
+      </div>
+    </article>
+
+    <article class="lesson">
+      <div class="lesson-rail"><span class="n">1.4</span><span class="run">10 min</span></div>
+      <div>
+        <h3>The trust ladder: from a trial shift to owning the whole queue</h3>
+        <div class="copy">
+          <p>Nobody hands a stranger their support inbox and their brand voice on day one. Understanding this saves you from the two mistakes that sink most beginners: asking to own the whole queue too early, and staying stuck on the bottom rung too long.</p>
+          <p><strong>Rung one, the trial shift.</strong> A few hours, one channel, low stakes, easy to check. The test is not whether you can answer correctly. It is whether you flag the thing you were unsure about instead of guessing silently — Tolu's first trial shift for Bumi Naturals was three hours on email only, and the moment that got him hired was a single message: "I wasn't sure whether to offer a replacement or a refund on ticket #114, so I held it — here's what I'd lean toward and why."</p>
+          <p><strong>Rung two, the recurring shift.</strong> A regular slot each week, the same responsibilities each time. The test is consistency — week four looks like week one, and the founder stops double-checking your replies.</p>
+          <p><strong>Rung three, the standing responsibility.</strong> You own the whole queue across every channel. The test is whether tickets stop reaching the founder at all, and whether you tell them what you handled without making them read a transcript of everything.</p>
+          <p><strong>Rung four, the retainer with judgement attached.</strong> A fixed monthly fee for owning support as a function, not a shift. The test most people never see coming: whether you bring things <em>to</em> the founder. "I've noticed the same complaint five times this month — I think it's a packaging problem, not a support problem." A rep who only responds stays on rung three forever.</p>
+          <p>Every rung is passed on <strong>reliability and judgement</strong>, never once on typing speed or tool knowledge — which is the same thing the pain research behind this course found: execution and communication are what get someone hired and kept, not a long list of software names.</p>
+        </div>
+        <ul class="beats">
+          <li class="head">Covered in this lesson</li>
+          <li>The four rungs, the hidden test at each, and the typical time to climb one</li>
+          <li>How to ask for the next rung without sounding like you want more money</li>
+          <li>Flagging uncertainty: the single habit that passes rung one</li>
+          <li>Why bringing a pattern to the founder unprompted is what actually earns a retainer</li>
+        </ul>
+        <div class="task"><span>Do this now</span><p>Write the message you would send at the end of a paid three-hour trial shift. Three lines maximum: what you handled, the one thing you were unsure about and what you did instead of guessing, and one thing you noticed that is worth mentioning. Save it — you will use this shape for years.</p></div>
+      </div>
+    </article>
+
+    <article class="lesson">
+      <div class="lesson-rail"><span class="n">1.5</span><span class="run">9 min</span></div>
+      <div>
+        <h3>Your service, in one sentence a founder can repeat to someone else</h3>
+        <div class="copy">
+          <p>You are going to write one sentence, and you will use it on LinkedIn, in every outreach message, and in the first thirty seconds of a trial-shift interview. It has to survive being repeated by someone else — because your third and fourth client often come from your first two describing you to a friend, badly, from memory.</p>
+          <p>"I do customer support" does not survive that. It says nothing about who you help or what stops going wrong.</p>
+          <p>The shape is: <strong>I help [a specific kind of business] stop losing [a specific thing] by [running a defined part of their support].</strong></p>
+          <p>Compare. "I'm a customer service rep with experience in email, chat and social." Now: "I help small skincare and beauty brands stop losing repeat customers to slow replies by running their email and WhatsApp inbox." The second is narrower — and narrower is why it works. A founder who hears it recognises their own inbox.</p>
+          <p>The fear here is universal and worth naming out loud: <em>if I narrow it down, I will get less work.</em> The opposite happens, almost every time. Nobody searches for a generalist. Every founder hiring for support is thinking about their own specific queue, and they hire whoever sounds like they have already solved it for someone like them. You can hold two of these sentences, no more — module 10 revisits this once you have real work to point at.</p>
+          <p>You do not need to have done the work yet to write the sentence. You need to have chosen who you are for.</p>
+        </div>
+        <ul class="beats">
+          <li class="head">Covered in this lesson</li>
+          <li>The three-part sentence, with worked examples across different kinds of brands</li>
+          <li>The repeatability test: say it to someone, wait an hour, ask them to say it back</li>
+          <li>Why narrowing increases replies, with the reasoning laid out plainly</li>
+          <li>Choosing a niche from what you already know — a product category, a platform, a language</li>
+        </ul>
+        <div class="task"><span>Do this now</span><p>Write your sentence. Read it out loud to one person and ask them to repeat it back tomorrow without looking. If they cannot, it is not the sentence yet.</p></div>
+      </div>
+    </article>
+
+    <article class="lesson">
+      <div class="lesson-rail"><span class="n">D</span><span class="run">~45 min</span></div>
+      <div>
+        <h3>Module drill: read the queue, not the job title</h3>
+        <div class="copy">
+          <p>Five real customer-support job posts are supplied — one from each client type in 1.2, plus a deliberately bad one. For each post, write four short answers: what is this brand actually protecting right now (a rating, a repeat customer, a refund cost); which of these tickets would a chatbot already handle acceptably; what is left that genuinely needs a person; and what you would charge, with your reasoning.</p>
+          <p>Then choose the one post you would apply to, and write one sentence on why each of the other four is a trap. Do it before checking the worked solution — the point is not to match the answers, it is to notice where your reasoning differed and why.</p>
+        </div>
+        <div class="task"><span>What this drill is testing</span><p>Not knowledge. Whether you can look at a job post and see the customer behind it — the same skill that later lets you notice a pattern a founder has not spotted yet.</p></div>
+      </div>
+    </article>
+  </div>
+</section>
+</body></html>
+
+</body>
+</html>

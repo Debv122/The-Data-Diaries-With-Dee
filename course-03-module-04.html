@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cleaning Data, and Knowing When to Trust It</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+
+
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">How to Be a Top-Notch Data Analyst</span>
+      <span class="sep">/</span>
+      <span class="label">Module 04</span>
+    </div>
+    <h1>Cleaning data, and knowing when to trust it</h1>
+    <p class="standfirst">Five lessons, about 50 minutes. Sahara Mart's stock-adjustment log is genuinely messy — this module gives you the discipline to find what's wrong before it corrupts a headline number.</p>
+
+    <nav class="toc">
+      <a href="#l1"><i>4.1</i><span>Profiling a dataset in ten minutes</span><u>10 min</u></a>
+      <a href="#l2"><i>4.2</i><span>Duplicates that aren't, and vice versa</span><u>11 min</u></a>
+      <a href="#l3"><i>4.3</i><span>Dates, time zones, and the silent type error</span><u>10 min</u></a>
+      <a href="#l4"><i>4.4</i><span>Deciding what to drop, what to fix, and what to flag</span><u>10 min</u></a>
+      <a href="#l5"><i>4.5</i><span>Writing down your assumptions so the number can be defended later</span><u>9 min</u></a>
+      <a href="#drill"><i>D</i><span>Drill: nine planted problems, one headline number</span><u>60 min</u></a>
+    </nav>
+
+    <div class="dl-callout">
+      <div class="dl-text">
+        <b>Module 4 practice workbook</b>
+        <span>A real branch stock-adjustment export with nine planted data-quality problems already inside it — the exact kind this module names. Find them, log each one, and calculate the corrected headline number. One .xlsx, four tabs.</span>
+      </div>
+      <button class="dl-btn" id="dl-m4" type="button">Save practice workbook (.xlsx)</button>
+      <span class="dl-status" id="dl-m4-status"></span>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 4.1 ============ -->
+<section class="lesson" id="l1">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 4.1</b><span class="label">10 minutes</span></div>
+      <h2>Profiling a dataset in ten minutes</h2>
+    </div>
+
+    <div class="flow">
+      <p>Before cleaning anything, spend ten minutes just looking at the shape of a new dataset. This is not optional polish — it's how you find most of the nine kinds of problem this module names, before you've built a single formula on top of broken data.</p>
+
+      <div class="ex">
+        <div class="ex-h">A ten-minute profiling pass</div>
+        <ol class="numlist">
+          <li><strong>Row count.</strong> Does it match what you'd expect given the date range and typical volume?</li>
+          <li><strong>Column-by-column: nulls, ranges, distinct values.</strong> A quantity column with a maximum a hundred times the median is worth a second look before you trust it.</li>
+          <li><strong>Distinct values in any "category" style column.</strong> If Branch has fourteen distinct values but Sahara Mart has nine branches, five of them are almost certainly the same branch spelled differently.</li>
+          <li><strong>Duplicate rows.</strong> Compare total row count against distinct-row count across every column — a gap means something is duplicated.</li>
+        </ol>
+      </div>
+
+      <p class="pull">Ten minutes of profiling before you start is nearly always cheaper than discovering the same problems one at a time, an hour into building on top of them.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Profile row counts, ranges, nulls and distinct values before writing a single formula against new data.</li>
+          <li>A category column with more distinct values than the real-world count it represents almost always means inconsistent spelling, not real new categories.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4.2 ============ -->
+<section class="lesson" id="l2">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 4.2</b><span class="label">11 minutes</span></div>
+      <h2>Duplicates that aren't, and vice versa</h2>
+    </div>
+
+    <div class="flow">
+      <p>"Remove duplicates" sounds like a mechanical step. In practice, it's a judgement call every time, and getting it backwards in either direction quietly changes a headline number.</p>
+
+      <div class="ex">
+        <div class="ex-h">Two rows that look identical, aren't the same thing</div>
+        <div class="split">
+          <div>
+            <span class="who">A real duplicate</span>
+            <p class="quote">Same branch, same SKU, same date, same quantity, same reason, same person entering it. This is one event, entered twice — almost certainly a real double-entry. Drop one.</p>
+          </div>
+          <div class="bad">
+            <span class="who">Not a duplicate, despite looking like one</span>
+            <p class="quote">Same branch, SKU, date and quantity — but the reason text describes two genuinely separate incidents that happened to involve the same product on the same day. Keep both.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>The only reliable way to tell them apart is reading the row, not just comparing columns mechanically. A "remove duplicates" button applied blindly to every matching column will get this wrong in both directions across a large enough dataset — sometimes deleting a real second event, sometimes leaving a genuine double-entry standing because one field happened to differ by a typo.</p>
+
+      <div class="aside">
+        <span>The inverse trap: near-duplicates that ARE the same event</span>
+        <p>"Lekki" and "lekki" describing the same transaction on the same day are the same real event, recorded with inconsistent casing — this is a duplicate that superficial column-matching would miss entirely, because the text doesn't match exactly.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Two identical-looking rows are not automatically duplicates — read the row before deciding.</li>
+          <li>Two differently-formatted rows can still be the same real event — standardise text (branch names, casing) before deduplicating, not after.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4.3 ============ -->
+<section class="lesson" id="l3">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 4.3</b><span class="label">10 minutes</span></div>
+      <h2>Dates, time zones, and the silent type error</h2>
+    </div>
+
+    <div class="flow">
+      <p>Two failure modes recur constantly in Sahara Mart's data: a date stored in a different text format than the rest of the column (which will sort and filter incorrectly the moment it's mixed with the rest), and a number stored as text (which most aggregate functions silently skip rather than error on).</p>
+
+      <div class="ex">
+        <div class="ex-h">Why the type error is worse than it sounds</div>
+        <div class="ex-b">
+          <p>A quantity column where one value is the text <span class="mono">"3"</span> instead of the number <span class="mono">3</span> looks completely normal displayed on screen. A SUM formula run over that column simply excludes it — no error, no warning, just a total that's quietly three units short. This is far more dangerous than a value that's obviously wrong, precisely because nothing about it looks wrong.</p>
+        </div>
+      </div>
+
+      <p>The fix is a habit, not a one-time cleanup: after importing any new data source, explicitly check and set the type of every date and numeric column, rather than trusting whatever type the import happened to guess.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>A number stored as text is silently excluded from most aggregates — check column types explicitly after every import, don't trust auto-detection.</li>
+          <li>A date in a different text format from the rest of its column will sort and filter wrong the moment it's mixed with the rest.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4.4 ============ -->
+<section class="lesson" id="l4">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 4.4</b><span class="label">10 minutes</span></div>
+      <h2>Deciding what to drop, what to fix, and what to flag</h2>
+    </div>
+
+    <div class="flow">
+      <p>Every problem you find sorts into one of three bins, and picking the wrong bin is its own kind of error even when you've correctly spotted the problem.</p>
+
+      <table class="kv">
+        <tr><td><b>Drop</b></td><td>An exact duplicate row. There is no information lost by removing it — the second copy adds nothing.</td></tr>
+        <tr><td><b>Fix</b></td><td>A value with an unambiguous correct form — a date in the wrong text format, a number stored as text, trailing whitespace, inconsistent branch-name casing. The correction is mechanical once identified.</td></tr>
+        <tr><td><b>Flag</b></td><td>Anything where the "correct" value isn't actually knowable from the data alone — a missing SKU, an outlier that might be real or might be an error, a sign that doesn't match its stated reason. These need a human decision, not a formula.</td></tr>
+      </table>
+
+      <p class="pull">The temptation with a "flag" problem is to quietly guess a fix so the workbook looks finished. Resist it — a wrong guess presented as a clean number is worse than an honest gap that's visibly marked as unresolved.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Drop only what's truly redundant; fix only what has one unambiguous correct value; flag everything else for a human decision.</li>
+          <li>A confidently wrong guess is worse than a visibly flagged gap — never silently resolve genuine uncertainty.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4.5 ============ -->
+<section class="lesson" id="l5">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 4.5</b><span class="label">9 minutes</span></div>
+      <h2>Writing down your assumptions so the number can be defended later</h2>
+    </div>
+
+    <div class="flow">
+      <p>Six months from now, someone — quite possibly you — will ask why August's stock-adjustment total is what it is. If every cleaning decision you made lives only in your memory, that question has no good answer. A short, plain-language cleaning log fixes this permanently.</p>
+
+      <div class="ex">
+        <div class="ex-h">A cleaning log entry, done properly</div>
+        <div class="ex-b">
+          <p style="color:var(--muted)">"Row 29 (Garki, qty -60,000): treated as a data entry error, corrected to -6 based on comparison with the branch's typical adjustment range for that SKU. Original value preserved in a separate column. — analyst, 24 Aug."</p>
+        </div>
+      </div>
+
+      <p>That single entry does everything a defensible correction needs: states what was changed, states the reasoning, and preserves the original so the decision can be reviewed or reversed later. A headline number with no cleaning log behind it is a number nobody downstream can actually trust, whether or not it happens to be correct.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Log every real correction: what changed, why, and what the original value was — not just the final "clean" number.</li>
+          <li>A number without a defensible cleaning log behind it can't really be trusted, however correct it happens to be.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Before the drill</span>
+        <p>Have a spreadsheet tool open — this drill is hands-on with a real file, not a written exercise.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="drill-sec" id="drill">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Module 4 drill</b><span class="label">about 60 minutes</span></div>
+      <h2>Nine planted problems, one headline number</h2>
+    </div>
+
+    <div class="flow">
+      <p>The practice workbook's "Raw Data" tab contains a real branch stock-adjustment export with nine planted problems, covering every category this module named: an exact duplicate, a near-duplicate that isn't, a near-duplicate that is, a wrong date format, an outlier, a type error, a sign mismatch, a missing key field, and an obvious data-entry mistake.</p>
+
+      <ol class="numlist">
+        <li>Find and log all nine on the Findings Log tab — what's wrong, and what you'd do about it (drop, fix, or flag).</li>
+        <li>Calculate the total quantity adjusted, uncorrected, straight from the raw data.</li>
+        <li>Calculate it again after your corrections, and note how much it moved and in which direction.</li>
+        <li>Write one paragraph you'd send Chidi explaining the corrected number and naming anything you flagged rather than resolved.</li>
+      </ol>
+
+      <div class="aside">
+        <span>What this drill is really testing</span>
+        <p>Whether you can tell the difference between the categories from lessons 4.2 and 4.4 under real conditions — a duplicate that isn't, a fix that's actually a flag in disguise — rather than mechanically "cleaning" everything the same way. There is a worked answer key on the fourth tab; do the drill first.</p>
+      </div>
+
+      <div class="doit">
+        <span>Before module 5</span>
+        <p>Keep your corrected total and your reasoning — module 5 asks whether a change like this is actually statistically meaningful, or well within normal week-to-week noise.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Module 04 of 10 · How to Be a Top-Notch Data Analyst</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const FILE = { filename: 'Sahara-Mart-Module4-Practice.xlsx', b64: "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" };
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+  function saveBlob(filename, bytes) {
+    const blob = new Blob([bytes], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+
+  (async function wire() {
+    const btn = document.getElementById('dl-m4');
+    const status = document.getElementById('dl-m4-status');
+    if (!btn) return;
+
+        btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Saving…';
+      if (status) { status.textContent = ''; status.classList.remove('ok'); }
+      try {
+        const bytes = b64ToBytes(FILE.b64);
+        saveBlob(FILE.filename, bytes);
+        if (status) { status.textContent = 'Saved.'; status.classList.add('ok'); }
+      } catch (err) {
+        const code = err && err.code ? err.code : 'unavailable';
+        if (status) status.textContent = code === 'declined' ? 'Cancelled.' : 'Could not save (' + code + ').';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+  })();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Python Where It Beats the Alternatives</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+
+
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">How to Be a Top-Notch Data Analyst</span>
+      <span class="sep">/</span>
+      <span class="label">Module 07</span>
+    </div>
+    <h1>Python where it beats the alternatives</h1>
+    <p class="standfirst">Seven lessons, about an hour and 15 minutes. You'll take module 2's manual Excel report and turn it into a script that runs itself.</p>
+
+    <nav class="toc">
+      <a href="#l1"><i>7.1</i><span>When Python is the right tool, and when a spreadsheet wins</span><u>9 min</u></a>
+      <a href="#l2"><i>7.2</i><span>pandas: load, filter, group, and the shape of a dataframe</span><u>13 min</u></a>
+      <a href="#l3"><i>7.3</i><span>Joining and reshaping without losing rows</span><u>12 min</u></a>
+      <a href="#l4"><i>7.4</i><span>A cleaning script you can rerun next month</span><u>10 min</u></a>
+      <a href="#l5"><i>7.5</i><span>Quick charts for exploring, not for presenting</span><u>9 min</u></a>
+      <a href="#l6"><i>7.6</i><span>Automating a recurring report end to end</span><u>11 min</u></a>
+      <a href="#l7"><i>7.7</i><span>Version control and file discipline, the minimum that matters</span><u>11 min</u></a>
+      <a href="#drill"><i>D</i><span>Drill: turn the manual report into a one-command script</span><u>75 min</u></a>
+    </nav>
+
+    <div class="dl-callout">
+      <div class="dl-text">
+        <b>Python starter kit</b>
+        <span>A real 900-row Sahara Mart export, a working starter script that loads and cleans it with pandas, and a README walking through exactly what to extend. Actually run it — this is code, not a reading exercise. One .zip: raw_sales.csv, clean_and_report.py, requirements.txt, README.</span>
+      </div>
+      <button class="dl-btn" id="dl-m7" type="button">Save starter kit (.zip)</button>
+      <span class="dl-status" id="dl-m7-status"></span>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 7.1 ============ -->
+<section class="lesson" id="l1">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 7.1</b><span class="label">9 minutes</span></div>
+      <h2>When Python is the right tool, and when a spreadsheet wins</h2>
+    </div>
+
+    <div class="flow">
+      <p>Python is not a strictly better version of Excel — it's a different tool, right for different jobs. Reaching for it out of habit, on a task Excel handles fine, wastes time relearning syntax for no real benefit.</p>
+
+      <table class="kv">
+        <tr><td><b>Python wins when</b></td><td>The same cleaning steps need to run on a new file every week (module 2's Power Query problem, but for cases Power Query can't reach); the data is too large to comfortably open in Excel; the logic is genuinely complex — multi-step joins, custom rules — and needs to live somewhere reviewable and testable.</td></tr>
+        <tr><td><b>Excel wins when</b></td><td>Chidi or a branch manager needs to open the result themselves and poke at it; the task is a one-off; the audience for the output isn't technical.</td></tr>
+      </table>
+
+      <p class="pull">The question isn't "which tool is more powerful." It's "which tool gets this specific job done and handed off cleanly." Often that's still Excel.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Reach for Python when a task repeats, scales beyond comfortable spreadsheet size, or needs logic too complex to trust in formulas.</li>
+          <li>Reach for Excel when the output needs to be opened and manipulated directly by someone non-technical.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7.2 ============ -->
+<section class="lesson" id="l2">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 7.2</b><span class="label">13 minutes</span></div>
+      <h2>pandas: load, filter, group, and the shape of a dataframe</h2>
+    </div>
+
+    <div class="flow">
+      <p>A pandas DataFrame is the Python equivalent of an Excel Table from module 2 — rows and named columns, and every operation you already know from SQL and Excel has a close pandas equivalent. Open the starter kit's <span class="mono">clean_and_report.py</span> alongside this lesson.</p>
+
+      <div class="ex">
+        <div class="ex-h">The core four operations</div>
+        <table class="kv">
+          <tr><td><b>Load</b></td><td><span class="mono">df = pd.read_csv('raw_sales.csv', parse_dates=['date'])</span> — parse_dates matters, the same way lesson 4.3's type-checking mattered in Excel.</td></tr>
+          <tr><td><b>Filter</b></td><td><span class="mono">df[df['transaction_type'] == 'SALE']</span> — the pandas equivalent of a WHERE clause.</td></tr>
+          <tr><td><b>Group</b></td><td><span class="mono">df.groupby('branch')['revenue'].sum()</span> — the pandas equivalent of SQL's GROUP BY, or Excel's pivot table.</td></tr>
+          <tr><td><b>Inspect the shape</b></td><td><span class="mono">df.shape</span>, <span class="mono">df.head()</span>, <span class="mono">df.dtypes</span> — module 4's profiling habit, in three lines.</td></tr>
+        </table>
+      </div>
+
+      <p>Notice how much of this module is really module 1 through 6's habits, expressed in a different syntax — know the grain, filter honestly, check types, aggregate deliberately. The tool changes far more than the thinking does.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Every core pandas operation has a direct equivalent you already know from Excel or SQL — map the syntax onto concepts you already have.</li>
+          <li>Check df.dtypes after loading, the same discipline as module 4's explicit type-checking.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7.3 ============ -->
+<section class="lesson" id="l3">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 7.3</b><span class="label">12 minutes</span></div>
+      <h2>Joining and reshaping without losing rows</h2>
+    </div>
+
+    <div class="flow">
+      <p>Lesson 3.3's fan-out join trap applies exactly as much in pandas as in SQL. <span class="mono">pd.merge(sales, products, on='sku')</span> can silently multiply rows if products has duplicate SKUs — the fix is the same habit: check <span class="mono">len(sales)</span> before and after the merge.</p>
+
+      <div class="ex">
+        <div class="ex-h">A safer merge, checked</div>
+        <div class="ex-b">
+          <p><span class="mono">before = len(sales)<br>merged = pd.merge(sales, products, on='sku', how='left')<br>assert len(merged) == before, "merge changed row count — check for duplicate SKUs"</span></p>
+          <p style="color:var(--muted);font-size:.9rem">The assert isn't decoration — it stops the script outright, loudly, the moment a fan-out happens, rather than letting a quietly-inflated total flow into the rest of the report.</p>
+        </div>
+      </div>
+
+      <p><span class="mono">how='left'</span> matters too: it keeps every row from sales even when a SKU has no match in products, rather than silently dropping transactions the way an inner join would — the pandas equivalent of choosing carefully between an INNER and LEFT JOIN in SQL.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Check row counts before and after every merge — the fan-out trap from SQL applies identically here.</li>
+          <li>Choose how='left' deliberately when you need to keep every row from your main table, even ones with no match.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7.4 ============ -->
+<section class="lesson" id="l4">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 7.4</b><span class="label">10 minutes</span></div>
+      <h2>A cleaning script you can rerun next month</h2>
+    </div>
+
+    <div class="flow">
+      <p>The starter kit's <span class="mono">load_and_clean()</span> function is deliberately separated from <span class="mono">weekly_summary()</span> — this is the single habit that makes a script reusable rather than a one-off notebook of commands run in whatever order you happened to type them.</p>
+
+      <p>A function with a clear name, a defined input, and a defined output can be rerun on next week's file by changing exactly one line — the file path — rather than re-deriving the whole sequence of steps from memory. This is Power Query's "record once, replay on refresh" idea, written as code instead of clicked as steps.</p>
+
+      <div class="aside">
+        <span>The test that separates a real script from a scratch notebook</span>
+        <p>Could someone else — or you, in three months — run this on a brand-new file without reading every line first? If yes, you've built something reusable. If the answer is "they'd need to understand my whole thought process first," it's still a scratch notebook wearing a .py extension.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Separate cleaning logic into a named function with a clear input and output, not inline steps run top to bottom.</li>
+          <li>A reusable script survives being run by someone else, cold, on new data — that's the actual bar.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7.5 ============ -->
+<section class="lesson" id="l5">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 7.5</b><span class="label">9 minutes</span></div>
+      <h2>Quick charts for exploring, not for presenting</h2>
+    </div>
+
+    <div class="flow">
+      <p>A one-line <span class="mono">df.groupby('date')['revenue'].sum().plot()</span> is for you, right now, spotting a pattern while you're still exploring — not for Chidi. Module 9's lesson on charts that argue is about deliberate, polished presentation; this is the opposite instinct, deliberately rough and fast.</p>
+
+      <p>Don't spend ten minutes styling a chart you're going to look at once and delete. If a quick matplotlib plot reveals something worth showing Chidi, that finding gets rebuilt properly — in Power BI, or as a deliberately designed chart — using module 9's discipline, not shipped as-is from an exploratory script.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Exploratory charts are for speed, not polish — don't over-invest in something meant to be looked at once.</li>
+          <li>A finding worth sharing gets rebuilt deliberately for its actual audience, not shipped straight from exploration.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7.6 ============ -->
+<section class="lesson" id="l6">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 7.6</b><span class="label">11 minutes</span></div>
+      <h2>Automating a recurring report end to end</h2>
+    </div>
+
+    <div class="flow">
+      <p>Module 2's manual Monday-morning cleanup — nine branch CSVs, cleaned by hand every week — is exactly the kind of recurring task lesson 7.4's reusable function is built for. Once <span class="mono">load_and_clean()</span> and <span class="mono">weekly_summary()</span> exist as functions, wiring them into a fully automated report is mostly plumbing: a scheduled task that runs the script and emails or saves the output, with no manual step in between.</p>
+
+      <div class="ex">
+        <div class="ex-h">What "end to end" actually means here</div>
+        <ol class="numlist">
+          <li>The script reads directly from wherever the branch exports land, not from a file you manually download first.</li>
+          <li>It handles a missing or malformed file gracefully — logging a clear error, not crashing silently at 6am with nobody watching.</li>
+          <li>The output lands somewhere Chidi can find it without asking you — a shared folder, an email, a dashboard refresh.</li>
+        </ol>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>"Automated" means no manual step anywhere in the chain, including a graceful, visible failure when something upstream breaks.</li>
+          <li>Build toward the output landing somewhere the recipient finds on their own, not toward you personally running and sending it.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7.7 ============ -->
+<section class="lesson" id="l7">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 7.7</b><span class="label">11 minutes</span></div>
+      <h2>Version control and file discipline, the minimum that matters</h2>
+    </div>
+
+    <div class="flow">
+      <p>You don't need to be a software engineer to benefit from git — you need three habits, consistently, and they cover most of what actually goes wrong with analyst code in practice.</p>
+
+      <ul class="list">
+        <li><strong>Commit working states, with a real message.</strong> "Fixed branch name cleaning for Ibadan variants" tells a future reader what changed and why; "updates" tells them nothing.</li>
+        <li><strong>Never commit raw data with real customer or financial detail into a public or shared repo.</strong> A .gitignore excluding your data files is the single most important line in the whole setup.</li>
+        <li><strong>Commit before a risky change, not after.</strong> A working version you can return to is worth more than a clever uncommitted rewrite that might not pan out.</li>
+      </ul>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Commit working states with messages that explain what and why, not just "updates."</li>
+          <li>Keep real data out of version control with a .gitignore — this is a habit worth building from your very first script.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Before the drill</span>
+        <p>Have Python and pandas installed (<span class="mono">pip install pandas</span>) — this drill runs real code against the starter kit's CSV.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="drill-sec" id="drill">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Module 7 drill</b><span class="label">about 75 minutes</span></div>
+      <h2>Turn the manual report into a one-command script</h2>
+    </div>
+
+    <div class="flow">
+      <p>Starting from the starter kit's <span class="mono">clean_and_report.py</span>, extend it to fully replace module 2's manual Monday-morning process.</p>
+
+      <ol class="numlist">
+        <li>Add a category breakdown: merge in a small products lookup you build yourself (sku, category), checked for row-count safety per lesson 7.3.</li>
+        <li>Add a week-over-week comparison, assuming a second week's file will exist next Monday — write the code so it works on any file path passed as an argument, not hard-coded.</li>
+        <li>Add basic error handling: what happens if the CSV is missing a column, or a branch name doesn't match any known variant?</li>
+        <li>Add one exploratory chart per lesson 7.5 — daily revenue trend — kept genuinely quick and rough.</li>
+        <li>Write the three-line README you'd hand a teammate to run this cold, next Monday, without you.</li>
+      </ol>
+
+      <div class="aside">
+        <span>What this drill is really testing</span>
+        <p>Whether you can extend real working code without breaking it — adding a join safely, handling a missing file gracefully, and leaving it in a state someone else could actually run. That is the entire point of module 7: not learning Python syntax in the abstract, but replacing a real manual process with something that runs itself.</p>
+      </div>
+
+      <div class="doit">
+        <span>Before module 8</span>
+        <p>Module 8 turns to working with AI tools directly — reviewing AI-drafted SQL and formulas, including ones an AI might suggest for a script exactly like the one you just built.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Module 07 of 10 · How to Be a Top-Notch Data Analyst</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const FILE = { filename: 'Sahara-Mart-Module7-Starter.zip', b64: "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" };
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+  function saveBlob(filename, bytes) {
+    const blob = new Blob([bytes], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+
+  (async function wire() {
+    const btn = document.getElementById('dl-m7');
+    const status = document.getElementById('dl-m7-status');
+    if (!btn) return;
+
+        btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Saving…';
+      if (status) { status.textContent = ''; status.classList.remove('ok'); }
+      try {
+        const bytes = b64ToBytes(FILE.b64);
+        saveBlob(FILE.filename, bytes);
+        if (status) { status.textContent = 'Saved.'; status.classList.add('ok'); }
+      } catch (err) {
+        const code = err && err.code ? err.code : 'unavailable';
+        if (status) status.textContent = code === 'declined' ? 'Cancelled.' : 'Could not save (' + code + ').';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+  })();
+})();
+</script>
+
+</body>
+</html>

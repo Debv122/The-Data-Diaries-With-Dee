@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Ticket Queue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- download callout ---------- */
+
+  .dl-callout{
+    margin-top:clamp(22px,3vw,32px);
+    display:flex;flex-wrap:wrap;gap:16px 20px;align-items:center;
+    border:1px solid var(--line);border-radius:12px;
+    background:var(--surface);padding:16px 20px;
+  }
+  .dl-callout .dl-text{flex:1;min-width:200px}
+  .dl-callout .dl-text b{display:block;font-size:.98rem;color:var(--ink);font-weight:600;margin-bottom:2px}
+  .dl-callout .dl-text span{font-size:.88rem;color:var(--muted)}
+  .dl-btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    height:42px;padding:0 20px;border-radius:999px;flex:none;
+    border:1px solid var(--ember);background:var(--ember);color:#160C08;
+    font-size:.86rem;font-weight:500;letter-spacing:-.01em;cursor:pointer;
+    font-family:inherit;transition:background .2s ease,transform .2s ease;
+  }
+  .dl-btn:hover{background:#EE9679;transform:translateY(-1px)}
+  .dl-btn:disabled{opacity:.55;cursor:default;transform:none}
+  .dl-status{font-family:var(--mono);font-size:.72rem;color:var(--faint);flex:none}
+  .dl-status.ok{color:var(--ember)}
+</style>
+<style>
+  .tree{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .tree .t-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .tree .t-b{padding:16px 18px;font-family:var(--mono);font-size:.85rem;line-height:1.85;color:var(--body);white-space:pre}
+  .tree .t-b .d{color:var(--ember)}
+  .tree .t-b .f{color:var(--muted)}
+  .tree .t-b .c{color:var(--faint);font-family:var(--sans);font-style:italic}
+
+  .namerow{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .namerow .n-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .nrow{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr);gap:6px 14px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:center;font-family:var(--mono);font-size:.84rem}
+  .nrow:last-child{border-bottom:0}
+  .nrow .bad{color:var(--dusk);text-decoration:line-through;text-decoration-color:var(--dusk);opacity:.7}
+  .nrow .good{color:var(--ink);font-weight:500}
+  .nrow .arrow{color:var(--ember);text-align:center;font-family:var(--sans)}
+  @media (max-width:560px){.nrow{grid-template-columns:minmax(0,1fr)}.nrow .arrow{display:none}}
+
+  .stagebox{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .stagebox .s-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .srow{display:grid;grid-template-columns:120px minmax(0,1fr);gap:6px 16px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:baseline;font-size:.92rem}
+  .srow:last-child{border-bottom:0}
+  .srow b{font-family:var(--mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ember)}
+  .srow span{color:var(--body)}
+  @media (max-width:560px){.srow{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">The Ticket That Doesn't Come Back</span>
+      <span class="sep">/</span>
+      <span class="label">Module 02</span>
+    </div>
+    <h1>The ticket queue</h1>
+    <p class="standfirst">Five lessons, about an hour and ten minutes. This is where the job actually starts: getting into a brand's support tools without becoming the reason they get hacked, learning to move through a stacked queue fast without becoming careless, sounding like the brand instead of like yourself, knowing when a saved reply is right and when it's an insult, and closing out a shift so the next person isn't guessing.</p>
+
+    <nav class="toc">
+      <a href="#l1"><i>2.1</i><span>Getting access without becoming the breach</span><u>14 min</u></a>
+      <a href="#l2"><i>2.2</i><span>Triage: severity, channel, and the ten-minute pass</span><u>15 min</u></a>
+      <a href="#l3"><i>2.3</i><span>Writing in the brand's voice, and the file that makes it repeatable</span><u>13 min</u></a>
+      <a href="#l4"><i>2.4</i><span>Macros versus a human reply</span><u>13 min</u></a>
+      <a href="#l5"><i>2.5</i><span>The end-of-shift handover</span><u>11 min</u></a>
+      <a href="#drill"><i>D</i><span>Drill: sixty stacked tickets, one hour</span><u>60 min</u></a>
+    </nav>
+
+    <div class="dl-callout">
+      <div class="dl-text">
+        <b>Module 2 worksheets</b>
+        <span>The five fill-in pages this module refers to — the access checklist, a severity key, a voice file template, the macro-or-human decision guide, and a handover template. One .docx, five pages.</span>
+      </div>
+      <button class="dl-btn" id="dl-m2" type="button">Save worksheets (.docx)</button>
+      <span class="dl-status" id="dl-m2-status"></span>
+    </div>
+  </div>
+</header>
+
+<section class="lesson" id="l1">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 2.1</b><span class="label">14 minutes</span></div>
+      <h2>Getting access without becoming the breach</h2>
+    </div>
+
+    <div class="flow">
+      <p>Tolu's first message from Bumi Naturals' founder, Ada, after the trial shift was hired, was: "I'll just give you my Gmail password, easier that way." It is easier, for about a week — until Ada wants to log the founder back into her own account, or Tolu leaves the role and nobody remembers to change anything, or the shared password sits in a WhatsApp message forever, readable by anyone who ever sees that phone.</p>
+
+      <p class="pull">The right access is the smallest amount that lets you do the job, granted in a way that can be taken back without a scramble.</p>
+
+      <h3>What "smallest amount" actually looks like</h3>
+
+      <p>Most helpdesk tools — a shared inbox, a live-chat dashboard, a WhatsApp Business number — support proper multi-user access: your own login, your own name on replies, permissions that can be switched off in seconds. Where a tool doesn't support that, the fallback is a role email alias (support@brand.com forwarding to your inbox) rather than the founder's personal one. Where even that isn't set up yet, it is your job — politely, in the first week — to ask for it, because you are the reason it now matters.</p>
+
+      <h3>Worked example: the access request that gets taken seriously</h3>
+
+      <div class="ex">
+        <div class="ex-h">Asking for proper access, week one</div>
+        <div class="ex-b">
+          <p class="quote">"Before I start on the queue properly, could we set me up with my own login on [helpdesk tool] rather than the shared Gmail? It means my replies show as coming from me, and you can switch my access off instantly if you ever need to — versus a shared password, which is harder to fully undo. Should take ten minutes on your end."</p>
+        </div>
+      </div>
+
+      <p>Notice what this does: it frames the request as protecting <em>Ada</em>, not as Tolu being difficult. Most founders have never been asked this and will be quietly relieved someone thought of it.</p>
+
+      <h3>What never gets shared, even by the brand's own request</h3>
+
+      <p>A founder who trusts you may offer more than you need — the password to the business bank account "just in case," or access to a personal email that happens to also receive support mail. Take the access the job needs and nothing more. If something wider is genuinely required later, that is a conversation to have deliberately, not a default to accept because declining feels awkward.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Ask for your own login wherever the tool supports it, not a shared password.</li>
+          <li>Where it doesn't, a role alias beats a personal inbox.</li>
+          <li>Frame the access request as protecting the founder, not as a demand.</li>
+          <li>Take only what the job needs — more access is a deliberate decision, never a default.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 8 minutes</span><p>Write the access request you'd send in your own first week on a new support role. Keep it to three sentences, following the worked example's shape.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l2">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 2.2</b><span class="label">15 minutes</span></div>
+      <h2>Triage: severity, channel, and the ten-minute pass</h2>
+    </div>
+
+    <div class="flow">
+      <p>A stacked queue — say ninety unread messages after a weekend — feels like it should be worked top to bottom, oldest first. That instinct is wrong, and following it is how a legitimately urgent message sits for two hours behind eleven "thank you!" replies that need nothing at all.</p>
+
+      <h3>The ten-minute pass, before you answer anything</h3>
+
+      <p>Before writing a single reply, scroll the whole queue once and sort every message into one of four piles, by severity rather than arrival time:</p>
+
+      <ol class="numlist">
+        <li><strong>Now.</strong> A payment failed, an order hasn't arrived past its promised date, someone is asking to cancel before a charge lands, a public complaint is visible to other customers. These get answered first, full stop.</li>
+        <li><strong>Today.</strong> A genuine question that affects whether someone buys or stays happy, but nothing is actively breaking. Answered in order after the "now" pile is clear.</li>
+        <li><strong>Batchable.</strong> The same question, asked by many people — "does this ship to Kenya," "is this cruelty-free." These get one strong answer, then copied out fast, which is exactly what module 2.4's macro judgement is for.</li>
+        <li><strong>Nothing needed.</strong> "Thanks!", an automatic order confirmation reply, a message that already resolved itself. Close these without a reply, or with a one-word acknowledgement at most.</li>
+      </ol>
+
+      <h3>Severity isn't always about the words used</h3>
+
+      <p>A calmly worded message can be a "now": "Hi, just checking — my card was charged twice for order #2291, could someone look?" No exclamation marks, no anger, and it is genuinely urgent — a double charge left alone becomes a chargeback, which costs the brand more than the refund would have. Meanwhile an angry-sounding "THIS IS RIDICULOUS, WHERE IS MY ORDER" about a package that is, per tracking, arriving tomorrow, is a "today" — real, but not actively getting worse.</p>
+
+      <div class="aside">
+        <span>Channel changes the clock, not just the tone</span>
+        <p>A live-chat message sitting unread for twenty minutes reads as ignored, because chat sets an expectation of near-instant reply. The same twenty-minute gap on email is unremarkable. Sort by channel-adjusted urgency, not by a single universal timer.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Sort the whole queue once before answering anything — severity, not arrival order.</li>
+          <li>Four piles: now, today, batchable, nothing needed.</li>
+          <li>A calm message can be urgent; an angry one can wait. Read for what's actually breaking.</li>
+          <li>Chat's clock runs faster than email's, even for the same words.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 10 minutes</span><p>Take any twenty messages from a real inbox, forum, or the drill file for this module, and sort them into the four piles in under ten minutes, timing yourself.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l3">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 2.3</b><span class="label">13 minutes</span></div>
+      <h2>Writing in the brand's voice, and the file that makes it repeatable</h2>
+    </div>
+
+    <div class="flow">
+      <p>Customers do not experience "Tolu, filling in for support today." They experience "Bumi Naturals." A reply that sounds like a different person every shift, or like a generic call-centre script, quietly tells the customer the brand is bigger and more impersonal than it actually is — which is the opposite of what a small, founder-led brand is usually selling.</p>
+
+      <h3>Reading for voice before you write a word</h3>
+
+      <p>Before your first reply, read ten pieces of the brand's own writing — its Instagram captions, its product descriptions, a founder's past replies if any exist. Note three things: how formal or casual it is, whether it uses emoji and how many, and what it never does — Bumi Naturals, for instance, never says "no worries" (Ada finds it dismissive) and always signs off with the customer's first name.</p>
+
+      <h3>Worked example: the same answer, generic versus in-voice</h3>
+
+      <div class="ex">
+        <div class="ex-h">A shipping question, two ways</div>
+        <div class="split">
+          <div>
+            <span class="who">Generic support voice</span>
+            <p style="color:var(--muted);font-size:.9rem">"Dear Customer, Thank you for contacting us. Your order will be delivered within 5-7 business days. Please let us know if you have any further questions. Best regards, Support Team."</p>
+          </div>
+          <div class="bad">
+            <span class="who">Bumi Naturals' voice</span>
+            <p style="color:var(--muted);font-size:.9rem">"Hi Funmi! Your order's on its way — usually 5–7 working days to Lagos, and I'll flag you the tracking link the moment it ships. Let me know if it's not with you by next Wednesday and I'll chase it personally. — Tolu, Bumi Naturals"</p>
+          </div>
+        </div>
+      </div>
+
+      <p>The second version costs almost nothing extra to write once you know the voice, and it reads like a specific person at a specific small brand — which is the entire reason a customer chose Bumi Naturals over a bigger competitor in the first place.</p>
+
+      <h3>The voice file: writing it down so it survives a shift change</h3>
+
+      <p>A voice held only in your head disappears the day you're on leave, or the day a second rep joins. Write it down once — tone, emoji rules, sign-off, three phrases the brand uses and three it never does — and it becomes an asset the brand owns, not something that lives only in your memory. This is worksheet page 3.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Read ten real pieces of the brand's writing before you write your first reply.</li>
+          <li>Note tone, emoji habits, and what the brand specifically never says.</li>
+          <li>A named sign-off and a personal detail cost nothing and read as a real person, not a script.</li>
+          <li>Write the voice down — it should survive you being on leave.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 9 minutes</span><p>Pick a real small brand's Instagram or website. Write three sentences describing its voice, then draft one reply to a made-up customer question in that voice.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l4">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 2.4</b><span class="label">13 minutes</span></div>
+      <h2>Macros versus a human reply: when a template is the right call</h2>
+    </div>
+
+    <div class="flow">
+      <p>A saved reply — a macro — is not a shortcut you should feel guilty about. Used well, it is how a brand answers its fortieth "does this ship to Kenya" question exactly as carefully as its first. Used badly, it is how a customer with a genuine, specific problem gets an answer that clearly wasn't written for them, and notices.</p>
+
+      <h3>The test: would this exact wording embarrass you if the customer quoted it back?</h3>
+
+      <p>A macro answering a factual, repeated question — shipping zones, ingredients, return windows — passes this test easily, because the facts don't change person to person. A macro attempting to handle a complaint, an apology, or anything with emotion in it almost always fails it, because it reads as exactly what it is: the same paragraph sent to everyone, including the one person for whom it's obviously wrong.</p>
+
+      <div class="ex">
+        <div class="ex-h">A macro that's right, and one that isn't</div>
+        <div class="split">
+          <div>
+            <span class="who">Right call for a macro</span>
+            <p style="color:var(--muted);font-size:.9rem">"Yes! We ship to Kenya via [carrier] — typically 8–12 working days, and duties are included in the checkout price so there's nothing extra on delivery."</p>
+          </div>
+          <div class="bad">
+            <span class="who">Wrong call for a macro</span>
+            <p style="color:var(--muted);font-size:.9rem">Customer: "This is the second order that's arrived with a broken pump, I'm honestly considering not ordering again." Reply sent: "We're sorry for any inconvenience. Please contact us with your order number and we'll be happy to assist!" — generic, doesn't acknowledge it's the second time, doesn't actually resolve anything.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>The fix in the second case isn't to ban macros — it's a hybrid: open with a macro-free, specific acknowledgement ("I can see this is the second broken pump you've had, that's genuinely not good enough"), then use a macro for the mechanical part (the replacement process), if one exists for that.</p>
+
+      <div class="aside">
+        <span>A macro should sound like a person chose it, not a bot fired it</span>
+        <p>Editing one word of a macro — the customer's name, a specific detail — takes five seconds and is often the difference between a reply that reads as considered and one that reads as automated, even when 95% of the wording is identical.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Macros are right for facts that don't change person to person.</li>
+          <li>Macros are wrong for anything with emotion, history, or a specific complaint in it.</li>
+          <li>The test: would this wording embarrass you if the customer quoted it back publicly?</li>
+          <li>A hybrid — human opening, macro for the mechanical part — often beats an all-or-nothing choice.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 7 minutes</span><p>Take three real or made-up support messages. Decide macro, human, or hybrid for each, and say why in one line.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l5">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 2.5</b><span class="label">11 minutes</span></div>
+      <h2>The end-of-shift handover that makes the next person's morning easy</h2>
+    </div>
+
+    <div class="flow">
+      <p>The queue doesn't stop existing when your shift does. A handover is the difference between the next person — or the founder, checking in before bed — knowing exactly what's in flight, and them having to reopen every ticket to find out.</p>
+
+      <h3>What actually belongs in a handover</h3>
+
+      <p>Not a transcript of everything you did. Three things: anything still open that needs a follow-up ("waiting on warehouse re: order #2291's broken pump — told customer 24–48 hours"), anything you were unsure about and made a judgement call on, and anything worth flagging as a pattern rather than a one-off ("three broken-pump complaints this week, might be worth a word with the supplier").</p>
+
+      <h3>Worked example: a real end-of-shift note</h3>
+
+      <div class="ex">
+        <div class="ex-h">Tolu's handover, Bumi Naturals, Friday shift</div>
+        <div class="ex-b">
+          <p class="quote">"Queue clear except: #2291 waiting on warehouse for a replacement pump, told customer 24–48h. #2305 asked to cancel before shipping — held the order, needs Ada's confirmation it hasn't shipped yet. Also: three broken-pump complaints this week (2288, 2291, 2299), all same product line — might be worth flagging to the supplier."</p>
+        </div>
+      </div>
+
+      <p>This takes under two minutes to write and saves the next person from reconstructing the queue's state from scratch — or worse, from missing #2305's hold and shipping an order the customer explicitly asked to cancel.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>A handover covers open items, judgement calls, and patterns — not a play-by-play.</li>
+          <li>Name the ticket, the state, and what happens next for each open item.</li>
+          <li>A pattern across several tickets is worth more to a founder than any single ticket.</li>
+          <li>Two minutes of writing prevents the next shift from re-doing your work or missing a hold.</li>
+        </ul>
+      </div>
+
+      <div class="doit"><span>Do this now — 6 minutes</span><p>Write a handover note for a made-up shift with two open items and one pattern, in the shape of the worked example.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="drill-sec" id="drill">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Module 2 drill</b><span class="label">one hour</span></div>
+      <h2>Sixty stacked tickets, one hour</h2>
+    </div>
+
+    <div class="flow">
+      <p>A weekend's worth of Bumi Naturals' queue is supplied: sixty messages across email, live chat and WhatsApp, unsorted. Clear it in one hour.</p>
+
+      <h3>Deliver three things</h3>
+
+      <ol class="numlist">
+        <li><strong>A sorted queue.</strong> Every message assigned to now, today, batchable, or nothing-needed, using 2.2's method.</li>
+        <li><strong>A judgement log.</strong> For every message where you had to decide macro, human or hybrid, or where severity wasn't obvious from the wording, one line on what you decided and why.</li>
+        <li><strong>The handover.</strong> Written as if your hour was a real shift ending — open items, judgement calls, and any pattern you noticed across the sixty.</li>
+      </ol>
+
+      <h3>How it is marked</h3>
+
+      <ul class="list">
+        <li><strong>Did the genuinely urgent messages get found?</strong> A double charge or a "please cancel before it ships" buried under a pile of "thanks!" replies is the single failure this drill is built to catch.</li>
+        <li><strong>Are the macro calls defensible?</strong> Not whether they match a key exactly, but whether the reasoning in 2.4's test holds up.</li>
+        <li><strong>Does the voice hold across all sixty replies?</strong> Consistency across an hour under time pressure is the actual test of lesson 2.3, not any single reply.</li>
+        <li><strong>Would the handover actually work?</strong> Read it as the next person, with no other context. Could they pick up the queue from it alone?</li>
+      </ul>
+
+      <div class="aside">
+        <span>What this drill is really testing</span>
+        <p>Whether the judgement from all five lessons holds up under volume and a clock, not just one message at a time in a calm read-through. Every module's drill tests judgement under a different kind of mess — this one tests it under sheer stacked volume.</p>
+      </div>
+
+      <div class="doit">
+        <span>Before module 3</span>
+        <p>You should now have: an access request template, a four-pile triage method, a written voice file, a macro-or-human test, and a handover template. Module 3 turns to the moment triage isn't enough on its own — the customer who is genuinely, sometimes justifiably, angry.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Module 02 of 10 · The Ticket That Doesn't Come Back</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+<script>
+(function () {
+  const FILE = { filename: 'C2-Module2-Worksheets.docx', b64: "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" };
+
+  function saveBlob(filename, bytes) {
+    const blob = new Blob([bytes], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+
+  (async function wire() {
+    const btn = document.getElementById('dl-m2');
+    const status = document.getElementById('dl-m2-status');
+    if (!btn) return;
+
+        btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Saving…';
+      if (status) { status.textContent = ''; status.classList.remove('ok'); }
+      try {
+        const bytes = b64ToBytes(FILE.b64);
+        saveBlob(FILE.filename, bytes);
+        if (status) { status.textContent = 'Saved.'; status.classList.add('ok'); }
+      } catch (err) {
+        const code = err && err.code ? err.code : 'unavailable';
+        if (status) status.textContent = code === 'declined' ? 'Cancelled.' : 'Could not save (' + code + ').';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+  })();
+})();
+</script>
+
+</body>
+</html>

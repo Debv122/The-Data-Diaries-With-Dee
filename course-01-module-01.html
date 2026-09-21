@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>What A Client Is Actually Buying</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">The Assistant They Can't Replace</span>
+      <span class="sep">/</span>
+      <span class="label">Module 01</span>
+      <span class="sep">/</span>
+      <span class="label">Free preview</span>
+    </div>
+    <h1>What a client is actually buying</h1>
+    <p class="standfirst">Five lessons, about an hour. By the end of this module you will be able to look at any job post and see the person behind it — which is the skill everything else in this course sits on.</p>
+
+    <nav class="toc">
+      <a href="#l1"><i>1.1</i><span>Nobody hires a virtual assistant. They hire back their week.</span><u>11 min</u></a>
+      <a href="#l2"><i>1.2</i><span>The four kinds of client, and which two can actually pay you</span><u>12 min</u></a>
+      <a href="#l3"><i>1.3</i><span>What AI already does better than you, and what that leaves</span><u>13 min</u></a>
+      <a href="#l4"><i>1.4</i><span>The trust ladder: from a test task to a monthly retainer</span><u>10 min</u></a>
+      <a href="#l5"><i>1.5</i><span>Your service, in one sentence a client can repeat</span><u>9 min</u></a>
+      <a href="#drill"><i>D</i><span>Drill: read the room, not the job title</span><u>45 min</u></a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ 1.1 ============ -->
+<section class="lesson" id="l1">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 1.1</b><span class="label">11 minutes</span></div>
+      <h2>Nobody hires a virtual assistant. They hire back their week.</h2>
+    </div>
+
+    <div class="flow">
+      <p>Let me tell you about the moment you are actually being hired into, because it is never the moment you imagine.</p>
+
+      <p>Adaeze is a therapist. She sees eleven clients a week, which is as many as she can hold without going hollow. She is good at the part of her job that matters. But last Tuesday she was still answering emails at 11:40pm — rescheduling requests, a query about her rates, an insurance form, someone asking if she takes card. On Thursday she missed a message from a woman who had waited three weeks to work up the nerve to send it, and by the time she replied on Sunday the woman had booked elsewhere. On Friday she realised she had not invoiced anyone in six weeks.</p>
+
+      <p>Adaeze does not wake up one morning wanting a virtual assistant. She wakes up one morning having had enough. <strong>That is the moment. Something has already broken, and she has finally stopped pretending it will fix itself.</strong></p>
+
+      <p>So when she writes a job post, she writes it in the language of tasks, because tasks are what she can see: <em>"Looking for a VA to handle email, bookings and invoicing."</em> But that is not what she is buying. What she is buying is her evenings back, and the end of the low-grade dread that something important is sitting unread.</p>
+
+      <p class="pull">You are not selling hours. You are selling the return of hours to someone who has run out of them.</p>
+
+      <h3>Why this changes what you do on day one</h3>
+
+      <p>Two assistants start with Adaeze on the same Monday. Watch the difference, because it is the whole difference.</p>
+
+      <div class="ex">
+        <div class="ex-h">The same first day, two assistants</div>
+        <div class="split">
+          <div>
+            <span class="who">Assistant A</span>
+            <p class="quote">"Hi Adaeze! I'm so excited to get started. What would you like me to work on today?"</p>
+            <p style="color:var(--muted);font-size:.9rem">Adaeze now has to stop, think, and explain. She has just been handed a new task — managing an assistant — at the exact moment she was trying to have fewer tasks.</p>
+          </div>
+          <div class="bad">
+            <span class="who">Assistant B</span>
+            <p class="quote">"Morning Adaeze. I've read through the last two weeks of the inbox. Three things are eating your mornings: reschedule requests, the same five questions about rates and insurance, and invoice chasing. I'd like to start with reschedules this week — I can handle those without needing you. Say no and I'll start somewhere else."</p>
+            <p style="color:var(--muted);font-size:.9rem">Adaeze has to do one thing: say yes. She has just felt, for the first time in months, what it is like for something to be handled.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Assistant A is not lazy, and she is not less capable. She has simply misunderstood what she was hired for. She thinks the job is <em>doing tasks</em>, so she waits to be given one. Assistant B understands the job is <em>removing weight</em>, so she goes and finds some to remove.</p>
+
+      <p>Within a year, Assistant A is on $6 an hour, wondering why she keeps having to look for new clients. Assistant B has a retainer and a waiting list.</p>
+
+      <h3>The sentence that gives you away</h3>
+
+      <p>There is a line used to warn people who are about to hire an assistant: <em>your assistant is only as good as your brief.</em> It is true, and it is why so many people give up on hiring help — they do not have the time or the clarity to write a good brief, so they get poor work, and conclude that assistants do not work.</p>
+
+      <p>Turn that sentence around and it becomes your entire career strategy. <strong>The assistant who can write the brief herself is the one nobody replaces</strong> — because she has removed the hard half of the job, the half the client was failing at. Everything in this course, from inbox triage to the way you word an escalation, is really training for that one capability.</p>
+
+      <p>You will not be able to do it in week one with a new client. You do not know their business yet. That is fine and expected. But you can start by <em>looking before you ask</em> — reading the last two weeks of the inbox, noticing what repeats, and coming with a proposal rather than a question. A proposal can be wrong. A question is always work.</p>
+
+      <div class="aside">
+        <span>If you are worried you are not qualified for this</span>
+        <p>Notice that nothing Assistant B did required a skill. She read an inbox and noticed a pattern. You already know how to do that. What stops most people is not ability, it is the belief that they should wait to be told. This module is mostly about unlearning that.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>People hire assistants after something has already gone wrong, not before. Your first job is to find out what.</li>
+          <li>"What would you like me to do?" hands the thinking back to someone who has none left.</li>
+          <li>Come with a proposal, not a question. A wrong proposal still saves them effort.</li>
+          <li>The assistant who writes her own brief cannot be replaced by one who waits for it.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 5 minutes</span>
+        <p>Write down, in one sentence, the last time <em>you</em> ran out of time and wished someone had taken something off you. What was the thing? What did it cost you — money, sleep, a relationship, an opportunity? Keep this. You will use it in lesson 1.5, and it is the closest thing you currently have to understanding a client from the inside.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 1.2 ============ -->
+<section class="lesson" id="l2">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 1.2</b><span class="label">12 minutes</span></div>
+      <h2>The four kinds of client, and which two can actually pay you</h2>
+    </div>
+
+    <div class="flow">
+      <p>Most people do not lose their first year to a lack of skill. They lose it to the wrong clients — eight or nine months spent on people who were never going to pay properly and, in many cases, genuinely could not have.</p>
+
+      <p>So before you learn a single tool, learn to tell them apart. Here are the four you will meet, with a real version of each post.</p>
+
+      <h3>Type one — the overwhelmed solo operator</h3>
+
+      <p>A coach, a therapist, a consultant, a photographer, an agency of one. Real revenue, no team, drowning in admin. They decide alone, they can pay, and they feel the pain every single day.</p>
+
+      <div class="ex">
+        <div class="ex-h">Job post — type one</div>
+        <div class="ex-b">
+          <p class="post">Part-time assistant for a busy business coach (10 hrs/week)
+
+I run a one-woman coaching practice and I'm losing evenings to admin. Need help with inbox, scheduling calls across UK/US time, and sending invoices. Must be comfortable making decisions without checking with me on every small thing. Long-term if it goes well.
+
+Budget: $300–450/month to start.</p>
+        </div>
+      </div>
+
+      <p>Read the tells. A named budget. A time commitment. "Long-term if it goes well." And critically: <em>"must be comfortable making decisions without checking with me."</em> That sentence is worth more than the budget line — it tells you this person is buying judgement, which is where the money is. <strong>This is your best client, and most beginners scroll past it because it is not exciting.</strong></p>
+
+      <h3>Type two — the small business with a bottleneck</h3>
+
+      <p>Five to thirty staff, and one person quietly doing three jobs. Slower to hire, more people involved in the decision, often a trial period. But once you are in, you stay for years and the work grows into something bigger than you were hired for.</p>
+
+      <div class="ex">
+        <div class="ex-h">Job post — type two</div>
+        <div class="ex-b">
+          <p class="post">Admin support — small architecture practice (20 hrs/week)
+
+Our office manager is covering admin, HR and client scheduling and it isn't sustainable. Looking for remote support with document management, meeting coordination and supplier follow-up. Experience with Google Workspace essential. Two-week paid trial, then ongoing.
+
+Budget: negotiable, tell us your rate.</p>
+        </div>
+      </div>
+
+      <p>"Tell us your rate" is not a trap, it is a test — and lesson 9.1 teaches you how to answer it. The paid trial is a good sign, not a bad one. Be wary only of unpaid trials.</p>
+
+      <h3>Type three — the startup founder</h3>
+
+      <p>Exciting, fast, often generous when funded, and volatile. They will ask for things well outside your scope, change direction twice in a month, and go quiet when the runway tightens. Take them — the work is genuinely good experience — but <strong>never let a founder be your only client.</strong></p>
+
+      <h3>Type four — the person who wants cheap hands</h3>
+
+      <div class="ex">
+        <div class="ex-h">Job post — type four</div>
+        <div class="ex-b">
+          <p class="post">VA NEEDED ASAP — ROCKSTAR ONLY!!
+
+Need an all-round rockstar VA for social media, graphic design, video editing, cold calling, data entry, bookkeeping and customer service. Must be available 24/7 including weekends. Unlimited revisions. Fast learner. This is a great opportunity to build your portfolio!
+
+Rate: $3/hr. Send 3 samples of previous work (free test task required).</p>
+        </div>
+      </div>
+
+      <p>Seven unrelated jobs in one role. Round-the-clock availability. Unlimited revisions. A free test task. "Great opportunity to build your portfolio" doing the work that a fee should be doing.</p>
+
+      <p>This is not a client. It is a treadmill. And the cost is not really the $3 — it is that every hour here is an hour not spent becoming the kind of assistant who is paid for judgement. <strong>Learn to recognise this post in ten seconds and close the tab.</strong></p>
+
+      <h3>Three questions that tell you if someone can pay</h3>
+
+      <ol class="numlist">
+        <li>Is there a named budget or rate range in the post? Not a promise of "competitive pay" — an actual number. Its absence is not fatal, but its presence is a strong signal.</li>
+        <li>Is the scope one job or seven? A single defined area means someone has thought about what they need. Seven means they are hoping to buy a whole team for one salary.</li>
+        <li>Does the post describe a problem, or only a list of tasks? "I'm losing evenings to admin" is a person in pain who will pay to stop it. A bare task list often means someone shopping on price.</li>
+      </ol>
+
+      <h3>What the market actually pays</h3>
+
+      <p>Useful numbers to hold, so you are neither insulted nor unrealistic. Offshore assistants commonly sit at <strong>$8–15 an hour</strong>. Specialists working in a defined niche reach <strong>$25–45</strong>. Monthly retainers for five or six hours a week typically run <strong>$150–400</strong>.</p>
+
+      <p>Now the important part. That gap between $8 and $35 is not explained by geography, and it is not explained by typing speed. It is explained by whether the client believes they are buying <em>hands</em> or <em>judgement</em>. Two people in the same city, with the same tools, land on opposite sides of it. The rest of this course is about which side you land on.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Types one and two are where the money and the stability are. Type three is good experience with a short shelf life. Type four is a treadmill.</li>
+          <li>A named budget, a single scope, and a described problem are the three green flags.</li>
+          <li>"Rockstar", "24/7", "unlimited revisions" and an unpaid test task are the four red ones.</li>
+          <li>$8 versus $35 is decided by hands versus judgement, not by where you live.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 20 minutes</span>
+        <p>Open any freelance job board and read fifteen VA posts without applying to a single one. Sort each into one of the four types and write the one word or phrase that gave it away. Count how many are type four. Notice how differently the good ones are written — that is the voice you will learn to answer in.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 1.3 ============ -->
+<section class="lesson" id="l3">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 1.3</b><span class="label">13 minutes</span></div>
+      <h2>What AI already does better than you, and what that leaves</h2>
+    </div>
+
+    <div class="flow">
+      <p>This is the lesson most virtual assistant courses will not give you, because giving it honestly makes the rest of their curriculum look thin. I would rather you heard it in your first hour than discovered it in your second year.</p>
+
+      <h3>The honest list</h3>
+
+      <p>Here is what AI tools competently do today, for roughly the price of a data bundle: draft routine email replies, schedule meetings across calendars and time zones, transcribe a call and pull the action items out of it, categorise expenses, reconcile receipts, fill in forms, and carry out surface-level research.</p>
+
+      <p>Read that list again and notice something uncomfortable: <strong>it is the entire syllabus of most beginner VA courses.</strong> Administrative roles are forecast to decline by around 10% by 2034, and that decline is concentrated exactly where beginners start.</p>
+
+      <p>So if your pitch is "I'm organised and I type fast", you are pricing yourself against something that costs twenty dollars a month, works at 3am, and does not get tired. You will lose that competition. It will feel personal. It is not.</p>
+
+      <h3>Now the half that has not moved</h3>
+
+      <p>There are four things no tool does, and they are not consolation prizes. They are the expensive part of the job.</p>
+
+      <div class="ex">
+        <div class="ex-h">Judgement — knowing which of forty things matters</div>
+        <div class="ex-b">
+          <p>A tool will summarise forty emails into a tidy list. It will not know that the mildly-worded one from a supplier — "just checking whether we're still on for the March order" — is the only one that could blow a hole in the quarter, because the client fell out with that supplier in January and nobody wrote it down.</p>
+          <p style="color:var(--muted);font-size:.92rem">Judgement is knowing what is <em>load-bearing</em>. It comes from context a model does not have, and it is the first thing a client notices you have.</p>
+        </div>
+      </div>
+
+      <div class="ex">
+        <div class="ex-h">Discretion — being trusted with what must not leak</div>
+        <div class="ex-b">
+          <p>Someone has to know the salary figure, the health diagnosis, the acquisition that has not been announced, the fact that a named employee is being managed out. Someone has to hold that and never repeat it, including to a friend, including as a story with the names removed.</p>
+          <p style="color:var(--muted);font-size:.92rem">This is a human relationship, and it is not transferable to software. Module 8 is entirely about it.</p>
+        </div>
+      </div>
+
+      <div class="ex">
+        <div class="ex-h">Relationships — the person on the other end wants to be known</div>
+        <div class="ex-b">
+          <p>The client's biggest customer wants to feel remembered, not processed. The difficult supplier needs someone who has learned how to talk to him. The nervous new client needs a reply that reads like a person wrote it, because she is deciding whether to trust this business at all.</p>
+        </div>
+      </div>
+
+      <div class="ex">
+        <div class="ex-h">Ambiguity — deciding when the instructions contradict each other</div>
+        <div class="ex-b">
+          <p>Two instructions conflict. The client is on a plane for six hours. A decision has to be made now, and both options have a cost. Someone makes it, makes it defensibly, and writes down why so it can be reviewed later.</p>
+          <p style="color:var(--muted);font-size:.92rem">A tool escalates. A junior assistant freezes. This is the moment you are actually paid for.</p>
+        </div>
+      </div>
+
+      <h3>The reframe this whole course rests on</h3>
+
+      <p class="pull">You are not competing with AI. You are supervising it.</p>
+
+      <p>Think about what a client actually wants. Not "a person who does tasks by hand", and not "software I have to check". They want <em>an outcome they do not have to think about</em>. The assistant who runs three AI tools well, checks their output properly, and takes personal responsibility for the result delivers exactly that.</p>
+
+      <p>And note the second half, because it is where the money is: she is worth more than the client using the same tools alone — because <strong>the client does not want to check anything either.</strong> Checking is work. Taking responsibility for a result is the service.</p>
+
+      <p>This is a promotion, not a threat. The tools do the typing; you do the deciding. But it only works if you are genuinely good at the checking, which is why module 7 teaches a specific method for verifying work you did not do, and why every module in this course teaches what to do when the task goes wrong rather than only how to do it when it goes right.</p>
+
+      <h3>One more thing that raises your rate faster than tools</h3>
+
+      <p>Specialising. An assistant who has learned how a therapy practice runs — the intake process, the cancellation norms, what you can and cannot put in an email about a client — is worth several times a general one, because that context is precisely what a tool lacks and what a new client would otherwise have to teach. Specialised assistants command premium rates while generalists get squeezed. You will choose your niche in lesson 1.5.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Drafting, scheduling, transcribing, categorising, form-filling and surface research are largely handled. Do not build your pitch on them.</li>
+          <li>Judgement, discretion, relationships and ambiguity are not, and they are the expensive part.</li>
+          <li>Your job is to supervise the tools and own the result — the client does not want to check the output either.</li>
+          <li>Knowing one industry deeply beats knowing one more tool.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 10 minutes</span>
+        <p>Take any five tasks from a real VA job post and put each in one of two columns: "a tool could do this acceptably" and "this needs a person". Then, for one task in column one, write a single line describing what would have to go wrong for it to suddenly need a person. That line is where your value lives — and it is roughly what you will say in an interview when someone asks why they should not just use AI.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 1.4 ============ -->
+<section class="lesson" id="l4">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 1.4</b><span class="label">10 minutes</span></div>
+      <h2>The trust ladder: from a test task to a monthly retainer</h2>
+    </div>
+
+    <div class="flow">
+      <p>Nobody hands a stranger their inbox. Understanding how trust is actually granted saves you from the two mistakes that sink most beginners: asking for too much too early, and then staying too small for far too long.</p>
+
+      <p>Trust moves in rungs. Each rung has a stated task and an unspoken test, and the test is never the one you think.</p>
+
+      <div class="rungs">
+        <div class="rung">
+          <div class="r-top"><span class="r-n">Rung one</span><span class="r-t">The test task</span><span class="r-w">1–2 hours, paid</span></div>
+          <p class="r-test">Stated: do this small, low-stakes, easily-checked thing. <b>Actual test: do you deliver when you said you would, and do you flag the ambiguous part instead of guessing silently?</b> Almost everyone can do the task. Most people fail the second half.</p>
+        </div>
+        <div class="rung">
+          <div class="r-top"><span class="r-n">Rung two</span><span class="r-t">The recurring small job</span><span class="r-w">2–6 weeks</span></div>
+          <p class="r-test">Stated: do the same thing every week. <b>Actual test: consistency.</b> Week four looks exactly like week one, including the week you were tired and the week the power went.</p>
+        </div>
+        <div class="rung">
+          <div class="r-top"><span class="r-n">Rung three</span><span class="r-t">The standing responsibility</span><span class="r-w">2–6 months</span></div>
+          <p class="r-test">Stated: you own the inbox, or the calendar, or the reporting. <b>Actual test: do things stop reaching the client at all</b> — and can you tell them what you handled without making them read a novel?</p>
+        </div>
+        <div class="rung">
+          <div class="r-top"><span class="r-n">Rung four</span><span class="r-t">The retainer</span><span class="r-w">6 months +</span></div>
+          <p class="r-test">Stated: a fixed monthly fee for owning an area. <b>Actual test, and most people never see it coming: do you bring things to them?</b> An assistant who only responds stays on rung three forever, however good she is.</p>
+        </div>
+      </div>
+
+      <h3>Rung one, in practice</h3>
+
+      <p>Here is the same test task ending two ways. The work was identical.</p>
+
+      <div class="ex">
+        <div class="ex-h">End of a paid two-hour test task</div>
+        <div class="split">
+          <div>
+            <span class="who">Fails quietly</span>
+            <p class="quote">"Hi! All done, the spreadsheet is attached. Let me know if you need anything else!"</p>
+            <p style="color:var(--muted);font-size:.9rem">Nothing is wrong with it. But the client now has to open the file and work out whether it was done properly — which is the work she was trying to avoid. And there <em>was</em> an ambiguity; this assistant guessed and said nothing.</p>
+          </div>
+          <div class="bad">
+            <span class="who">Passes</span>
+            <p class="quote">"Morning Tunde — the sheet is attached, 214 rows cleaned.<br><br>One thing I wasn't sure about: 18 entries had no region. I've marked them 'Unassigned' rather than deleting them, so you can decide — say the word and I'll remove them.<br><br>If it's useful, the same three formatting errors caused most of the mess. I can write a one-page note so it doesn't recur."</p>
+            <p style="color:var(--muted);font-size:.9rem">Three lines. Delivered, flagged the judgement call with a reversible decision already made, and offered the next thing. That last paragraph is a rung-four move performed at rung one — which is exactly how people climb fast.</p>
+          </div>
+        </div>
+      </div>
+
+      <p><strong>Flagging ambiguity is the single habit that passes rung one.</strong> Not perfection — clients do not expect a stranger to get everything right. What they are testing is whether they will find out about problems from you, or from a customer three weeks later.</p>
+
+      <h3>Rung four, in practice</h3>
+
+      <p>The move that turns a good assistant into a retained one is unglamorous and takes ninety seconds a month:</p>
+
+      <div class="ex">
+        <div class="ex-h">The message that moves you to rung four</div>
+        <div class="ex-b">
+          <span class="who">Send this once a month</span>
+          <p class="quote">"I've noticed we're losing about two hours a week to the back-and-forth on booking confirmations — mostly people asking the same question about parking. I'd like to fix it with a standard reply and a line on the booking page. Takes me an hour. Want me to?"</p>
+        </div>
+      </div>
+
+      <p>Notice what it does. It names a cost in hours, proposes a specific fix, prices it in your time, and ends with a question the client answers in one word. She does not have to think. She only has to agree.</p>
+
+      <h3>How to ask for the next rung without sounding like you want more money</h3>
+
+      <p>You do not ask for the rung. You demonstrate it and let them notice. If you want the calendar, start by fixing one calendar problem you were not asked to fix, and mention it in a line. If you want a retainer, spend two months bringing one improvement a month, then say: <em>"We've settled into a rhythm of about ten hours a week. Would a fixed monthly arrangement be easier for you to budget than variable hours?"</em> — framed as their convenience, because it genuinely is.</p>
+
+      <p>One last thing worth noticing about all four rungs: <strong>every single one is passed on reliability and communication.</strong> Not once on speed, and not once on the length of your tool list. That is not encouragement, it is what the hiring evidence says — execution quality matters more than tool breadth, and clients screen with messy real-world scenarios rather than polished portfolios. Which is why every module in this course ends in a mess rather than a quiz.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Four rungs: test task, recurring job, standing responsibility, retainer. Each has a hidden test.</li>
+          <li>Rung one is passed by flagging what was ambiguous, not by getting everything right.</li>
+          <li>Rung four is reached by bringing things to the client, not by responding well.</li>
+          <li>Ask for the next rung by demonstrating it first, and frame it as their convenience.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 10 minutes</span>
+        <p>Write the message you would send at the end of a paid two-hour test task, using the structure above: what you did, the one thing you were unsure about plus the reversible decision you made, and what you would suggest next. Three lines maximum. Save it somewhere you will find it — this is a template you will use for years, and you will send it in the first week of every client relationship you ever have.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 1.5 ============ -->
+<section class="lesson" id="l5">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 1.5</b><span class="label">9 minutes</span></div>
+      <h2>Your service, in one sentence a client can repeat</h2>
+    </div>
+
+    <div class="flow">
+      <p>You are going to write one sentence in this lesson. You will use it in your LinkedIn headline, at the top of every outreach message, and in the first thirty seconds of every call for as long as you do this work.</p>
+
+      <p>It has one hard requirement: <strong>it must survive being repeated by someone else, badly, from memory.</strong> Because the way you get your third and fourth clients is one of your first two describing you to a friend over lunch. If your sentence does not survive that lunch, you will spend your whole career doing cold outreach.</p>
+
+      <p>"I'm a virtual assistant" does not survive it. It names a job title and says nothing about who you help or what stops hurting.</p>
+
+      <h3>The shape</h3>
+
+      <p class="pull">I help [a specific kind of person] get back [a specific thing] by [a defined area of work].</p>
+
+      <p>Three slots, and each one is doing a job. The first makes it findable — a person recognises themselves or they do not. The second is the outcome, and it is the reason anyone pays. The third makes it credible and bounded, so nobody assumes you do everything.</p>
+
+      <h3>Eight worked examples</h3>
+
+      <ul class="list">
+        <li>I help solo therapists stop doing admin in the evenings by running their inbox and their booking calendar.</li>
+        <li>I help wedding photographers get their weekends back by handling client enquiries and gallery delivery.</li>
+        <li>I help small law firms stop losing billable hours by managing client intake and document filing.</li>
+        <li>I help online course creators stay on top of their students by running support and the community inbox.</li>
+        <li>I help estate agents stop missing viewings by owning their diary and their follow-ups.</li>
+        <li>I help NGO programme managers get their reporting back on time by handling data collection and donor correspondence.</li>
+        <li>I help e-commerce owners stop firefighting on WhatsApp by running order tracking and customer replies.</li>
+        <li>I help podcast hosts stop chasing guests by managing booking, prep documents and follow-up.</li>
+      </ul>
+
+      <p>Read a few out loud. Notice that every one names a specific evening, weekend or deadline that a real person is currently losing. That is not decoration — it is the part the listener remembers, because it is the part they have felt.</p>
+
+      <h3>The test</h3>
+
+      <p>Read your sentence to one person. Wait a day. Ask them to say it back without looking. If they can get roughly to <em>"she does inboxes and diaries for therapists"</em>, it works — that is precisely the sentence that gets said at lunch. If they say <em>"she does, um, admin stuff? Online?"</em>, it is not the sentence yet.</p>
+
+      <h3>The fear, named</h3>
+
+      <p>Every single person hesitates here, and the hesitation is always the same: <em>if I narrow it down, I will get less work.</em></p>
+
+      <p>In practice the opposite happens, reliably. Nobody searches for a generalist. Every person who hires is thinking about their own specific problem, and they hire whoever appears to have already solved it for someone like them. A therapist reading "I help solo therapists stop doing admin in the evenings" is not thinking about your range. She is thinking <em>this person understands my Tuesday.</em></p>
+
+      <p>Narrowing also compounds. Your second therapist client is far easier to win than your first, because you now know the intake forms, the cancellation norms, the software, and what you can and cannot put in writing about a client. That accumulated context is exactly what lesson 1.3 called the expensive part of the job — the part a tool does not have.</p>
+
+      <p>You may hold two of these sentences, no more. Two is a hedge. Three is a generalist wearing a costume.</p>
+
+      <h3>Choosing when you have no experience</h3>
+
+      <p>You do not need to have done the work to write the sentence. You need to have chosen who you are for, and you almost certainly already have material for that choice:</p>
+
+      <ul class="list">
+        <li><strong>Your family's trade.</strong> If you grew up around a pharmacy, a school, a haulage business or a church, you understand its rhythms in a way an outsider cannot buy.</li>
+        <li><strong>Your degree.</strong> Not the qualification — the vocabulary. A biology graduate is not a scientist, but she can read a lab's emails without being lost.</li>
+        <li><strong>Your last job, however humble.</strong> Two years in a bank branch means you understand what a small financial firm worries about.</li>
+        <li><strong>A world you are simply in.</strong> Church admin, a running club, a student society, a market association. You know its people and how they talk.</li>
+      </ul>
+
+      <p>Pick one. It is not permanent — module 10 revisits this once you have real work to point at, and people change niche all the time. What matters today is that you stop being <em>everyone's assistant</em>, which is nobody's.</p>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>The shape: I help [who] get back [what] by [defined work].</li>
+          <li>The test is whether a stranger can repeat it a day later.</li>
+          <li>Narrowing increases enquiries, because nobody searches for a generalist.</li>
+          <li>Choose your niche from context you already own — family trade, degree, last job, a world you are in.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 15 minutes</span>
+        <p>Write your sentence. Then read it out loud to one real person today, and ask them to repeat it back to you tomorrow without looking. If they cannot, rewrite it and try again with someone else. Do not move on to module 2 until one person has passed this test — everything in the outreach module assumes you have a sentence that survives being repeated.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DRILL ============ -->
+<section class="drill-sec" id="drill">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Module 1 drill</b><span class="label">about 45 minutes</span></div>
+      <h2>Read the room, not the job title</h2>
+    </div>
+
+    <div class="flow">
+      <p>Five job posts. For each one, write four short answers — no more than a line each.</p>
+
+      <ol class="numlist">
+        <li>What is this person actually losing right now?</li>
+        <li>Which of these tasks would an AI tool already handle acceptably?</li>
+        <li>What is left that genuinely needs a human, and why?</li>
+        <li>What would you charge, and what is your reasoning?</li>
+      </ol>
+
+      <p>Then choose the single post you would apply to, and write one sentence on why each of the other four is a trap. There is a worked solution — do the drill first and compare. The point is not to match my answers, it is to notice where your reasoning went somewhere different and work out which of us was right.</p>
+
+      <div class="posts">
+        <div class="job">
+          <div class="j-h"><b>Post A</b><span>Posted 2 days ago</span></div>
+          <div class="j-b">
+            Executive assistant needed for a private wealth advisor. Managing a complex diary across three time zones, screening incoming enquiries, preparing client meeting packs. Absolute discretion required — you will see financial information. Prefer someone who can commit two years.
+            <span class="rate">Budget: $1,400/month · 25 hrs/week</span>
+          </div>
+        </div>
+
+        <div class="job">
+          <div class="j-h"><b>Post B</b><span>Posted 6 hours ago</span></div>
+          <div class="j-b">
+            Looking for a data entry VA. Copying product details from supplier PDFs into our Shopify store. About 400 products. Straightforward work, full instructions provided. Need it finished within a week.
+            <span class="rate">Budget: $120 fixed price</span>
+          </div>
+        </div>
+
+        <div class="job">
+          <div class="j-h"><b>Post C</b><span>Posted 5 days ago</span></div>
+          <div class="j-b">
+            Part-time support for a growing physiotherapy clinic (3 practitioners). Front-desk email, appointment reminders, chasing unpaid invoices, ordering supplies. Our receptionist left and the physios are doing it between patients. Need someone reliable who can start soon and take it off our hands properly.
+            <span class="rate">Budget: not stated — "tell us what you charge"</span>
+          </div>
+        </div>
+
+        <div class="job">
+          <div class="j-h"><b>Post D</b><span>Posted 1 day ago</span></div>
+          <div class="j-b">
+            NEED A VA ROCKSTAR!! Social media, video editing, cold calling, bookkeeping, customer service, graphic design. Must be online 24/7 and respond within 5 minutes. Fast learner, no excuses. Great chance to build your portfolio with a fast-growing brand!
+            <span class="rate">Rate: $3/hr · Free test task required</span>
+          </div>
+        </div>
+
+        <div class="job">
+          <div class="j-h"><b>Post E</b><span>Posted 3 weeks ago, reposted</span></div>
+          <div class="j-b">
+            Chief of staff / EA for a pre-seed founder. Wearing many hats — inbox, investor scheduling, some research, occasional personal errands, help with whatever's on fire. Fast-moving, no two days the same. Equity available for the right person.
+            <span class="rate">Budget: $800/month, "can grow quickly after we raise"</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="aside">
+        <span>What this drill is testing</span>
+        <p>Not knowledge — you already have everything you need from the five lessons. It is testing whether you can look at a job post and see the person behind it. That is the same skill that later lets you write the brief a client did not know how to write, which lesson 1.1 named as the thing that makes an assistant unreplaceable.</p>
+      </div>
+
+      <div class="doit">
+        <span>Before you move on to module 2</span>
+        <p>You should now have four things saved: your one-sentence description of a time you ran out of hours, your fifteen sorted job posts, your test-task closing message, and your service sentence with one person's confirmation that they could repeat it. Module 2 opens the inbox, and it assumes all four exist.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Module 01 of 10 · The Assistant They Can't Replace</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

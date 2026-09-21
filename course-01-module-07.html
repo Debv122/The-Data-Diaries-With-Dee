@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Working with AI as Your Junior</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- download callout ---------- */
+
+  .dl-callout{
+    margin-top:clamp(22px,3vw,32px);
+    display:flex;flex-wrap:wrap;gap:16px 20px;align-items:center;
+    border:1px solid var(--line);border-radius:12px;
+    background:var(--surface);padding:16px 20px;
+  }
+  .dl-callout .dl-text{flex:1;min-width:200px}
+  .dl-callout .dl-text b{display:block;font-size:.98rem;color:var(--ink);font-weight:600;margin-bottom:2px}
+  .dl-callout .dl-text span{font-size:.88rem;color:var(--muted)}
+  .dl-btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    height:42px;padding:0 20px;border-radius:999px;flex:none;
+    border:1px solid var(--ember);background:var(--ember);color:#160C08;
+    font-size:.86rem;font-weight:500;letter-spacing:-.01em;cursor:pointer;
+    font-family:inherit;transition:background .2s ease,transform .2s ease;
+  }
+  .dl-btn:hover{background:#EE9679;transform:translateY(-1px)}
+  .dl-btn:disabled{opacity:.55;cursor:default;transform:none}
+  .dl-status{font-family:var(--mono);font-size:.72rem;color:var(--faint);flex:none}
+  .dl-status.ok{color:var(--ember)}
+</style>
+<style>
+  .tree{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .tree .t-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .tree .t-b{padding:16px 18px;font-family:var(--mono);font-size:.85rem;line-height:1.85;color:var(--body);white-space:pre}
+  .tree .t-b .d{color:var(--ember)}
+  .tree .t-b .f{color:var(--muted)}
+  .tree .t-b .c{color:var(--faint);font-family:var(--sans);font-style:italic}
+
+  .namerow{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .namerow .n-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .nrow{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr);gap:6px 14px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:center;font-family:var(--mono);font-size:.84rem}
+  .nrow:last-child{border-bottom:0}
+  .nrow .bad{color:var(--dusk);text-decoration:line-through;text-decoration-color:var(--dusk);opacity:.7}
+  .nrow .good{color:var(--ink);font-weight:500}
+  .nrow .arrow{color:var(--ember);text-align:center;font-family:var(--sans)}
+  @media (max-width:560px){.nrow{grid-template-columns:minmax(0,1fr)}.nrow .arrow{display:none}}
+
+  .stagebox{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .stagebox .s-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .srow{display:grid;grid-template-columns:120px minmax(0,1fr);gap:6px 16px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:baseline;font-size:.92rem}
+  .srow:last-child{border-bottom:0}
+  .srow b{font-family:var(--mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ember)}
+  .srow span{color:var(--body)}
+  @media (max-width:560px){.srow{grid-template-columns:minmax(0,1fr)}}
+</style>
+
+
+</head>
+<body>
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">The Assistant They Can't Replace</span>
+      <span class="sep">/</span>
+      <span class="label">Module 07</span>
+    </div>
+    <h1>Working with AI as your junior</h1>
+    <p class="standfirst">Five lessons, just over an hour. Treat an AI tool like a junior assistant who is fast, tireless, occasionally brilliant, and cannot be trusted with anything unchecked or anything confidential. This module is what to hand it, how to brief it so the first draft is usable, how to check work you didn't do yourself, which automations actually save hours, and the one line you never cross regardless of how much time it would save.</p>
+
+    <nav class="toc">
+      <a href="#l1"><i>7.1</i><span>What to hand it, and what must never leave the client's account</span><u>13 min</u></a>
+      <a href="#l2"><i>7.2</i><span>The brief is the skill: prompts that produce a usable first draft</span><u>14 min</u></a>
+      <a href="#l3"><i>7.3</i><span>Checking work you did not do: the three-way check</span><u>13 min</u></a>
+      <a href="#l4"><i>7.4</i><span>No-code automations that save real hours, and the ones that break silently</span><u>14 min</u></a>
+      <a href="#l5"><i>7.5</i><span>Confidentiality, client data, and the line you do not cross even once</span><u>12 min</u></a>
+      <a href="#drill"><i>D</i><span>Drill: automate it, document it, justify yourself</span><u>70 min</u></a>
+    </nav>
+
+    <div class="dl-callout">
+      <div class="dl-text">
+        <b>Module 7 worksheets</b>
+        <span>The five fill-in pages this module refers to — the hand-off checklist, a brief template, the three-way check log, an automation map and the confidentiality line. One .docx, five pages.</span>
+      </div>
+      <button class="dl-btn" id="dl-m7" type="button">Save worksheets (.docx)</button>
+      <span class="dl-status" id="dl-m7-status"></span>
+    </div>
+  </div>
+</header>
+
+<section class="lesson" id="l1">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 7.1</b><span class="label">13 minutes</span></div>
+      <h2>What to hand it, and what must never leave the client's account</h2>
+    </div>
+
+    <div class="flow">
+      <p>An AI tool can draft the first version of Adaeze's newsletter, summarise a long article for module 6's research, or turn rough meeting notes into a clean paragraph in ten seconds. It can also, if you paste the wrong thing into it, put a client's name, a diagnosis-adjacent detail, or a supplier's contract terms into a system you don't control and can't take back. The skill in this lesson is telling those two situations apart before you paste anything, not after.</p>
+
+      <p class="pull">Treat every AI tool as a very capable stranger you've just met. Useful for plenty. Told nothing it couldn't repeat.</p>
+
+      <h3>The test: would you say this out loud in a waiting room?</h3>
+
+      <p>A rough working test, before every paste: would you be comfortable saying this sentence out loud in Adaeze's waiting room, where any client might overhear it? A newsletter draft about general wellness tips — yes, obviously. "Summarise this session note about Chinelo's anxiety symptoms" — no, and pasting it into a general-purpose AI tool is exactly as exposing as saying it out loud, even though it feels more private because no one's in the room.</p>
+
+      <h3>Three categories, and which tools each one is allowed near</h3>
+
+      <div class="stagebox">
+        <div class="s-h">Sorting a task before you touch any AI tool</div>
+        <div class="srow"><b>Safe to hand over</b><span>General knowledge, public information, your own drafting work with no client specifics in it — a newsletter template, a generic process description, brainstorming subject lines. No names, no numbers, no identifying detail.</span></div>
+        <div class="srow"><b>Needs de-identifying first</b><span>Content that's useful to process but doesn't need the client's specific identity attached — "summarise this 800-word note" works fine with the client's name replaced by "the client" and dates removed, if the summary itself doesn't need them.</span></div>
+        <div class="srow"><b>Never leaves the client's own account, if it goes near AI at all</b><span>Session notes, health information, financial details, anything covered by a confidentiality agreement. If a client's own software has an AI feature built directly into their own account — a scheduling tool's built-in assistant, for instance — that is a different situation from copying the same text into a separate, general-purpose tool outside their systems.</span></div>
+      </div>
+
+      <h3>De-identifying is a real skill, not just find-and-replace</h3>
+
+      <p>Swapping "Chinelo" for "the client" is the easy part. The harder part is the detail that identifies someone even without a name attached — a very specific combination of profession, location, and situation can be enough to be recognisable to someone who knows the practice, even to a machine that never sees the name. When in doubt, generalise further than feels necessary, or don't de-identify at all — keep the task inside the client's own systems instead.</p>
+
+      <div class="ex">
+        <div class="ex-h">The same task, two ways</div>
+        <div class="split">
+          <div>
+            <span class="who">Should not be pasted anywhere general</span>
+            <p style="color:var(--muted);font-size:.9rem">"Summarise this note: Chinelo Okafor, 34, presenting with anxiety related to a custody dispute, third session, discussed coping strategies for court dates in October."</p>
+          </div>
+          <div class="bad">
+            <span class="who">Safe, because nothing identifying survived</span>
+            <p style="color:var(--muted);font-size:.9rem">"Rewrite this general paragraph on anxiety coping strategies for a client-facing newsletter, keeping the tone warm and non-clinical: [your own paragraph, containing no client details at all]."</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>When you genuinely don't know which category something is in</h3>
+
+      <p>Ask, or default to the stricter category. The cost of treating a borderline task too cautiously is a few extra minutes doing it by hand. The cost of guessing wrong the other way is not reversible once it's pasted into a tool you don't control — there is no version of "undo" for information that's already left the client's systems.</p>
+
+      <div class="aside">
+        <span>This is a client-relationship issue before it's a technical one</span>
+        <p>Adaeze's clients trust her with things they don't tell most people. That trust is the entire asset her practice runs on. An assistant who pastes the wrong thing into the wrong tool once, even accidentally, once even out of genuine helpfulness, is risking something that took years to build and cannot be quickly rebuilt.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>The waiting-room test: would you say this out loud where a client might overhear?</li>
+          <li>Three categories — safe, needs de-identifying, never leaves the client's own account.</li>
+          <li>De-identifying means removing anything that could still identify someone, not just their name.</li>
+          <li>When unsure, default to the stricter category. There's no undo once it's pasted.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 8 minutes</span>
+        <p>List five tasks you might hand to an AI tool for Adaeze's practice this month. Sort each into one of the three categories from this lesson, out loud if it helps, before you do anything else with the list.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l2">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 7.2</b><span class="label">14 minutes</span></div>
+      <h2>The brief is the skill: prompts that produce a usable first draft</h2>
+    </div>
+
+    <div class="flow">
+      <p>"Write a newsletter" produces something generic enough to belong to any wellness practice in the world, because that instruction told the tool nothing that distinguishes this one. The skill here is not learning to use an AI tool — it's the same skill from module 5's meeting agendas, redirected: turning a vague ask into a specific brief before the work starts, except now you're briefing a tireless junior instead of running a meeting.</p>
+
+      <p class="pull">A vague prompt gets a generic answer. The gap between generic and genuinely useful is almost entirely the brief, not the tool.</p>
+
+      <h3>Four things a usable brief includes</h3>
+
+      <ol class="numlist">
+        <li><strong>Audience and purpose.</strong> Who is this actually for, and what should they do or feel after reading it? "A newsletter" tells the tool nothing. "A monthly note to existing clients, reassuring them the practice is stable and worth staying with, not a sales pitch to strangers" tells it everything about tone.</li>
+        <li><strong>Constraints.</strong> Length, format, what to avoid. "Under 300 words, no clinical jargon, don't mention pricing" removes entire categories of bad output before they're written.</li>
+        <li><strong>A concrete example or two.</strong> If Adaeze has sent a newsletter before that landed well, give a short excerpt as a model. Nothing teaches tone faster than a real example, and it's the single highest-leverage addition to any brief.</li>
+        <li><strong>What "done" looks like.</strong> The specific thing that would make this draft usable versus needing another pass — "should sound like it could have been written by Adaeze herself, not a marketing agency."</li>
+      </ol>
+
+      <h3>Worked example: two prompts, two outcomes</h3>
+
+      <div class="ex">
+        <div class="ex-h">The same task, briefed two ways</div>
+        <div class="ex-b">
+          <p class="quote"><strong>Thin prompt:</strong> "Write a newsletter for a therapy practice."<br><br><strong>Full brief:</strong> "Write a monthly newsletter update for existing clients of a solo therapy practice in Lagos. Purpose: reassure clients the practice is stable and remind them gently that rebooking is easy — not a sales pitch, and not aimed at new clients. Under 300 words. Warm, direct, no clinical jargon, no mention of pricing. Here's an excerpt from a past one that landed well: [paste example]. Should read like it was written by the therapist herself, not a marketing team."</p>
+        </div>
+      </div>
+
+      <p>Notice the full brief doesn't ask for anything technically difficult — every constraint in it is something a competent human writer would also need to know before starting. That's the whole insight: briefing an AI tool well is briefing anyone well. The skill transfers directly from every other briefing moment in this course.</p>
+
+      <h3>Iterate on the brief, not just the output</h3>
+
+      <p>When a first draft misses, the instinct is to ask for a rewrite — "make it warmer," "shorter." That works, but it's slower than fixing the brief itself for next time: if tone keeps coming back wrong, the brief is probably missing the example that would have fixed it in one pass. Treat a bad first draft as information about what the brief left out, not just a draft to patch.</p>
+
+      <div class="aside">
+        <span>The first draft is a draft, always</span>
+        <p>Even a well-briefed output is a starting point, not a finished piece — this lesson is about getting to a <em>usable</em> first draft, not a final one. Lesson 7.3 covers what checking it properly actually involves, and it applies to every output, however good the brief was.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Four parts: audience and purpose, constraints, a concrete example, what "done" looks like.</li>
+          <li>A real example of tone that's worked before is the single highest-leverage thing to include.</li>
+          <li>Briefing an AI tool well is the same skill as briefing any person well.</li>
+          <li>A bad draft usually means the brief was missing something — fix the brief, not just the output.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 10 minutes</span>
+        <p>Take the thin prompt from the worked example above — or write your own one-liner for a real task — and expand it into a full four-part brief. Notice how much of it you already knew and simply hadn't written down.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l3">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 7.3</b><span class="label">13 minutes</span></div>
+      <h2>Checking work you did not do: the three-way check</h2>
+    </div>
+
+    <div class="flow">
+      <p>An AI-drafted summary of a supplier contract states the notice period is 30 days. You didn't read the original contract yourself — the draft looked clean, confident, well-formatted, entirely plausible. It is also, on this point, wrong: the actual clause says 60 days. Confident and wrong look identical from the outside, which is exactly why checking AI output needs a specific discipline, not just a read-through.</p>
+
+      <p class="pull">Fluent is not the same as correct. A well-written wrong answer is more dangerous than a badly-written one, because it doesn't look like it needs checking.</p>
+
+      <h3>Three checks, every time something goes out under your name</h3>
+
+      <ol class="numlist">
+        <li><strong>Source check: does the claim trace back to something real?</strong> For any specific fact, figure, date, or quote in the output, find the place in the original material that actually supports it. If you can't point to it, treat the claim as unverified — the same confidence-labelling discipline from module 6, applied to AI output instead of search results.</li>
+        <li><strong>Logic check: does the reasoning actually hold?</strong> Read the argument, not just the conclusion. AI output can state a confident conclusion that doesn't actually follow from the reasoning shown above it — numbers that don't add up, a "therefore" that doesn't follow from what came before.</li>
+        <li><strong>Fit check: is this actually right for this client, this time?</strong> Correct in general and correct for Adaeze's specific situation aren't the same thing. A technically accurate newsletter tip might still be wrong for her practice's tone, or reference something that doesn't apply to her client base.</li>
+      </ol>
+
+      <h3>Worked example: the contract summary, checked properly</h3>
+
+      <div class="ex">
+        <div class="ex-h">Where the three-way check catches the error</div>
+        <div class="ex-b">
+          <p class="quote"><strong>AI-drafted summary:</strong> "The contract requires 30 days' written notice to terminate."<br><br><strong>Source check:</strong> Opened the original contract, found the termination clause. It actually says 60 days. The summary was wrong.<br><br><strong>Why it likely happened:</strong> Many commercial contracts use a 30-day standard, and the tool may have defaulted toward the common pattern rather than this specific document's actual clause.<br><br><strong>What changes:</strong> Corrected the summary, and now treat every specific number in future AI-drafted summaries as needing this same source check, not just the ones that feel surprising.</p>
+        </div>
+      </div>
+
+      <p>The unsettling part of this example is that 30 days was entirely plausible — it's a completely normal notice period, which is exactly why it didn't trigger suspicion on a read-through. Plausible and wrong is the failure mode a source check catches that a read-through alone never will.</p>
+
+      <h3>Higher stakes, more checking — not the reverse</h3>
+
+      <p>It's tempting to check casually on the tasks that matter most, because they took the most effort to draft and feel the most "done." Do the opposite: the three-way check should scale up with stakes, not down. A social media caption with a wrong fact in it is embarrassing. A client-facing summary of a legal or financial document with a wrong fact in it can cost real money or trust — and the second one is exactly what got less scrutiny in the example above, because it read as authoritative.</p>
+
+      <div class="aside">
+        <span>You are the last check, and your name is the one on it</span>
+        <p>Whatever went into producing a draft, once you send it, edit it, or hand it to Adaeze without flagging a concern, it is your work in every way that matters. "The AI said so" is not a defence a client will accept, and it shouldn't be — checking is the actual job, and drafting is increasingly the easy part.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Three checks: source (does the claim trace back to something real), logic (does the reasoning hold), fit (is this right for this client, now).</li>
+          <li>A confident, well-written answer is not evidence it's correct — it's exactly what a wrong answer looks like too.</li>
+          <li>Scale checking up with stakes, not down. The most important outputs need the most scrutiny, not the least.</li>
+          <li>Once you send it, it's your work — "the AI said so" isn't a defence.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 10 minutes</span>
+        <p>Take any AI-drafted output you have access to — yours or an example. Pick three specific factual claims in it and try to trace each back to a real source. Note how many you actually could.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l4">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 7.4</b><span class="label">14 minutes</span></div>
+      <h2>No-code automations that save real hours, and the ones that break silently</h2>
+    </div>
+
+    <div class="flow">
+      <p>Booking reminders that fire automatically 24 hours before each session, from module 4's handover file, are a no-code automation already doing real work in Adaeze's practice. A tool like this connects two systems — the booking calendar and an email or SMS sender — with a trigger ("a session is booked") and an action ("send a reminder"), no custom software required. Set up well, automations like this buy back hours every single week. Set up carelessly, they fail silently and nobody notices until a client misses an appointment and asks why no reminder came.</p>
+
+      <p class="pull">A good automation saves time forever. A bad one saves time until the day it silently stops working, and costs far more than it ever saved.</p>
+
+      <h3>What actually makes a task worth automating</h3>
+
+      <p>Not everything repetitive should be automated. A task is a good candidate when it's frequent, the steps are genuinely identical every time, and the cost of it going unnoticed if it breaks is low enough that occasional spot-checking is enough of a safety net. A task that's frequent but varies in subtle ways each time — like drafting a truly personalised reply — is usually a worse fit; automating it either produces something generic or requires so many exceptions that the automation becomes more fragile than doing it by hand.</p>
+
+      <h3>Where automations break, specifically</h3>
+
+      <div class="stagebox">
+        <div class="s-h">The failure modes worth watching for</div>
+        <div class="srow"><b>A connected app changes something</b><span>The booking tool updates its layout or the field an automation reads gets renamed, and the trigger quietly stops firing — with no error message anywhere, because from the tool's point of view nothing is "broken," it's just no longer receiving the input it expects.</span></div>
+        <div class="srow"><b>Silent partial failure</b><span>An automation with several steps completes the first two and fails on the third — the reminder email sends, but the calendar note that was meant to log it never gets written. Everything looks fine from the part you happen to check.</span></div>
+        <div class="srow"><b>Rate limits and quotas</b><span>Free or lower tiers of most automation tools cap how many times a workflow can run in a day or month. Cross that cap mid-month and later triggers simply don't fire, often without an obvious alert.</span></div>
+        <div class="srow"><b>Edge cases nobody designed for</b><span>A client reschedules twice in one day, or books two sessions back to back — situations the automation's logic never accounted for, producing a wrong or duplicate action instead of no action at all.</span></div>
+      </div>
+
+      <h3>The habit that catches all four: a monthly spot-check</h3>
+
+      <p>Once a month, deliberately trigger every live automation and confirm the whole chain actually completed — not just that something happened, but that every step happened. This is a direct echo of module 4's process-library discipline: a system nobody is responsible for checking is a system slowly drifting toward failure, unnoticed, until the day it matters.</p>
+
+      <div class="ex">
+        <div class="ex-h">A spot-check, done properly</div>
+        <div class="ex-b">
+          <p class="quote">Booked a test session for a fake client on the 1st of the month. Confirmed: reminder email sent 24 hours before (yes) — calendar note logged (yes) — internal tracker updated with the new booking (no — this step had silently failed for the last three weeks, since the tracker's spreadsheet was renamed). Fixed the broken link, re-ran, confirmed all three steps completed. Logged the fix in the process library page for booking reminders.</p>
+        </div>
+      </div>
+
+      <h3>Document it so someone else could run it without you</h3>
+
+      <p>Every live automation deserves its own process-library page, in the format from module 4.4: what triggers it, what it does step by step, what to watch for, and when to ask Adaeze rather than fix it alone. This isn't extra work on top of the automation — it's what makes the time-saving durable rather than something that quietly stops paying off the moment you're unavailable to notice it's broken.</p>
+
+      <div class="aside">
+        <span>Start with the highest-frequency, lowest-stakes task</span>
+        <p>The best first automation to build is something that runs often and where an occasional miss is annoying, not costly — booking reminders, not anything touching money or clinical information. Build confidence in the discipline of monitoring before automating anything where a silent failure would be expensive.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Automate what's frequent, identical every time, and low-cost if it briefly breaks unnoticed.</li>
+          <li>Four failure modes: an app changes underneath it, silent partial failure, rate limits, edge cases nobody designed for.</li>
+          <li>Spot-check every live automation monthly — trigger it for real and confirm every step, not just the visible one.</li>
+          <li>Document every automation as its own process-library page, so it survives you being unavailable.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 10 minutes</span>
+        <p>List every repetitive task you currently do by hand, weekly or more often. Circle the one that's most frequent and lowest-stakes if it briefly goes wrong. That's your first automation candidate — not necessarily the one that would save the most time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l5">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 7.5</b><span class="label">12 minutes</span></div>
+      <h2>Confidentiality, client data, and the line you do not cross even once</h2>
+    </div>
+
+    <div class="flow">
+      <p>Every lesson in this module has circled this point without quite landing on it directly, so this lesson says it plainly: there is one line in this entire course that doesn't bend for convenience, deadline pressure, or good intentions, and it's this one. Client confidentiality is not a best practice to weigh against speed. It's the floor everything else in this role stands on.</p>
+
+      <p class="pull">Every other rule in this course has an exception for a good enough reason. This one does not.</p>
+
+      <h3>Why this is categorically different from other judgement calls</h3>
+
+      <p>Most of this course has been about judgement — when to escalate, how firmly to chase, what counts as good enough. Confidentiality isn't a judgement call in the same sense, because the harm from a breach is often irreversible in a way a late invoice or a clumsy email isn't. A missed deadline can be apologised for and fixed. A client's private information, once it's left the systems it was meant to stay inside, cannot be put back — the exposure already happened, permanently, regardless of what happens next.</p>
+
+      <h3>What this means in the moments that actually come up</h3>
+
+      <ol class="numlist">
+        <li><strong>No client information into a general-purpose AI tool, ever</strong> — covered fully in lesson 7.1, worth repeating here as the anchor rule of the whole module.</li>
+        <li><strong>No client information in a personal notebook, personal email, or personal cloud storage.</strong> Work happens in the client's systems, or in tools she's explicitly approved for it — never wherever happens to be convenient in the moment.</li>
+        <li><strong>No screenshots of client data sent anywhere outside approved channels</strong> — including to yourself, "just to remember it later." If you need to remember it, write a note that doesn't contain the identifying details.</li>
+        <li><strong>No discussing a client's situation with anyone, including other clients, family, or friends</strong> — even with names removed, if enough specific detail remains that someone could work out who it's about. This is the same identifiability trap from lesson 7.1's de-identifying discussion, applied to conversation instead of AI prompts.</li>
+        <li><strong>When in doubt, ask before, not after.</strong> "Is it alright if I use this tool for X" costs Adaeze thirty seconds. Finding out after the fact that you already did costs a great deal more, and can't be undone by asking.</li>
+      </ol>
+
+      <h3>What to do if you think you've already made a mistake</h3>
+
+      <p>Tell Adaeze immediately, plainly, with exactly what happened and where — not after trying to quietly undo it yourself, and not with the details softened to make it sound less serious than it was. A fast, honest disclosure that starts the right response early is recoverable in ways that will make the relationship stronger, not weaker, if handled this way. A mistake discovered later, or one you tried to hide, damages trust far beyond the original error — because now the concern isn't just what happened, but what else might have happened that was never disclosed.</p>
+
+      <div class="aside">
+        <span>This is the one place "better to ask forgiveness than permission" is exactly backwards</span>
+        <p>That instinct works fine for small, reversible calls — trying a new template, sending a slightly informal message. It fails completely here, because the harm from a confidentiality breach happens at the moment of exposure, not at the moment someone finds out about it. Asking first is the only version of this that actually prevents the harm rather than just managing the fallout afterward.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Confidentiality doesn't bend for speed, convenience, or good intentions — it's the floor, not a judgement call.</li>
+          <li>Work stays inside the client's approved systems. Not a personal notebook, not a screenshot "for later."</li>
+          <li>Enough specific detail can identify someone even with the name removed — in conversation, not just in prompts.</li>
+          <li>If you think you've made a mistake, disclose it immediately and fully. Concealment is what actually destroys trust.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 8 minutes</span>
+        <p>Write, in your own words, the one sentence you'd want to be able to say honestly about how you've handled every piece of client information this month. If any part of that sentence would be uncomfortable to say to Adaeze directly, that's worth addressing before it becomes a habit.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="drill-sec" id="drill">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Module 7 drill</b><span class="label">70 minutes</span></div>
+      <h2>Automate it, document it, justify yourself</h2>
+    </div>
+
+    <div class="flow">
+      <p>Pick one genuinely repetitive task from your own life or work — not a hypothetical, something real you actually do more than once a week. Build a working automation or AI-assisted workflow for it end to end, using the disciplines from this whole module.</p>
+
+      <h3>Deliver three things</h3>
+
+      <ol class="numlist">
+        <li><strong>The automation or workflow, built and tested.</strong> Actually working, not sketched — run it for real at least twice, including one deliberate edge case, and note what happened both times.</li>
+        <li><strong>The documentation.</strong> A process-library page, per lesson 7.4, written so someone else could run or maintain this without you: what triggers it, the steps, what to watch for, when to ask before touching it.</li>
+        <li><strong>The paragraph.</strong> A short, honest piece of writing explaining what a human is still needed for in this specific workflow, now that the repetitive part is automated — and why that makes you more valuable to keep around, not less.</li>
+      </ol>
+
+      <h3>How it is marked</h3>
+
+      <ul class="list">
+        <li><strong>Did you test an edge case, not just the happy path?</strong> Lesson 7.4's whole point was that automations fail on the cases nobody designed for — a drill that only ever ran the simple version hasn't actually tested for the real risk.</li>
+        <li><strong>Would the documentation actually let someone else run this?</strong> Read it as if you'd never seen the automation before. If a step is missing or assumed, it fails the same test as module 4's handover file.</li>
+        <li><strong>Did anything in this drill touch confidential or identifying information?</strong> If it did, was lesson 7.1's category sorting and lesson 7.5's line actually respected — or quietly skipped because it was "just a drill"?</li>
+        <li><strong>Is the final paragraph honest, or defensive?</strong> The strongest answers name a real, specific human judgement the automation can't replace — not a vague claim that "the human touch matters."</li>
+        <li><strong>Did you check the automation's output, or trust it on the first pass?</strong> The three-way check from lesson 7.3 applies here too — an automated workflow producing wrong output silently is the whole risk this module has been building toward.</li>
+      </ul>
+
+      <div class="aside">
+        <span>What this drill is really testing</span>
+        <p>Whether you can hand real work to a fast, tireless, occasionally wrong junior — and still be the reason the work is trustworthy. Every module's drill has tested judgement under a different kind of mess. This one tests it under speed: the tools in this module make it easy to move fast, and the discipline is making sure fast doesn't mean careless.</p>
+      </div>
+
+      <div class="doit">
+        <span>Before module 8</span>
+        <p>You should now have: a working, tested automation with real documentation, and a clear-eyed paragraph on your own value in an AI-assisted role. Module 8 turns to communication and discretion — the messages that get a decision instead of a conversation, and the judgement calls about what you say, to whom, and what you never repeat.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Module 07 of 10 · The Assistant They Can't Replace</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const FILE = { filename: 'VA-Course-Module7-Worksheets.docx', b64: "UEsDBAoAAAAAAMZ2I10AAAAAAAAAAAAAAAAFAAAAd29yZC9QSwMECgAAAAAAxnYjXQAAAAAAAAAAAAAAAAsAAAB3b3JkL19yZWxzL1BLAwQKAAAACADGdiNdxppPZfoAAAAhBAAAHAAAAHdvcmQvX3JlbHMvZG9jdW1lbnQueG1sLnJlbHOtk91OAyEQhV+FcO+yrVqNKe2NMemtWR+AsrM/cRkITI19ezF2KzUN8YLLOTOc+TI5rLefZmIf4MNoUfJFVXMGqG07Yi/5W/Ny88i3m/UrTIriRBhGF1h8gkHygcg9CRH0AEaFyjrA2OmsN4pi6XvhlH5XPYhlXa+ETz34pSfbtZL7XbvgrDk6+I+37bpRw7PVBwNIV1aIQMcJQnRUvgeS/Keuog8X19cvS67Hg9mDj3f8JThLOYjbkhCdtYSW0jOcpRzEXUkIwPYPw6zkEO6LZgGI4t3TNJyUHMKqJIK25ruVIMxKDuGhbBqQGrWfIE3DSZohxMVf33wBUEsDBAoAAAAIAMZ2I11H17lajQ8AANXQAAARAAAAd29yZC9kb2N1bWVudC54bWztXd1S4zoSfhUVV2erAokDhJ+anwqQDKkZYIqEoaa29kKxlVgH23JJMpnM1VztA2ztzVbtPse5P48yT7Ldsp0fCJBATn4YcUFix2pLre5PrZa69eb9tzAgt0wqLqK3G85WaYOwyBUej7pvN65a9c39DaI0jTwaiIi93egztfH+3ZveoSfcJGSRJqF72OhGQtJ2AL/3nB3Sc3ZJL3Z2NggQj9RhL3bfbvhax4fFonJ9FlK1FXJXCiU6essVYVF0OtxlxZ6QXrFcckrmWyyFy5SCmhzT6JaqnFx4n5qIWQQ/doQMqYZL2S2GVN4k8SZQj6nmbR5w3QfapUpORrzdSGR0mJHYHFQIixymFco+8hJymvemRU4y7pg3FiULoA4iUj6Ph814LjX40c+J3D7WiNswGHaBs/OyPjiRtAcfQ4LTVN9LC4VBWvPHKTqlKXoESQxKTFOF8XfmNQkpj4YvfhZrRpjr7M5GoHyXQNx9Wed8kCKJh9T4y6g1opsBLdT5GWhlnTzaNPWyyjR9Gg800P02HbFM7pDeTtH1qdTs25CGMzOR3eJBcf8+ofIzCEEDy859Utszk6oUsVb3CE0py3cIQa3uUZpSqO9SmtC4yvMole9T2nsepe37lPafR+meOAGQ3DyDFB/qGA23vZkp7BVD4bFgewiGTsVlU6pHrmv7mbIW3WF7kA6fsj45ncqADh+tz/MqM0JAedrzZ6JSzrG5iGWppj5V/ijF2eAM9DUn1w+BR2j4tIXXx8/Y/Pss8UPF1IWOIb1D2tEM7IRKaaP47k1x8ED6L/teF5FW+KxyOUB1VXIKre4dumrkglGlq4rTkVt+NVKD54umLun/Y2U+XREICc/d0uDtxn59v3JQTR8bVs/8tF3Kbn/P7zi7+Z1jNX6vOKi2Ri4aUsDDWDLF5C3beNc6rZFqs9lotqrnLQJXX8lx9fznj/+0yGXt86fqcQ1p6JRSypInueeUl84+58DZKd/j087+fT6l957k05nwkoCRPQICdaN8xrR6BmN2StiSgOOwXN5fDJfG+FI5qpT3tu/ypVy+z5f03pN8uQZ2mDZy7ZNqg1BF+iKR5Pck4kJukWO4UIyUHPLnH+QLlzqhAamCaYCzEpdtPcnE+MiTqd5qLcK8dmhaBMwwBJv3duNk/6R0UsEb6js0M+dsVvheT4Cpg8+2GdiabGH6PsLxCQyfit+vSOhKE3hQmooJdX7LRhSxQGBuS2ImSQBGp4i2SMtnxIdZ7yaMBwQGCvcmAIEjcIdo+MkVUYd7MCOD+sK8kiBvCEw5gF8kFPDgzx//JpJRfFqA9OqeIOyWRYR3ULqJuuGhIQQ10pNFWLeD7CNrSTu4hlbqfgwt8b5RZBtMgA62Kxkb4IEjGKtgKm+uRPygqNcqJ7vHx7mo76TFA9bRs5V4QqEmlpG868/4Gg6i4bHTvFAEXTVSpG7+8iKl0SJfpi9SHGdfcZzvHyT38GsXPo9FMM744tgjOi3jpv8zCu7jHad8D251eABVrR/Vt2v1kcrSRIuNvCFuwKjMets9o3LY0XepOznxrFvv/o7wNd6JD1LIu+wBEsVBXYrDJq+4bXRU2i2X69PaRjsTbKOdqWDm9OKatC7IVbMGhlGjST5Xjz/Ojr/LRt9yDcD3Hvo6BxPYcjAVW2BK7zGPtMU3pgiVjMAYamBRC9KTXDPCAYKrUV/7yAgaIJL2CWoIFOOAolAsIuwbDWMwqToSBLjqUfadgdmpSCypq8GIz0A4DuD1hOvUwjC2hehFRFN1oyZBbzHV32KqzMUBEo/ZFE3dhzdnzT6F6kFFnbsClY+f46bCTmnp8j/ZuN2eYFNsT2dU7G05htun94bMdTQ3Jgv8C8yNppBoO/SN0JFUEFAiuwIUIAJMR3EG21cLEWyRax8MhSRSiWQF4rEOTQKNqoH2gtKSu2hluFSzrpD9hRsP43byNMbDxBIzWeNTGQ8Ti9wxHmYp9GWWQs8wIMqVfAweu13Ze8SukAOSiDlMZs/lt2cyO/CtzRgE786MYsQayXDi5dZI6XFrZGBrPGyNlJ6wRpzKE9bI4lE2szMX4oFpnV7WauS42qp9uLhs1JpPjmuzmKpDSR0zVcu1k/o8hKP8YuEor59wTB6CnQn+JWc6/1KTdhiOEjhrJeKWyYdFYLpez4HoTq8PJk+21x/odZ5zo0MDxbJ7w/4cufvXmtnngkQ0ZKpAIviWhG0Ymsz31HPR6SMgeUxTHjxtB1u8eGV4cc6Yp6D7N0elocPlRJPdAsevBBxXinWSAAeTbBm+QNqJNnOPGKcx6bRc+1QTVySBNwAUokTIRDTRKW/h5JXDya1xn9NbmNIaF3nAQSiMQwbdLdQFUYkstvzq2NLEXT0iAjNEo2XiMxpon/Ao3bIFvxSGCDO6yvJcT91E99IiPEp2qW4+vrNPuO7WwfU6CbKSum3NOpxCpxqjrk8eGHF61g22Bm6wnfJEN9iuY91gj1BYteFlFdxg1eZH8vOf/8q9YF/naoQOxdQaoStrhDovNS93nQfMyyPby2thXlqdXwVpWKTOl63OW523Or90aVikzm9bnbc6b3V+6dKwSJ3fsTpvdd7q/NKlYZE6v2t13uq8XfV507PRQDYayEYDrXk0kNmnW2u2Zl/WXfai7txh/dpsGzKRkLRPtM8VEYkmgUhMfM+d/SM9yjXyQwoRFkjPZ5LhJgGM2QyNOOJ2Vx+U4T1pdHBnQQGDKzzBVATlMcwCiGpBKOmyiEkabMaJjE1cpgAFZhzeJ2feYGDa15YDXYhpl+WNn9yvNmrobtRQ2UQNHUnOOkSzMA6oZuu462HuEUNVcku7CcMNeGEMEsyg1pn4cheEX/VAYkkdRgnUFwofHQxsi6mEB7MAI1QvsxucpnFHqAHDMCO7YWJNN0yAgE+MG9q1GyYeobBqE6xHcHaxGyYAf/9+fVptka8XVzBaXtbIyWW13mqcf/jHXB0uQ7G1DpeVdbhUEw+sLpeZDXaZkfRSH0wOTNYH81p9MBYGXhkMHItIaUk51v23gEVd7RdIukO7QOit4N7fLCpYVLCosHRpWKhxgAEZrmSaDVKvwJTSpKG0aGDRwKLB0qVhkWhwjeGfP3/81xMR+/njfyQQ4kaRgN/YCYMFgyfAwC7a2kXbYRG7aGsXbWcezxa1aNuok2rqESVnjWZzYmalX231tqpuSA+Hf1ynbZvFux5VJOTmwIZ8+Ykqk9cZcztSIplJ7LgFzGxTj3gSeINpHBOV0CDojwaAE9rGteA7LzBKAPftMu3zLL0XLdNum2WCli8Z2+zRfprdESy+rl2rBf5cJhEmd5Z9Um1sGslmHopqnKAAS5F0fbNCq5F/Ke/U3SSQKPFJBENXmqAU8zbZFdp1XaF1Jq/Q7tkV2scorNps6hGIXUJmx9Pa8cf5ZnV0rJdl9b0sTRgN3Bd7VPYe8qjYrEnr4VE5QRshtTFUzFze4S5xA4qHSEjMbt6mrtnfhfnX0txJmCznvcWLVRCiReLFJ9HlroULCxcqO16GKhGZQxRcnc60fRF4mAVWk98TpfPTbNwgwbRsFjFWQo4WiRh1/uKkjBYv1hwvGiqNwUj5gx47c5mGYBTSC83D9ESVAXS4QkrmatyAnsVVPA0fv8jKz4q7wOafpFF00ZWV+3ppQGLOwC4VHfSJUXNaH/PMiWvWrbWubi17YIl1a83FrXVx1fp81RoJPWi0yHW1Oed4A5s1fPWNz9S9la0npce1qST467KE2x1E62GQWiRYBWlYuOPKAsGqdL0FAisNS/NHWRhYlY63MGClYUnBRsNDYIyXkXkWBCwIWOfym54NK7BhBTasYM3DCi5rZ7Wzo9rl7KtHy147mjus14OERSYYAFcWzSH3NMTwgXzo3yJNlwaZlxB5kYBcc+0TpelNerwtZnvrRTY24Hlm2otiA3bMPK0KYJSFb4Q0Xsc10bmHBZwINwlRstN9ewEeYUeHbAL55jo9GxPFznAxjXkBWO3CYAM/F9I7WTLD7EoL0qPa9XG11S6mru1iqs3iZhdT57GYWr1qXZxVW42L83RB9bx6VrOZ21ZdOubuL2mlo8aLnSQ298Ird5JYzX9lmt/ULAbbkEfE2B8WASwCWARYujQsEgGu8+kg+c0XPZwuuia/fofygCgewCQ06NuMjRYYLDAsXxoWCQyYqCVLNKFF4pr1VEAH3rFYYLHAYsHSpWGRWPAJKkRULPSmWUeZw34KiwGvHAPsfgq7n2JYxO6nsPspZh7GFnm23tnFeev001fS/HzR2jQJk+zuinxdII/ONbG5eLiLK6IOl2GeVEazGG5hTneM0x0L88YdGXjUXnqcWByzCJegMd0zoTYd4zMNuRdtudjN0jGytBc9FmmoCde4ySCy5+cZsTdHSoLUDk+BbDMQe9QBFTPmFZB3tywyxx0VCNzuCoGHT2rkpojUFrkEUUO9yWbQqaaEwktAGvfMkXojeVQEkFmD3RgZHmcl8unEcrZjvHL7Yl7pT56yL8rLsy+c5cPrfn2/clBdjIFRb3ypkcurT89JAu2Ul42xkweiF2Css0XORZYkZiyB8wOH7WYnjxYMkk7Gyl+NheWHWQgMjAHCRAQGG4wyrA0GF7AupDwww5VrDktWWkiwoCw3kZvbhpvKlYxFyhe4u7KTM9ejmhKF32jUT4+QFonGwYWATSvFLZi9rk+jiAXKmFccc6KhqYnWLiZlVizoWD4jn3cMnz2u3CTN+E5HT+tWXCepEJtN2ulB3UbpszuY3FrBTCREphcI7xCPaVyqDHE7N843QpIatR1O28FzhPvVsXx3i1z7zOCCJ5I2HsM3WNtJrVDT8pmnYw9K7YJcB9anZ3161qdnfXoPHL3y9eKKtE4b5x+z06nB/j6rntRIFQ9jaVU/1tZvaJi/h4+ZsyXYwIwMQ+ZxqlnQL5A4oDzCL2bkZd+oq4N+GkeS+vLA7EF3oLGItsgJjOmBUAmeTIFDtAtDtDRjMDlGDwcNwixWy5AYJJX1mNJS9GHwloma3Sn4UF9tL2h+uYg0kPGRJ6fA/XHHSSVvflb4HofK4/7ONR+1V9xLOeZrGKpuZYLqVqZiwrGZVpCSgxOVnRL58w/j1a2hp9GjfVDHLtcw/zunt7xLYaqHT5zgCTMF0mSxZmGbSVIulSsT2amYqzPh6za/ZwOTc1Ay4uVjLfe39/G7kIgcUDMh8dhnnTYo7sLARMwYaVw9hv1mPBteptI8vMYBc3jlmzCltxt7JfOajhB65LKb6AyRs9edJ2ELhklz5QkXrYKswz9z7UKFh0ZD3rQiVsHrmy9eFnD37v9QSwMECgAAAAgAxnYjXbTnJbLjAgAAoxAAAA8AAAB3b3JkL3N0eWxlcy54bWzlVltP2zAY/StR3iGXpgUqCtoKFUjThhhoz67jNBaOndkOpfz62YmdlqahhQYmbW/9Ljk+57vUPj1/yojziLjAjI7c4NB3HUQhizGdjdz7u8nBsesICWgMCKNo5C6QcM/PTudDIRcECSeDw+sZZRxMiYrOg8iZB33XUahUDDM4clMp86HnCZiiDIhDliOqggnjGZDK5DMvA/yhyA8gy3Ig8RQTLBde6PsDC8N3QWFJgiG6YLDIEJXl9x5HRCEyKlKcC4s23wVtzniccwaREKoSGanwMoBpDRNEDaAMQ84ES+ShEmMYlVDq88Avf2VkCdB/G0BoAXT5YwYvUAIKIoU2+Q03pqfNfNX0Gtll75z5UC5y1bQccDDjIE9dx4Su45F7hyVB5VEUZDr5ERDrLc+YAoHiH9RGvuvqkSpE0ZPc5P89KUvsGcYllWeb2B9USeJ5LF76PJPtGXq7SrhCQM9x0FBhAk7QpRLICOM2N7w8ir72rSDr7YVNiZVvT4lhq8TwkyWGG7oYdtHFXqvE3odJDCbRxdFxQ2K0QWLUgcSoVWLUpURcGngsvFd6uqeUfquU/icM5J7kB63kB58wau8l/1NyRmcN6sbdIe9phVXOz3vJfsNC3tSRdc466izD27gvObbTgKmCgxLxlw1XMU4wfWh2vI5sOt1cpjXFCaOySizwDceMqyeMzT05MRGa4hj9ShG9V1itg+D3B72xuZgK69SPkOre3V7wzUonjEnKJLpFCeLqhde82hOT4fA6pSvpAmX4CscxolsqoR6i8gvBs/o0Uag2CMhxLvfZDav+Tk15u3Cpo9uGTc+E9a/CjlXZ969Dbl5FOYD6/2Y+BInqpJoKLUcdjfRVUxu3hX50g0IyUxzzeeNtFfobriy/i3mqpa9X1SY4OsNZVmfncWordGfD9pHluaTx69uGqoR/cdmM9o27ZmW/edVWQP+zTVtXvl5SE+9kz1Zb93fXzP4SZ38AUEsDBAoAAAAAAMZ2I10AAAAAAAAAAAAAAAAJAAAAZG9jUHJvcHMvUEsDBAoAAAAIAMZ2I13WP0/ROgEAAIMCAAARAAAAZG9jUHJvcHMvY29yZS54bWyVkl1vgjAUhv8K6T2U4kccAUy2xauZLJlmi3dNe9Rm9CNtJ/rvV1ARM2922b5Pn7znQDE/yjo6gHVCqxKRJEURKKa5ULsSrVeLeIYi56nitNYKSnQCh+ZVwUzOtIV3qw1YL8BFwaNczkyJ9t6bHGPH9iCpSwKhQrjVVlIfjnaHDWXfdAc4S9MpluApp57iVhib3oguSs56pfmxdSfgDEMNEpR3mCQE31gPVrqHD7pkQErhTwYeotewp49O9GDTNEkz6tDQn+Cv5dtHN2osVLspBqgqOMuZBeq1rdYqVlQCL/Dgsl1gTZ1fhk1vBfDn04D7m7W4hYNov1JFOqI/Fpehz27gUSibn0e7Jp+jl9fVAlVZmk3j9ClORysyzifjnGQJmY03bbU7x00qLyX+bZ0MrFdJ1TW//3GqX1BLAwQKAAAACADGdiNdLTZ5/NcCAADXDwAAEgAAAHdvcmQvbnVtYmVyaW5nLnhtbNVXyW7bMBD9FUFAj7EWy44hRAmcBC5cdAOafgBF0RYRLgJJSfWt9x56a69FP61fUlKbZbdIbRkB3ItpcmbePPFxhtLVzSdKrAIJiTmLbG/k2hZikCeYrSP748PiYmZbUgGWAMIZiuwNkvbN9VUZspzGSGg3i8JwuWZcgJhoh9ILrNKbWGXmBbal0ZkMywxGdqpUFjqOhCmiQI4ohoJLvlIjyKnDVysMkVNykTi+67nVv0xwiKTUOe4AK4Bs4eifaDxDTBtXXFCg9FSsHQrEY55daPQMKBxjgtVGY7vTFoZHdi5Y2EBcdIRMSFgTaoY2QhyStw655zCniKkqoyMQ0Rw4kynOto8xFE0b0xakeOohCkq2EnjBaRrcC1DqYQt4CP2kDqKkZv40ouceoIiB6CIOobCbs2VCAWbbxIO2pre53uQ4AH8fIFufJs5LwfNsi4ZPQ1uyxw7LFP0RWI3I/UeTp5H5kIIM2ablgFgqAaB6m1NrZ7ZMdOuyTdsJBdLdSpjFujvNVwqJW4HAY2S7FQrNicKvUYHIwyZDGqgARDPcxAInb4yNGJvtGF9SEO2A9WCiqwRKl6Gu5QKZlManytfCeHWcbo4L2i3GOSFIdYgP6FNn+vX9a7f+CrarBK0a9+y9MANmibaZ5ci+9A2TMAVsXTXp8dQ1vk7j7FRY++S95yH/5VjyXhAMYO8/C/tvP45l73vTAezHZ3Jw/NlsAPvgTE6OJjuA/eRMTk4wHlK10zM5ORN3SNVengv7yyFVOzsT9tPgsKp1dm7Ef16X/v95XX7+OaBv7Gyf7+9sXxmKZlhwpqTZKAmxfn+aCwyIiYSyN0FAqrnEoLeUzpns/CsWkBMuWnK37sT3F01KcYJi4/NVLEEQU0D+KtkLb3R0s9zr9P702SWL6987eZqArBKOtW+ke5ouk71d1Cjv9Le31gX1VOj2vGfbRjk7YdWcmeRO75P8+jdQSwMECgAAAAAAxnYjXQAAAAAAAAAAAAAAAAYAAABfcmVscy9QSwMECgAAAAgAxnYjXR+jkpbmAAAAzgIAAAsAAABfcmVscy8ucmVsc62Sz0oDMRCHXyXMvTvbVkSkaS9S6E2kPkBIZneDzR8mU61vbyiKVuraQ4+Z/ObLN0MWq0PYqVfi4lPUMG1aUBRtcj72Gp6368kdrJaLJ9oZqYky+FxUbYlFwyCS7xGLHSiY0qRMsd50iYOReuQes7Evpiecte0t8k8GnDLVxmngjZuC2r5nuoSdus5bekh2HyjKmSd+JSrZcE+i4S2xQ/dZbioW8LzN7HKbvyfFQGKcEYM2MU0y124WT+VbqLo81nI5JsaE5tdcDx2EoiM3rmRyHjO6uaaR3RdJ4Z8VHTNfSnjyMZcfUEsDBAoAAAAIAMZ2I12gjo6lmgEAADgIAAATAAAAW0NvbnRlbnRfVHlwZXNdLnhtbLVWy07DMBD8lShX1LhwQAi15cDjCBzgA1x7kxpir2VvCvw96/QhBZpSoLllPTM7E+9GyuTq3dbZEkI06Kb5aTHOM3AKtXHVNH9+uhtd5FezydOHh5gx1cVpviDyl0JEtQArY4EeHCMlBiuJy1AJL9WrrECcjcfnQqEjcDSi1COfTW6glE1N2fXqPLWe5sYmvndVnt2+8/EqTqrFXsWLh66kPfi15ifJ3PqOItX7FZUpO4pU71fEZXXC99hR8VmvSnpfGyWJiWLp9Jc5jNYzKALULScujI/fDBiNBzl8Fab6j8mwLI0CjaqxLClwXjaR2aDvuEnHBDVRe20PvKHBaPiPzxsG7QMqiJGX29bFFrHSuNXNPMpA99Jyb5HoYktZv+4gOSJ91BB3B1hh/7LfLILCACM29hDI7PDjgI+MRpGIx3xh1URCe5h1Sz2mOaRt0qAPsufWg07aNXYOgZ93D3sLDxqiRCSH1LdxW3jQEDyTPRk26LCfHRDxU9+Ht0YHjaDQJqAnwgYdeBu4kZzX0LcNa3gTQrS/ArNPUEsDBAoAAAAIAMZ2I11YedsikgAAAOQAAAATAAAAZG9jUHJvcHMvY3VzdG9tLnhtbJ3OQQrCMBCF4auU2dtUFyKlaTfi2kV1H9JpG2hmQiYt9vZGBA/g8vHDx2u6l1+KDaM4Jg3HsoICyfLgaNLw6G+HCxSSDA1mYUINOwp0bXOPHDAmh1JkgETDnFKolRI7ozdS5ky5jBy9SXnGSfE4OotXtqtHSupUVWdlV0nsD+HHwdert/QvObD9vJNnv4fsqfYNUEsDBAoAAAAIAMZ2I13i/J3akwAAAOYAAAAQAAAAZG9jUHJvcHMvYXBwLnhtbJ3OQQrCMBCF4auE7G2qC5HStBtx7aK6D8m0DTQzIRNLe3sjggdw+fjh47X9FhaxQmJPqOWxqqUAtOQ8Tlo+htvhIgVng84shKDlDiz7rr0nipCyBxYFQNZyzjk2SrGdIRiuSsZSRkrB5DLTpGgcvYUr2VcAzOpU12cFWwZ04A7xB8qv2Kz5X9SR/fzj57DH4qnuDVBLAwQKAAAACADGdiNdnInJkc4BAACtBgAAEgAAAHdvcmQvZm9vdG5vdGVzLnhtbNWUzU7jMBDHXyXyvXVSAVpFTTmAQNwQ3X0A4ziNhe2xbCehb7+TxE26LKoKPXGJv2Z+85+Z2Ovbd62SVjgvwRQkW6YkEYZDKc2uIH9+Pyx+kcQHZkqmwIiC7IUnt5t1l1cAwUAQPkGC8XlneUHqEGxOqee10MwvteQOPFRhyUFTqCrJBe3AlXSVZukwsw648B7D3THTMk8iTv9PAysMHlbgNAu4dDuqmXtr7ALplgX5KpUMe2SnNwcMFKRxJo+IxSSod8lHQXE4eLhz4o4u98AbLUwYIlInFGoA42tp5zS+S8PD+gBpTyXRakWmFmRXl/Xg3rEOhxl4jvxydNJqVH6amKVndKRHTB7nSPg35kGJZtLMgb9VmqPiZtdfA6w+AuzusuY8OmjsTJOX0Z7M28TqL/YXWLHJx6n5y8Rsa2bxBmqeP+0MOPaqUBG2LMGqJ/1vTY6fnKTLw96ihReWORbAEdySZUEW2WBoh8+z6wdvGccIaMCqIPB2p72xkn3Oq6tp8dL0IVkTgNDNmk7u4yfOt2Gv+ugtUwV5iGpeRCUcvpkiOkbjaj6O+xNukj0d0EEznb0+TZeDCdI0wyuz/Zh6+hMy/zSDU1U4WvjNX1BLAwQKAAAACADGdiNd0nf8t20AAAB7AAAAHQAAAHdvcmQvX3JlbHMvZm9vdG5vdGVzLnhtbC5yZWxzTYxBDgIhDEWvQrp3ii6MMcPMbg5g9AANViAOhVBiPL4sXf689/68fvNuPtw0FXFwnCwYFl+eSYKDx307XGBd5hvv1IehMVU1IxF1EHuvV0T1kTPpVCrLIK/SMvUxW8BK/k2B8WTtGdv/B+DyA1BLAwQKAAAACADGdiNdP0qOjcEBAACSBgAAEQAAAHdvcmQvZW5kbm90ZXMueG1szZTbbuMgEIZfxeI+wY661cqK04seVr2rmt0HoBjHqMAgwPbm7Xd8CM62VZQ2N70xp5lv/pkxrG/+apW0wnkJpiDZMiWJMBxKaXYF+fP7YfGT3GzWXS5MaSAIn6C98XlneUHqEGxOqee10MwvteQOPFRhyUFTqCrJBe3AlXSVZukwsw648B7ht8y0zJMJp9/TwAqDhxU4zQIu3Y5q5l4bu0C6ZUG+SCXDHtnp9QEDBWmcySfEIgrqXfJR0DQcPNw5cUeXO+CNFiYMEakTCjWA8bW0cxpfpeFhfYC0p5JotSKxBdnVZT24c6zDYQaeI78cnbQalZ8mZukZHekR0eMcCf/HPCjRTJo58JdKc1Tc7MfnAKu3ALu7rDm/HDR2psnLaI/mNbKM+BRravJxav4yMduaWbyBmuePOwOOvShUhC1LsOpJ/1uToxcn6fKwt2jghWWOBXAEt2RZkEU22Nnh8+T6wVvGMQAasCoIvNxpb6xkn/LqKi6emz4iawIQulnT6D5+pvk27FUfvWWqIPejmGdRCYfvo5j8JlsRT6ftCIui4wEdFNPo9FGqHEyQphkemO3btNPvn/WH+k9UYJ77zT9QSwMECgAAAAgAxnYjXdJ3/LdtAAAAewAAABwAAAB3b3JkL19yZWxzL2VuZG5vdGVzLnhtbC5yZWxzTYxBDgIhDEWvQrp3ii6MMcPMbg5g9AANViAOhVBiPL4sXf689/68fvNuPtw0FXFwnCwYFl+eSYKDx307XGBd5hvv1IehMVU1IxF1EHuvV0T1kTPpVCrLIK/SMvUxW8BK/k2B8WTtGdv/B+DyA1BLAwQKAAAACADGdiNdTZ/KyqEBAABzBQAAEQAAAHdvcmQvc2V0dGluZ3MueG1spZTdbtswDIVfxdB9IrtYi8GoW3Qr1vVi2EW3B2Al2RYiUYIk28vbj47juD9AkTRXkkHxO0ekxevbf9ZkvQpRO6xYsc5ZplA4qbGp2N8/P1ZfWRYToATjUFVsqyK7vbkeyqhSokMxIwDGcvCiYm1KvuQ8ilZZiGurRXDR1WktnOWurrVQfHBB8ou8yHc7H5xQMRLoO2APke1x9j3NeYUUrF2wkOgzNNxC2HR+RXQPST9ro9OW2PnVjHEV6wKWe8TqYGhMKSdD+2XOCMfoTin3TnRWYdop8qAMeXAYW+2Xa3yWRsF2hvQfXaK3hh1aUHw5rwf3AQZaFuAx9uWUZM3k/GNikR/RkRFxyDjGwmvN2YkFjYvwp0rzorjF5WmAi7cA35zXnIfgOr/Q9Hm0R9wcWOO7PoG1b/LLq8XzzDy14OkFWlE+NugCPBtyRC3LqOrZ+FuzceJIHb2B7TcQm4ZqgXKXxseQ6hXeofwt5U8FkqZZNpQ9mIrVYKJiuzPTlFh2T9MAm08Wl4y2CJakXw2UX06qMdSFE0o+SvJFky/z8uY/UEsDBAoAAAAIAMZ2I12LhjnExQEAAMYIAAARAAAAd29yZC9jb21tZW50cy54bWyl1N1y4iAYBuBbcThXklhTN9O0J53t9HjbC6CAwjT8DKDRu19SJUmXnU6CR+ok35OX18DD00k0iyM1litZg3yVgQWVWBEu9zV4f/u93IKFdUgS1ChJa3CmFjw9PrQVVkJQ6ezCA9JW+FQD5pyuILSYUYHsSnBslFU7t/L3QrXbcUwhMaj1Niyy/A5ihoyjJ9Ab+WxkA3/BbQwVCVCewSKPqfVsqoRdqgi6S4J8qkjapEn/WVyZJhWxdJ8mrWNpmyZFr5PAEaQ0lf7iThmBnP9p9lAg83nQSw9r5PgHb7g7ezMrA4O4/ExI5Kd6QazJbOEeCkVosyZBUTU4GFld55f9fBe9usxfP8KEmbL+y8izwoduO3+tHBra+C6UtIxr29eZqvmLLCDHnxZxFE24r9X5xO3SKkO6vrKvb9ooTK31HT5fqhzAKfGv/YvmkvxnMc8m/CMd0U9MifD9mSGJ8G/h8OCkakbl5hMPkAAUEVBiOvHAD8b2akA87NDO4RO3RnDK3uFk5KSFGQGWOMJmKUXoFXazyCGGLBuLdF6oTc+dxagjvb9tI7wYddCDxm/TXodjrZXzFpiV/7au7W1h/jCkKYCPfwFQSwMECgAAAAgAxnYjXdJ3/LdtAAAAewAAABwAAAB3b3JkL19yZWxzL2NvbW1lbnRzLnhtbC5yZWxzTYxBDgIhDEWvQrp3ii6MMcPMbg5g9AANViAOhVBiPL4sXf689/68fvNuPtw0FXFwnCwYFl+eSYKDx307XGBd5hvv1IehMVU1IxF1EHuvV0T1kTPpVCrLIK/SMvUxW8BK/k2B8WTtGdv/B+DyA1BLAwQKAAAACADGdiNdY+1e1h0BAABDAwAAEgAAAHdvcmQvZm9udFRhYmxlLnhtbJ3R3W7CIBQH8Fch3Cu1mY1prN4sS3a/PQACtUQOp+Hg1LcfrbZr4o3dFRDy/+V8bPdXcOzHBLLoK75aZpwZr1Bbf6z499fHYsMZRem1dOhNxW+G+H63vZQ1+kgspT2VoCrexNiWQpBqDEhaYmt8+qwxgIzpGY4CZDid24VCaGW0B+tsvIk8ywr+YMIrCta1VeYd1RmMj31eBOOSiJ4a29KgXV7RLhh0G1AZotQxuLsH0vqRWb09QWBVQMI6LlMzj4p6KsVXWX8D9wes5wH5E1Aoc51nbB6GSMmpY/U8pxgdqyfO/4qZAKSjbmYp+TBX0WVllI2kZiqaeUWtR+4G3YxAlZ9Hj0EeXJLS1llaHOthdp9cd7D7MtjQAhe7X1BLAwQKAAAACADGdiNd0nf8t20AAAB7AAAAHQAAAHdvcmQvX3JlbHMvZm9udFRhYmxlLnhtbC5yZWxzTYxBDgIhDEWvQrp3ii6MMcPMbg5g9AANViAOhVBiPL4sXf689/68fvNuPtw0FXFwnCwYFl+eSYKDx307XGBd5hvv1IehMVU1IxF1EHuvV0T1kTPpVCrLIK/SMvUxW8BK/k2B8WTtGdv/B+DyA1BLAQIUAAoAAAAAAMZ2I10AAAAAAAAAAAAAAAAFAAAAAAAAAAAAEAAAAAAAAAB3b3JkL1BLAQIUAAoAAAAAAMZ2I10AAAAAAAAAAAAAAAALAAAAAAAAAAAAEAAAACMAAAB3b3JkL19yZWxzL1BLAQIUAAoAAAAIAMZ2I13Gmk9l+gAAACEEAAAcAAAAAAAAAAAAAAAAAEwAAAB3b3JkL19yZWxzL2RvY3VtZW50LnhtbC5yZWxzUEsBAhQACgAAAAgAxnYjXUfXuVqNDwAA1dAAABEAAAAAAAAAAAAAAAAAgAEAAHdvcmQvZG9jdW1lbnQueG1sUEsBAhQACgAAAAgAxnYjXbTnJbLjAgAAoxAAAA8AAAAAAAAAAAAAAAAAPBEAAHdvcmQvc3R5bGVzLnhtbFBLAQIUAAoAAAAAAMZ2I10AAAAAAAAAAAAAAAAJAAAAAAAAAAAAEAAAAEwUAABkb2NQcm9wcy9QSwECFAAKAAAACADGdiNd1j9P0ToBAACDAgAAEQAAAAAAAAAAAAAAAABzFAAAZG9jUHJvcHMvY29yZS54bWxQSwECFAAKAAAACADGdiNdLTZ5/NcCAADXDwAAEgAAAAAAAAAAAAAAAADcFQAAd29yZC9udW1iZXJpbmcueG1sUEsBAhQACgAAAAAAxnYjXQAAAAAAAAAAAAAAAAYAAAAAAAAAAAAQAAAA4xgAAF9yZWxzL1BLAQIUAAoAAAAIAMZ2I10fo5KW5gAAAM4CAAALAAAAAAAAAAAAAAAAAAcZAABfcmVscy8ucmVsc1BLAQIUAAoAAAAIAMZ2I12gjo6lmgEAADgIAAATAAAAAAAAAAAAAAAAABYaAABbQ29udGVudF9UeXBlc10ueG1sUEsBAhQACgAAAAgAxnYjXVh52yKSAAAA5AAAABMAAAAAAAAAAAAAAAAA4RsAAGRvY1Byb3BzL2N1c3RvbS54bWxQSwECFAAKAAAACADGdiNd4vyd2pMAAADmAAAAEAAAAAAAAAAAAAAAAACkHAAAZG9jUHJvcHMvYXBwLnhtbFBLAQIUAAoAAAAIAMZ2I12cicmRzgEAAK0GAAASAAAAAAAAAAAAAAAAAGUdAAB3b3JkL2Zvb3Rub3Rlcy54bWxQSwECFAAKAAAACADGdiNd0nf8t20AAAB7AAAAHQAAAAAAAAAAAAAAAABjHwAAd29yZC9fcmVscy9mb290bm90ZXMueG1sLnJlbHNQSwECFAAKAAAACADGdiNdP0qOjcEBAACSBgAAEQAAAAAAAAAAAAAAAAALIAAAd29yZC9lbmRub3Rlcy54bWxQSwECFAAKAAAACADGdiNd0nf8t20AAAB7AAAAHAAAAAAAAAAAAAAAAAD7IQAAd29yZC9fcmVscy9lbmRub3Rlcy54bWwucmVsc1BLAQIUAAoAAAAIAMZ2I11Nn8rKoQEAAHMFAAARAAAAAAAAAAAAAAAAAKIiAAB3b3JkL3NldHRpbmdzLnhtbFBLAQIUAAoAAAAIAMZ2I12LhjnExQEAAMYIAAARAAAAAAAAAAAAAAAAAHIkAAB3b3JkL2NvbW1lbnRzLnhtbFBLAQIUAAoAAAAIAMZ2I13Sd/y3bQAAAHsAAAAcAAAAAAAAAAAAAAAAAGYmAAB3b3JkL19yZWxzL2NvbW1lbnRzLnhtbC5yZWxzUEsBAhQACgAAAAgAxnYjXWPtXtYdAQAAQwMAABIAAAAAAAAAAAAAAAAADScAAHdvcmQvZm9udFRhYmxlLnhtbFBLAQIUAAoAAAAIAMZ2I13Sd/y3bQAAAHsAAAAdAAAAAAAAAAAAAAAAAFooAAB3b3JkL19yZWxzL2ZvbnRUYWJsZS54bWwucmVsc1BLBQYAAAAAFgAWAHwFAAACKQAAAAA=" };
+
+  function saveBlob(filename, bytes) {
+    const blob = new Blob([bytes], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+
+  (async function wire() {
+    const btn = document.getElementById('dl-m7');
+    const status = document.getElementById('dl-m7-status');
+    if (!btn) return;
+
+        btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Saving\u2026';
+      if (status) { status.textContent = ''; status.classList.remove('ok'); }
+      try {
+        const bytes = b64ToBytes(FILE.b64);
+        saveBlob(FILE.filename, bytes);
+        if (status) { status.textContent = 'Saved.'; status.classList.add('ok'); }
+      } catch (err) {
+        const code = err && err.code ? err.code : 'unavailable';
+        if (status) status.textContent = code === 'declined' ? 'Cancelled.' : 'Could not save (' + code + ').';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+  })();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Client’s Second Brain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- download callout ---------- */
+
+  .dl-callout{
+    margin-top:clamp(22px,3vw,32px);
+    display:flex;flex-wrap:wrap;gap:16px 20px;align-items:center;
+    border:1px solid var(--line);border-radius:12px;
+    background:var(--surface);padding:16px 20px;
+  }
+  .dl-callout .dl-text{flex:1;min-width:200px}
+  .dl-callout .dl-text b{display:block;font-size:.98rem;color:var(--ink);font-weight:600;margin-bottom:2px}
+  .dl-callout .dl-text span{font-size:.88rem;color:var(--muted)}
+  .dl-btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    height:42px;padding:0 20px;border-radius:999px;flex:none;
+    border:1px solid var(--ember);background:var(--ember);color:#160C08;
+    font-size:.86rem;font-weight:500;letter-spacing:-.01em;cursor:pointer;
+    font-family:inherit;transition:background .2s ease,transform .2s ease;
+  }
+  .dl-btn:hover{background:#EE9679;transform:translateY(-1px)}
+  .dl-btn:disabled{opacity:.55;cursor:default;transform:none}
+  .dl-status{font-family:var(--mono);font-size:.72rem;color:var(--faint);flex:none}
+  .dl-status.ok{color:var(--ember)}
+</style>
+<style>
+  .tree{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .tree .t-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .tree .t-b{padding:16px 18px;font-family:var(--mono);font-size:.85rem;line-height:1.85;color:var(--body);white-space:pre}
+  .tree .t-b .d{color:var(--ember)}
+  .tree .t-b .f{color:var(--muted)}
+  .tree .t-b .c{color:var(--faint);font-family:var(--sans);font-style:italic}
+
+  .namerow{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .namerow .n-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .nrow{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr);gap:6px 14px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:center;font-family:var(--mono);font-size:.84rem}
+  .nrow:last-child{border-bottom:0}
+  .nrow .bad{color:var(--dusk);text-decoration:line-through;text-decoration-color:var(--dusk);opacity:.7}
+  .nrow .good{color:var(--ink);font-weight:500}
+  .nrow .arrow{color:var(--ember);text-align:center;font-family:var(--sans)}
+  @media (max-width:560px){.nrow{grid-template-columns:minmax(0,1fr)}.nrow .arrow{display:none}}
+
+  .stagebox{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .stagebox .s-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .srow{display:grid;grid-template-columns:120px minmax(0,1fr);gap:6px 16px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:baseline;font-size:.92rem}
+  .srow:last-child{border-bottom:0}
+  .srow b{font-family:var(--mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ember)}
+  .srow span{color:var(--body)}
+  @media (max-width:560px){.srow{grid-template-columns:minmax(0,1fr)}}
+</style>
+
+</head>
+<body>
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">The Assistant They Can't Replace</span>
+      <span class="sep">/</span>
+      <span class="label">Module 04</span>
+    </div>
+    <h1>Files, documents and the client's second brain</h1>
+    <p class="standfirst">Five lessons, about an hour. Everything you promised in the day-before brief — "it's in your folder" — has to actually be findable in ten seconds by someone who isn't you. This module is how you make that true.</p>
+
+    <nav class="toc">
+      <a href="#l1"><i>4.1</i><span>A folder structure a stranger can navigate in ten seconds</span><u>14 min</u></a>
+      <a href="#l2"><i>4.2</i><span>Naming things so that search actually finds them</span><u>12 min</u></a>
+      <a href="#l3"><i>4.3</i><span>Documents: templates, formatting, version control without extra software</span><u>13 min</u></a>
+      <a href="#l4"><i>4.4</i><span>Building the client's process library as you go</span><u>13 min</u></a>
+      <a href="#l5"><i>4.5</i><span>The handover file that makes you hard to lose</span><u>11 min</u></a>
+      <a href="#drill"><i>D</i><span>Drill: 400 unsorted files, one map</span><u>60 min</u></a>
+    </nav>
+
+    <div class="dl-callout">
+      <div class="dl-text">
+        <b>Module 4 worksheets</b>
+        <span>The five fill-in pages this module refers to — folder map, naming convention, template log, process page and handover file. One .docx, six pages.</span>
+      </div>
+      <button class="dl-btn" id="dl-m4" type="button">Save worksheets (.docx)</button>
+      <span class="dl-status" id="dl-m4-status"></span>
+    </div>
+  </div>
+</header>
+
+<section class="lesson" id="l1">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 4.1</b><span class="label">14 minutes</span></div>
+      <h2>A folder structure a stranger can navigate in ten seconds</h2>
+    </div>
+
+    <div class="flow">
+      <p>Adaeze's Drive has 1,140 files in it. There is a folder called "New folder". There is a folder called "New folder (2)". There is a file called <em>Final.docx</em>, a file called <em>Final v2.docx</em>, and a file called <em>Final v2 ACTUAL.docx</em>. She has been finding things by typing a guess into search and scrolling.</p>
+
+      <p>This is not disorganisation as a character flaw. It is what happens to every Drive that nobody was ever specifically responsible for. Files accumulate the way post accumulates on a hallway table — each one reasonable on its own, ruinous in aggregate.</p>
+
+      <p class="pull">A good structure is not the one you understand. It is the one a stranger understands in ten seconds, on the worst day of her practice, looking for one thing.</p>
+
+      <h3>Design for the emergency, not the ordinary day</h3>
+
+      <p>Here is the test that should govern every decision in this lesson. Imagine Adaeze is mid-session, a client's insurance company calls demanding a report <em>right now</em>, and you are unreachable. Can she find it in one click from the top level? If the honest answer is "she'd have to ask me", the structure has failed, however elegant it looks to you.</p>
+
+      <h3>Organise by what the business does, not by what a computer does</h3>
+
+      <p>The single most common mistake is structuring folders the way software categorises things — by file type, by month, by who uploaded it. That reflects how a computer thinks. Nobody hunting for a specific client's insurance letter thinks in file types; they think in <em>who</em> or <em>what</em>.</p>
+
+      <div class="ex">
+        <div class="ex-h">The same drive, organised two ways</div>
+        <div class="split">
+          <div>
+            <span class="who">By file type — wrong</span>
+            <p class="quote" style="font-family:var(--mono);font-size:.85rem;line-height:1.75">Documents/<br>Spreadsheets/<br>PDFs/<br>Scanned/<br>2026/</p>
+            <p style="color:var(--muted);font-size:.9rem">To find Chinelo's intake form you now have to remember whether it was a PDF or a scan, and which folder catches "form I photographed on my phone". Every search becomes a guess.</p>
+          </div>
+          <div class="bad">
+            <span class="who">By what the business does — right</span>
+            <p class="quote" style="font-family:var(--mono);font-size:.85rem;line-height:1.75">Clients/<br>Admin &amp; Finance/<br>Templates/<br>Marketing/<br>Archive/</p>
+            <p style="color:var(--muted);font-size:.9rem">One question — "whose is this, or what kind of business function is this" — always has one obvious answer. That is the whole test for whether a top-level folder is doing its job.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>Five to seven top-level folders, no more</h3>
+
+      <p>This is the number that matters most in the whole lesson. More than seven top-level folders and a person scanning the list has to read every label before deciding; five to seven is roughly what a glance can hold. If you find yourself wanting an eighth, it usually means two of your existing folders should merge, or something belongs one level deeper than you are trying to put it.</p>
+
+      <div class="tree">
+        <div class="t-h">Adaeze's practice — top level, after restructuring</div>
+        <div class="t-b"><span class="c"># The whole drive, one screen, five folders. Nothing else at this level.</span>
+<span class="d">01 Clients/</span>          <span class="c">every current and former client, one subfolder each</span>
+<span class="d">02 Admin &amp; Finance/</span>  <span class="c">invoices, insurance, the practice's own paperwork</span>
+<span class="d">03 Templates/</span>        <span class="c">the blank versions of everything you send out</span>
+<span class="d">04 Marketing/</span>        <span class="c">the leaflet, the listing, social media assets</span>
+<span class="d">05 Archive/</span>          <span class="c">anything closed, ended, or superseded — never deleted</span></div>
+      </div>
+
+      <p>Notice the numbers in front of each name. That is deliberate, and it is the second habit worth adopting: a leading number forces the folders to sort in the order you decided, not alphabetically — which matters because "Clients" should sit above "Templates" regardless of what the alphabet thinks, since it is where almost every search actually starts.</p>
+
+      <h3>Depth: three levels, almost always</h3>
+
+      <p>Beneath each top-level folder, one more layer for the specific thing, and a third only when a specific thing genuinely has parts. A fourth level is where structures go to die — by the time something is four folders deep, nobody remembers the path, including you.</p>
+
+      <div class="tree">
+        <div class="t-h">Inside Clients/ — three levels deep, no further</div>
+        <div class="t-b"><span class="d">01 Clients/</span>
+  <span class="d">Chinelo Okafor/</span>
+    <span class="f">Intake form.pdf</span>
+    <span class="f">Session notes 2026.docx</span>
+    <span class="f">Insurance correspondence.pdf</span>
+  <span class="d">Ify Mbanefo/</span>
+  <span class="d">Bola Adeyemi/</span>
+  <span class="c">... one folder per client, nothing nested further</span></div>
+      </div>
+
+      <h3>Archive is not the bin — it is memory</h3>
+
+      <p>When a client stops, or a tax year closes, or a template gets replaced, the instinct is to delete. Do not. Move it to Archive and keep it. A client who returns eighteen months later, an insurance query about a session from last year, a tax audit — each of these is a question only the archive can answer, and each arrives without warning. Deleting is a decision you can never take back; moving to Archive costs nothing and can always be undone.</p>
+
+      <div class="aside">
+        <span>What to check before you touch anything</span>
+        <p>Before restructuring a live business's files, ask two questions you cannot answer by guessing: is anyone else currently working in these folders, and are any files linked from outside — a website, an email signature, a form that points at a specific file location? Moving a linked file breaks the link silently, and the first sign of trouble is a client complaining that a page doesn't load. Ask, then move in one sitting rather than gradually, so nothing is half-migrated when someone else opens the drive.</p>
+        </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Design for the emergency: could a stranger find one thing in ten seconds on the worst day?</li>
+          <li>Organise by what the business does — who or what — never by file type.</li>
+          <li>Five to seven top-level folders. An eighth usually means two should merge.</li>
+          <li>Three levels deep, almost always. A fourth level is where things get lost.</li>
+          <li>Archive, never delete. Ask about links before restructuring anything live.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 15 minutes</span>
+        <p>Sketch a five-to-seven-folder top level for a business you know — your church, a shop, a family trade. Write one sentence for each folder answering "what question does someone open this folder to answer?" If you cannot answer that in one sentence, the folder is not earning its place.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l2">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 4.2</b><span class="label">12 minutes</span></div>
+      <h2>Naming things so that search actually finds them</h2>
+    </div>
+
+    <div class="flow">
+      <p>A perfect folder structure still fails if the files inside it are named <em>Untitled document</em>, <em>Scan_003.pdf</em> and <em>copy of copy of form.docx</em>. Most people find files by searching, not by browsing — so the name is doing more work than the folder it sits in.</p>
+
+      <h3>The four things a good file name answers</h3>
+
+      <p>A name should let someone identify a file from the list view alone, without opening it. That means it answers, in order: <strong>what is this, who or what is it about, and when.</strong> Leave any of the three out and the file becomes identifiable only by opening it — which is the exact failure a good name exists to prevent.</p>
+
+      <div class="namerow">
+        <div class="n-h">Renaming, side by side</div>
+        <div class="nrow"><span class="bad">Scan_003.pdf</span><span class="arrow">→</span><span class="good">2026-08-14 Chinelo Okafor — intake form.pdf</span></div>
+        <div class="nrow"><span class="bad">invoice.docx</span><span class="arrow">→</span><span class="good">2026-09 MedSupply — invoice 2291.docx</span></div>
+        <div class="nrow"><span class="bad">Final v2 ACTUAL.docx</span><span class="arrow">→</span><span class="good">2026-09-03 Practice leaflet — approved.docx</span></div>
+        <div class="nrow"><span class="bad">notes.docx</span><span class="arrow">→</span><span class="good">Ify Mbanefo — session notes 2026.docx</span></div>
+        <div class="nrow"><span class="bad">Untitled spreadsheet.xlsx</span><span class="arrow">→</span><span class="good">2026 Q3 — fee tracker.xlsx</span></div>
+      </div>
+
+      <h3>Dates go first, and they go one way</h3>
+
+      <p>Always <strong>YYYY-MM-DD</strong>, at the very start of the name. Two things ride on this small habit. First, files then sort into true chronological order automatically, in any file browser, without anyone doing anything — the computer's alphabetical sort and calendar order become the same sort. Second, it removes the ambiguity from lesson 3.1: <em>03-09-2026</em> reads as 3 September to one reader and 9 March to another, but <em>2026-09-03</em> reads the same way to everyone, everywhere, forever.</p>
+
+      <p>If the file is not date-specific — a template, a standing document — drop the date rather than fake one. A false date is worse than none.</p>
+
+      <h3>Words a search can actually match</h3>
+
+      <p>Search matches text, not intention. A file called <em>Final.docx</em> cannot be found by searching "insurance" even though that is exactly what it is. Put the client's name, the subject, and any reference number a person might actually type into the name itself. <em>MedSupply — invoice 2291</em> is found by searching "MedSupply", "invoice", or "2291" — three separate paths to the same file, versus zero for <em>invoice.docx</em>.</p>
+
+      <h3>What to avoid</h3>
+
+      <ul class="list">
+        <li><strong>"Final", "final final", "v2", "latest".</strong> These are meaningless within a week and actively misleading within a month — there is always eventually a file more final than the one called Final. Lesson 4.3 gives you the actual alternative.</li>
+        <li><strong>Special characters</strong> — <code>/ \ : * ? " &lt; &gt; |</code> — which some systems reject outright and others silently mangle. A dash or an underscore does every job a slash was doing.</li>
+        <li><strong>Names longer than about eight or nine words.</strong> If it needs more, the extra detail belongs inside the document, not in its name.</li>
+        <li><strong>Client names abbreviated inconsistently.</strong> "Chinelo O", "C. Okafor" and "Chinelo Okafor" are three different search results for the same person. Pick one form and use it forever — full name, same order, every time.</li>
+      </ul>
+
+      <div class="aside">
+        <span>Renaming an existing mess</span>
+        <p>You do not need to rename 1,140 files by hand. Sort the client folders by "date modified" and start with whichever ten a client is most likely to ask about this month — active clients, open invoices, anything mid-process. Rename properly as you touch things naturally from here on, and the mess shrinks on its own rather than requiring a project nobody has time for.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>A good name answers what, who or what it's about, and when — without opening the file.</li>
+          <li>Dates first, always YYYY-MM-DD. Sorts correctly and reads the same in every timezone.</li>
+          <li>Put words a person would actually type in the name — a client name, a reference number.</li>
+          <li>Never "final". Special characters break systems. Pick one form of a name and never vary it.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 15 minutes</span>
+        <p>Open your own downloads folder or camera roll and rename the twenty most recent files using this system. Time yourself. Notice how many you cannot rename properly because you no longer remember what they are — that is the cost of not naming them well the first time, made visible.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l3">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 4.3</b><span class="label">13 minutes</span></div>
+      <h2>Documents: templates, formatting, version control without extra software</h2>
+    </div>
+
+    <div class="flow">
+      <p>Adaeze has sent the same intake form to nineteen new clients, and every single one is a document she built from scratch by editing an old one — changing the name, forgetting to change something else, occasionally sending someone else's session notes by mistake because she started from the wrong file. This is not a formatting problem. It is a system with no template in it.</p>
+
+      <h3>Turn anything sent more than twice into a template</h3>
+
+      <p>The rule is exactly that simple. The intake form, the fee agreement, the end-of-session note, the standard email attachment — anything Adaeze produces more than twice becomes a template: built once, properly, and reused rather than rebuilt.</p>
+
+      <p>Most document tools have a real "Template" file type, and it is worth using rather than faking. A true template opens as a fresh, untitled copy every time — nobody can accidentally edit and save over the master, which is precisely the failure mode you are trying to close. If your tool has no template type, keep the master in <strong>Templates/</strong>, marked read-only, and always duplicate before editing. Never open the master and start typing.</p>
+
+      <h3>Version control that needs no extra software</h3>
+
+      <p>You do not need Git or paid version-history tools for this. You need one naming convention, used without exception, plus the version history every major document tool already keeps automatically and almost nobody opens.</p>
+
+      <div class="stagebox">
+        <div class="s-h">The version convention</div>
+        <div class="srow"><b>Draft</b><span><em>2026-08-14 Fee agreement — draft.docx.</em> Being worked on. Not sent to anyone.</span></div>
+        <div class="srow"><b>For review</b><span><em>2026-08-15 Fee agreement — for review.docx.</em> Sent to someone whose sign-off you need.</span></div>
+        <div class="srow"><b>Approved</b><span><em>2026-08-16 Fee agreement — approved.docx.</em> Signed off. This is now the version anyone else should use.</span></div>
+        <div class="srow"><b>Superseded</b><span>Move the previous approved version into Archive the moment a new one is approved. Never leave two files both called "approved" in the same folder.</span></div>
+      </div>
+
+      <p>Four words — draft, for review, approved, superseded — replace every ad-hoc "v2", "v3" and "FINAL FINAL" you have ever seen, and unlike those, each one tells you something true about the file's actual status the moment you read the name.</p>
+
+      <h3>Built-in version history is usually enough</h3>
+
+      <p>Google Docs, Word Online and most modern tools keep every saved version automatically, viewable from a "version history" or "see edit history" menu, with the ability to name a version and restore an earlier one. Learn where that menu lives in whatever tool your client uses — it is usually enough on its own, and it means you never need a folder full of numbered duplicates for a single working document. Duplicated files with a version convention are for documents that leave the tool entirely, such as anything sent as an attachment; native version history is for anything that stays inside one shared document.</p>
+
+      <h3>Formatting: match, don't reinvent</h3>
+
+      <p>When you build or edit a document for a client, the fastest way to look competent — or the fastest way to look careless — is formatting consistency. A professional font throughout, matching what they already use. Headings that are actually styled as headings, not bold text sized up by hand, so the document's own table-of-contents and navigation tools work. One consistent way of laying out a date, a currency figure, a phone number. None of this is decoration. It is the difference between a document that reads as considered and one that reads as thrown together, and clients notice the second far more than they notice the first.</p>
+
+      <div class="ex">
+        <div class="ex-h">Building the intake template — worked example</div>
+        <div class="ex-b">
+          <p>Nineteen intake forms exist, all slightly different, because Adaeze has been starting each one from the last client's document and editing the name. Building the template properly:</p>
+          <p style="color:var(--muted);font-size:.92rem">1. Read all nineteen, and note every field they collect between them — some forms are missing fields others have.<br>
+          2. Build one canonical version with every field, saved as <em>Templates/Intake form — template.docx</em>, using the tool's real Template type.<br>
+          3. Replace every client-specific value with a clearly bracketed placeholder: <em>[CLIENT NAME]</em>, <em>[DATE]</em>, <em>[EMERGENCY CONTACT]</em>.<br>
+          4. Test it by creating one new document from the template and filling it in as if for a real client, checking nothing was missed.<br>
+          5. From today, every new intake starts from the template, never from a copied file.</p>
+        </div>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Anything sent more than twice becomes a template — a true template type where the tool has one.</li>
+          <li>Draft, for review, approved, superseded — four words instead of "v2" and "FINAL FINAL".</li>
+          <li>Learn where built-in version history lives before building your own duplicate-file system.</li>
+          <li>Formatting consistency is not decoration. It is the fastest visible signal of competence.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 20 minutes</span>
+        <p>Pick one document you or someone you know sends repeatedly — a CV, an invoice, a reference request. Build it as a proper template with bracketed placeholders, following the five steps above. Test it by filling it in from scratch once.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l4">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 4.4</b><span class="label">13 minutes</span></div>
+      <h2>Building the client's process library as you go</h2>
+    </div>
+
+    <div class="flow">
+      <p>By your second month with Adaeze, you will have answered the same question about her practice four or five times — to yourself, working it out again each time, because nobody wrote it down the first time. How to file an insurance appeal. What the cancellation policy actually is when a client is genuinely unwell versus simply unavailable. Which supplier to use when the usual one is out of stock.</p>
+
+      <p class="pull">The second time you work something out, write it down. There should never be a third time.</p>
+
+      <h3>What belongs in the process library, and what doesn't</h3>
+
+      <p>Not everything needs documenting — a library nobody trusts is worse than no library, because people stop checking it. Write down a process when it meets any of these: it recurs (you will do this again), it has a decision in it (there is a right way and a wrong way, not just one obvious way), or getting it wrong is expensive (money, a client relationship, or a compliance requirement).</p>
+
+      <p>Do not document what is genuinely obvious, what changes every single time so a written version would mislead more than it helps, or what exists only in your head and applies to nobody else. A library that tries to capture everything becomes unreadable, and an unreadable library gets ignored exactly like no library at all.</p>
+
+      <h3>One page, every time, same shape</h3>
+
+      <p>Consistency matters more than cleverness here. If every process page has the same four sections, a reader learns the shape once and can then scan any page in the library at speed, because they already know where the answer lives on the page.</p>
+
+      <div class="stagebox">
+        <div class="s-h">Process page — "Filing an insurance appeal"</div>
+        <div class="srow"><b>When</b><span>A claim comes back rejected. Look for "not approved" or "determination" in the subject line — insurers rarely use the word "rejected" itself.</span></div>
+        <div class="srow"><b>Steps</b><span>1. Check the deadline in the letter — usually 14 days. 2. Pull the original session notes for that date. 3. Draft the appeal using the template in Templates/Insurance/. 4. Send from Adaeze's account, cc her. 5. Log it in the tracker with the deadline.</span></div>
+        <div class="srow"><b>Watch for</b><span>HealthPlan specifically wants the practitioner's licence number restated on every appeal, even though it's on file — appeals without it are auto-rejected a second time.</span></div>
+        <div class="srow"><b>Ask Adaeze if</b><span>The appeal would be the second one for the same client this year, or the claim involves more than ₦50,000.</span></div>
+      </div>
+
+      <p>Four sections, always this order: when this applies, the steps in order, the specific thing that trips people up, and the line that tells you when to stop and escalate rather than proceed alone — which is the same threshold discipline from lesson 2.4, applied to a written process instead of an inbox message.</p>
+
+      <h3>Write it the moment you learn it, not later</h3>
+
+      <p>"I'll write it up properly later" is where process libraries go to die. The detail that actually matters — that HealthPlan wants the licence number restated — is exactly the kind of thing that feels obvious the moment you learn it and is completely gone from memory a month later. Capture it in rough form immediately, even a single ugly line, and tidy the page during your weekly review rather than waiting for a moment of inspiration that will not arrive.</p>
+
+      <h3>The client should be able to answer her own questions from it eventually</h3>
+
+      <p>A process library is not primarily for you — it is for the business, and a well-built one starts answering Adaeze's own questions before it finishes answering yours. Within a few months she stops asking "how did we handle the last cancellation dispute" and starts checking the library first. That is the signal the system is working, and it is also, not coincidentally, the reason a well-documented practice is genuinely harder to leave than one that runs on memory: it depends less on any one person, you included.</p>
+
+      <div class="aside">
+        <span>Where it lives</span>
+        <p>One folder — <em>02 Admin &amp; Finance/Process library/</em> — one page per process, named plainly: <em>Filing an insurance appeal.docx</em>, <em>Setting up a new client.docx</em>, <em>Cancellation policy.docx</em>. No numbering, no folders within folders. It should be as fast to add a new page as it is to find an old one.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>The second time you work something out, write it down. Never a third time.</li>
+          <li>Document what recurs, involves a decision, or is expensive to get wrong. Nothing else.</li>
+          <li>Same four sections every time: when, steps, watch for, ask if. Consistency beats cleverness.</li>
+          <li>Capture the detail the moment you learn it — it is gone from memory within a month.</li>
+          <li>A working library eventually answers the client's own questions, not just yours.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 15 minutes</span>
+        <p>Write one process page, in the four-section shape, for something you personally had to work out more than once — a form you keep having to re-figure, a route you keep re-planning, a setting you keep re-finding in an app. If you cannot fill in "watch for", you have not actually done it enough times yet to know where it bites.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="l5">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Lesson 4.5</b><span class="label">11 minutes</span></div>
+      <h2>The handover file that makes you hard to lose</h2>
+    </div>
+
+    <div class="flow">
+      <p>This is an uncomfortable lesson to write, so let's be direct about why it matters. You are going to build a document that would let someone else pick up your work if you disappeared tomorrow — went silent, got a medical emergency, took a job that meant stopping. It feels like writing yourself out of a job. It is the opposite.</p>
+
+      <p class="pull">Being replaceable on paper is what makes a client trust you with more. Nobody hands over their whole business to someone who might vanish and take the knowledge with them.</p>
+
+      <h3>What actually goes in it</h3>
+
+      <p>Not everything you know — a handover file that tries to capture everything becomes a second job to maintain and nobody reads it. It holds exactly what someone would need in the first 48 hours of stepping in cold, in this order:</p>
+
+      <ol class="numlist">
+        <li><strong>Access.</strong> Every account touched, how access is granted (delegate, shared inbox, direct login), and who to contact for each one. Never actual passwords — that undoes everything lesson 2.1 established.</li>
+        <li><strong>What runs on autopilot.</strong> Every template, automation and recurring task, and where each one lives. The things that fail silently if nobody knows they exist.</li>
+        <li><strong>The rhythm.</strong> What happens daily, weekly, monthly — the end-of-day summary, the day-before brief, the quarterly audit — so a replacement can pick up the pattern of the role, not just its content.</li>
+        <li><strong>Where things stand right now.</strong> Anything currently in progress, anything currently owed to a client, anything already escalated and awaiting an answer. This section only, unlike the rest, needs updating regularly — the others change slowly.</li>
+        <li><strong>Who to ask.</strong> For anything not written down. One honest line naming the actual gaps is worth more than pretending the document is complete.</li>
+      </ol>
+
+      <h3>What it looks like</h3>
+
+      <div class="ex">
+        <div class="ex-h">Handover file — opening section</div>
+        <div class="ex-b">
+          <p class="quote"><strong>Access</strong><br>Email — delegate access, granted by Adaeze directly in Gmail settings.<br>Booking tool — my own login, admin level, set up by me.<br>Insurance portal — shared login (Adaeze's choice, not mine — she has the password).<br>Client folder in Drive — full access, shared by Adaeze.<br><br><strong>Runs on autopilot</strong><br>Booking reminders — automatic, 24 hours before each session, via the booking tool.<br>Monthly invoice summary — I run this by hand on the 1st, no automation yet, template in Admin &amp; Finance/.<br><br><strong>The rhythm</strong><br>Daily: inbox triage by 9am, end-of-day summary by 6pm.<br>Weekly: calendar check for the week ahead, sent Sunday evening.<br>Quarterly: recurring-meeting audit, next due end of December.<br><br><strong>Right now</strong><br>Kemi Adebayo's billing complaint — escalated to Adaeze on 3 Sept, awaiting her decision.<br>HealthPlan appeal for claim 4471 — deadline 18 Sept, drafted, awaiting Adaeze's "send".<br><br><strong>Ask Adaeze about</strong><br>The supplier relationship with MedSupply — history I don't have, useful for judging how firmly to chase them.</p>
+        </div>
+      </div>
+
+      <h3>Update it in one place, as you go</h3>
+
+      <p>A handover file written once and never touched again is worse than none, because it actively misleads — someone follows an instruction that stopped being true eight months ago. Keep it as a single living document, and update the <strong>right now</strong> section weekly, in the same sitting as your Sunday calendar check. The other four sections change rarely; touch them only when something genuinely does.</p>
+
+      <h3>The trust this actually buys you</h3>
+
+      <p>Show Adaeze this document exists — not the whole content necessarily, but that it exists and where it lives. This is not a minor point. It is one of the clearest rung-four signals in the entire course: an assistant thinking about business continuity, unprompted, is an assistant a client stops worrying about. It is also, quietly, your own protection. If you are ever unreachable for a genuine emergency, this document is what stops a client's business from stalling — and what stops the relationship from souring the moment you resurface.</p>
+
+      <div class="aside">
+        <span>The honest reason to do this</span>
+        <p>People delay this lesson because it feels like planning your own redundancy. It is the reverse. A client who can see you have thought about what happens if you are unreachable trusts you with more, not less — because she now believes the practice does not stop if you have one bad week. That is precisely the trust that turns a rung-two relationship into a rung-four retainer.</p>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">Keep this</div>
+        <ul>
+          <li>Five sections: access, autopilot, rhythm, right now, who to ask. Nothing more.</li>
+          <li>Never a password — access methods and contacts only.</li>
+          <li>Update "right now" weekly. The rest changes rarely.</li>
+          <li>Being visibly replaceable on paper is what makes a client trust you with more.</li>
+        </ul>
+      </div>
+
+      <div class="doit">
+        <span>Do this now — 20 minutes</span>
+        <p>Write your own handover file for whatever you are doing right now — a course, a job, a project. Five sections, following the shape above. If you struggle to fill in "the rhythm", that is worth noticing: it usually means the rhythm exists only in your head, which is exactly the risk this lesson is about.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="drill-sec" id="drill">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>Module 4 drill</b><span class="label">one hour</span></div>
+      <h2>400 unsorted files, one map</h2>
+    </div>
+
+    <div class="flow">
+      <p>You are given a listing of roughly 400 files from a real dumped Drive: six near-duplicate contracts, files named things like <em>Scan1</em> and <em>New folder (3)/New folder/doc.docx</em>, three different intake forms nobody can tell apart, a folder of session notes mixed in with marketing images, and one genuinely important insurance letter buried four folders deep under a completely unrelated name.</p>
+
+      <h3>Deliver three things</h3>
+
+      <ol class="numlist">
+        <li><strong>The new structure.</strong> Five to seven top-level folders, three levels deep, following lesson 4.1. You are not moving all 400 files by hand — you are designing the structure and showing where the twenty files listed separately in the brief would land.</li>
+        <li><strong>The one-page map.</strong> What Adaeze would read to understand where everything now lives — the same document lesson 4.1's emergency test demands she could use without you.</li>
+        <li><strong>The template shortlist.</strong> From the six near-duplicate contracts and three intake forms, identify which one document should become the template, and what you'd change about it first.</li>
+      </ol>
+
+      <h3>How it is marked</h3>
+
+      <ul class="list">
+        <li><strong>Did you find the buried insurance letter?</strong> It is in there, filed under a name with nothing to do with insurance. This is worth the most marks — it is the same skill as finding the load-bearing email in module 2's drill, applied to files instead of messages.</li>
+        <li><strong>Is your top level five to seven folders?</strong> More than seven, or fewer than five with everything crammed into one, both fail.</li>
+        <li><strong>Would the map pass the ten-second test?</strong> Someone unfamiliar with the drive should be able to answer "where would X be" correctly from the map alone, without opening a single folder.</li>
+        <li><strong>Did you archive rather than delete?</strong> The brief includes files that look obviously redundant. Anyone who recommends deleting them, rather than moving them to Archive, has the wrong instinct for someone else's business records.</li>
+        <li><strong>Did you pick a defensible template?</strong> Not necessarily the newest of the near-duplicates — the one with the most complete set of fields, argued for in one line.</li>
+      </ul>
+
+      <div class="aside">
+        <span>What this drill is really testing</span>
+        <p>Whether you can look at genuine chaos and impose a structure that a stranger, not you, can use under pressure. Every module so far has tested judgement under a different kind of mess — an inbox, a calendar, and now a filing system. The skill underneath all three is the same: sort first, protect what's load-bearing, and build for the person who isn't you.</p>
+      </div>
+
+      <div class="doit">
+        <span>Before module 5</span>
+        <p>You should now have: a five-to-seven-folder structure sketched for a real business, twenty files renamed properly, one built template with placeholders, one process-library page, and your own handover file. Module 5 takes meetings and what happens after them — and it assumes the files it produces (notes, action lists) have somewhere sensible to live, because you have just spent this module building that somewhere.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Module 04 of 10 · The Assistant They Can't Replace</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const FILE = { filename: 'VA-Course-Module4-Worksheets.docx', b64: "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" };
+
+  function saveBlob(filename, bytes) {
+    const blob = new Blob([bytes], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+
+  (async function wire() {
+    const btn = document.getElementById('dl-m4');
+    const status = document.getElementById('dl-m4-status');
+    if (!btn) return;
+
+        btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Saving…';
+      if (status) { status.textContent = ''; status.classList.remove('ok'); }
+      try {
+        const bytes = b64ToBytes(FILE.b64);
+        saveBlob(FILE.filename, bytes);
+        if (status) { status.textContent = 'Saved.'; status.classList.add('ok'); }
+      } catch (err) {
+        const code = err && err.code ? err.code : 'unavailable';
+        if (status) status.textContent = code === 'declined' ? 'Cancelled.' : 'Could not save (' + code + ').';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+  })();
+})();
+</script>
+
+</body>
+</html>

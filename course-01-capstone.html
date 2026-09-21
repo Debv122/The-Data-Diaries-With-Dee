@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Capstone: The Unreasonable Week</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- download callout ---------- */
+
+  .dl-callout{
+    margin-top:clamp(22px,3vw,32px);
+    display:flex;flex-wrap:wrap;gap:16px 20px;align-items:center;
+    border:1px solid var(--line);border-radius:12px;
+    background:var(--surface);padding:16px 20px;
+  }
+  .dl-callout .dl-text{flex:1;min-width:200px}
+  .dl-callout .dl-text b{display:block;font-size:.98rem;color:var(--ink);font-weight:600;margin-bottom:2px}
+  .dl-callout .dl-text span{font-size:.88rem;color:var(--muted)}
+  .dl-btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    height:42px;padding:0 20px;border-radius:999px;flex:none;
+    border:1px solid var(--ember);background:var(--ember);color:#160C08;
+    font-size:.86rem;font-weight:500;letter-spacing:-.01em;cursor:pointer;
+    font-family:inherit;transition:background .2s ease,transform .2s ease;
+  }
+  .dl-btn:hover{background:#EE9679;transform:translateY(-1px)}
+  .dl-btn:disabled{opacity:.55;cursor:default;transform:none}
+  .dl-status{font-family:var(--mono);font-size:.72rem;color:var(--faint);flex:none}
+  .dl-status.ok{color:var(--ember)}
+</style>
+<style>
+  .tree{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .tree .t-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .tree .t-b{padding:16px 18px;font-family:var(--mono);font-size:.85rem;line-height:1.85;color:var(--body);white-space:pre}
+  .tree .t-b .d{color:var(--ember)}
+  .tree .t-b .f{color:var(--muted)}
+  .tree .t-b .c{color:var(--faint);font-family:var(--sans);font-style:italic}
+
+  .namerow{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .namerow .n-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .nrow{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr);gap:6px 14px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:center;font-family:var(--mono);font-size:.84rem}
+  .nrow:last-child{border-bottom:0}
+  .nrow .bad{color:var(--dusk);text-decoration:line-through;text-decoration-color:var(--dusk);opacity:.7}
+  .nrow .good{color:var(--ink);font-weight:500}
+  .nrow .arrow{color:var(--ember);text-align:center;font-family:var(--sans)}
+  @media (max-width:560px){.nrow{grid-template-columns:minmax(0,1fr)}.nrow .arrow{display:none}}
+
+  .stagebox{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .stagebox .s-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);padding:11px 18px;border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+  .srow{display:grid;grid-template-columns:120px minmax(0,1fr);gap:6px 16px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:baseline;font-size:.92rem}
+  .srow:last-child{border-bottom:0}
+  .srow b{font-family:var(--mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ember)}
+  .srow span{color:var(--body)}
+  @media (max-width:560px){.srow{grid-template-columns:minmax(0,1fr)}}
+</style>
+
+
+</head>
+<body>
+<header class="head">
+  <div class="wide">
+    <div class="crumbs">
+      <span class="label">The Assistant They Can't Replace</span>
+      <span class="sep">/</span>
+      <span class="label">Capstone</span>
+    </div>
+    <h1>The unreasonable week</h1>
+    <p class="standfirst">Two weeks, assessed. Ten modules taught you the pieces one at a time — the inbox alone, the calendar alone, the files alone. This is what happens when they all break in the same week, for a client you have never met before, with more arriving than you can finish. You are marked on judgement and on what you chose to leave undone. Not on tidiness.</p>
+
+    <nav class="toc">
+      <a href="#brief"><i>·</i><span>The brief: who this is, and what's gone wrong</span><u>read first</u></a>
+      <a href="#inputs"><i>·</i><span>What you're actually given</span><u>the mess</u></a>
+      <a href="#deliverables"><i>·</i><span>The seven deliverables</span><u>the work</u></a>
+      <a href="#walkthrough"><i>·</i><span>The five-minute walkthrough</span><u>the defence</u></a>
+      <a href="#rubric"><i>·</i><span>How it's actually marked</span><u>the standard</u></a>
+    </nav>
+
+    <div class="dl-callout">
+      <div class="dl-text">
+        <b>Capstone submission pack</b>
+        <span>The deliverables checklist, the judgement-log template, the walkthrough prep sheet, and the full marking rubric — so you can self-assess honestly before you submit. One .docx, six pages.</span>
+      </div>
+      <button class="dl-btn" id="dl-cap" type="button">Save capstone pack (.docx)</button>
+      <span class="dl-status" id="dl-cap-status"></span>
+    </div>
+  </div>
+</header>
+
+<section class="lesson" id="brief">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>The brief</b><span class="label">read this first</span></div>
+      <h2>Who this is, and what's gone wrong</h2>
+    </div>
+
+    <div class="flow">
+      <p>Ngozi Eze runs a mid-sized event planning business out of Lagos — weddings, corporate launches, the occasional milestone birthday, four to six live events a month at the busiest stretch of the year. Her assistant of eight months left two weeks ago with almost no notice, for a good reason that isn't really your business, right at the start of the year's busiest six-week run: three weddings, one corporate product launch, and a fortieth-birthday event that's already gone sideways twice.</p>
+
+      <p class="pull">Every earlier drill in this course handed you one broken thing at a time. This one hands you a business that has been quietly breaking for two unattended weeks, all at once.</p>
+
+      <p>You've been brought in — cold, no handover, no relationship built up over ten modules the way Adaeze's was. Everything you know about Ngozi's business, you'll learn from what's sitting in front of you today: the inbox, the calendar, the drive, one recorded call, and one message that arrived an hour ago asking for something that will take real research to answer properly.</p>
+
+      <p>This is deliberate. Every client you take on after this course will start exactly like this — a stranger's mess, no context you didn't build yourself, and a limited window before something in it actually breaks something that matters. The capstone is not harder because the tasks are new. It's harder because nothing has been warmed up for you first.</p>
+
+      <div class="aside">
+        <span>You will not finish everything. That's the point.</span>
+        <p>Ninety-odd emails, a broken calendar, an unsorted drive, a messy call transcript, and a real research question, all arriving inside a two-week window that also has its own real deadlines inside it — this is engineered to exceed what a careful person can fully complete. What you triage, what you leave undone, and how you explain that choice in the walkthrough is being assessed as closely as the work itself.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="inputs">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>The materials</b><span class="label">what you're actually given</span></div>
+      <h2>What you're actually given</h2>
+    </div>
+
+    <div class="flow">
+      <p>Five inputs, all live at once, exactly as they'd arrive on a real first week. Use every module's disciplines — nothing here is solvable with only one module's toolkit.</p>
+
+      <div class="stagebox">
+        <div class="s-h">The five inputs, and roughly what's inside each</div>
+        <div class="srow"><b>The inbox</b><span>Around ninety unread messages spanning the two silent weeks — three genuinely urgent client questions buried among vendor spam, a venue confirming a date change nobody's actioned, a photographer threatening to release her booking to another client if she isn't confirmed by Friday, and one message that looks routine but, read carefully, is a client trying to cancel a deposit-paid wedding.</span></div>
+        <div class="srow"><b>The calendar</b><span>Double-bookings from the venue date-change nobody caught, a client meeting scheduled during a live event Ngozi will already be running, and at least one appointment that was quietly cancelled by the other side but never removed.</span></div>
+        <div class="srow"><b>The drive</b><span>No consistent structure — vendor contracts, client mood boards, invoices and a folder ominously named "final stuff" all sitting at the same top level, including at least one duplicate contract with different terms on each copy.</span></div>
+        <div class="srow"><b>The recorded call</b><span>A vendor negotiation call, auto-transcribed, with at least one wrong number, a mangled vendor name, and a stretch where the transcript reads as continuous but a chunk of the actual conversation is missing.</span></div>
+        <div class="srow"><b>The research ask</b><span>Arrived an hour ago, from Ngozi herself, exactly as vague as any real one: "Can you find me a few backup videographers, in case Kunle falls through for the launch — need this fast."</span></div>
+      </div>
+
+      <h3>Build these inputs yourself, realistically, before you start</h3>
+
+      <p>Rather than being handed a pre-built dataset, construct a realistic version of each input yourself — ninety-ish invented messages, a real conflicting calendar, a genuinely messy folder tree, a transcript with the specific error types module 5 named, and Ngozi's one-line research ask. This is itself part of the assessment: a capstone built on inputs you designed with real judgement about what a messy week actually contains is a stronger piece of work than one built on a thin or unrealistic version of the mess.</p>
+
+      <div class="aside">
+        <span>More will arrive while you're working</span>
+        <p>Treat this as live, not static — new messages, a new calendar clash, a follow-up question from Ngozi partway through, arriving while you're still working through the original mess. Real client weeks don't pause while you catch up, and neither should this one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="deliverables">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>The work</b><span class="label">seven deliverables</span></div>
+      <h2>The seven deliverables</h2>
+    </div>
+
+    <div class="flow">
+      <p>Every deliverable draws on a specific earlier module. None of them are new skills — this is entirely about applying what you already have, under real pressure and without a handover.</p>
+
+      <ol class="numlist">
+        <li><strong>A triaged inbox, with a written log of every judgement call.</strong> Module 2's triage system, applied cold. For every message you acted on, deferred, or ignored, log why — the log matters as much as the triage itself, because it's the only way anyone can check your judgement afterward.</li>
+        <li><strong>A repaired calendar, plus a note explaining what moved and why.</strong> Module 3's discipline — every change defensible, every affected person accounted for, with the DST-style traps this time hiding in double-bookings and silent cancellations instead of time zones.</li>
+        <li><strong>A restructured drive and its one-page map.</strong> Module 4's folder logic, plus the emergency test — could Ngozi find anything in ten seconds, on the worst day of her busiest month, without asking you.</li>
+        <li><strong>Meeting notes with owned, dated actions, and the follow-ups actually sent.</strong> Module 5's four buckets and verb-owner-date discipline, applied to the vendor call — including catching the transcript's specific errors before anything reaches a real recipient.</li>
+        <li><strong>One research deliverable, with confidence labels on every row.</strong> Module 6's full discipline, applied to Ngozi's videographer request — a real brief with a stopping point, not just a list of names.</li>
+        <li><strong>One automation, documented well enough for someone else to run.</strong> Module 7's standard — something in this week that's repetitive enough to be worth automating, built and documented as its own process-library page.</li>
+        <li><strong>A five-minute walkthrough, marked on how you handle being challenged.</strong> Covered fully in the next section — this is where the whole capstone gets defended out loud, not just submitted.</li>
+      </ol>
+
+      <div class="ex">
+        <div class="ex-h">What "drawing on a module" actually means here</div>
+        <div class="ex-b">
+          <p class="quote">The inbox triage log isn't just module 2's triage categories copy-pasted — it's your own judgement about which of Ngozi's ninety messages was the load-bearing one, argued in your own words. The research deliverable isn't just a list of videographer names — it's module 6's brief, criteria, stopping point, and honest confidence labelling, applied to a request that arrived with real time pressure attached. Every deliverable is the module's discipline, not just its shape.</p>
+        </div>
+      </div>
+
+      <div class="keep">
+        <div class="k-h">What ties all seven together</div>
+        <ul>
+          <li>Every judgement call is written down, not just made silently — an unwritten decision can't be assessed or defended.</li>
+          <li>Every deliverable is built for Ngozi specifically, not as a generic template with her name inserted.</li>
+          <li>Nothing here needed a skill this course didn't already teach. The difficulty is entirely in doing it all at once, cold, under real time pressure.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="walkthrough">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>The defence</b><span class="label">five minutes</span></div>
+      <h2>The five-minute walkthrough</h2>
+    </div>
+
+    <div class="flow">
+      <p>Submitting the seven deliverables is not the end of the capstone. A short walkthrough — five minutes presenting the work, followed by being challenged on it — is where the judgement behind the deliverables actually gets tested, not just the finished output.</p>
+
+      <p class="pull">A polished deliverable proves you can produce good work. A well-handled challenge proves you can defend the thinking behind it — which is what a real client is actually trusting you with.</p>
+
+      <h3>What the five minutes should cover</h3>
+
+      <p>Not a tour of all seven deliverables in equal depth — that's too much for five minutes and dilutes the parts that matter most. Instead: the single hardest judgement call you made this week, what you chose to leave undone and why, and one thing you'd do differently with another day.</p>
+
+      <h3>Then, the challenge</h3>
+
+      <p>Expect direct questions that press on the actual judgement, not just the output — the kind a real client, or a course assessor standing in for one, would genuinely ask:</p>
+
+      <div class="stagebox">
+        <div class="s-h">The kind of questions to expect</div>
+        <div class="srow"><b>"Why this, and not that?"</b><span>Pressed on a specific triage or escalation call — why one message got acted on immediately and a similar-looking one didn't.</span></div>
+        <div class="srow"><b>"What if you're wrong about this?"</b><span>A direct challenge to a confidence label in the research deliverable, or a calendar decision — testing whether the reasoning holds up, not just whether the answer sounds confident.</span></div>
+        <div class="srow"><b>"What did you leave undone, and why that and not something else?"</b><span>The most important question in the whole walkthrough. A confident, specific answer here is worth more than having technically finished more.</span></div>
+        <div class="srow"><b>"Ngozi disagrees with this decision — now what?"</b><span>A live test of module 8's discretion and escalation judgement, applied under actual pressure rather than described in the abstract.</span></div>
+      </div>
+
+      <h3>What good handling of a challenge actually looks like</h3>
+
+      <p>Not defensiveness, and not instant capitulation either. A well-handled challenge sounds like: stating the reasoning plainly, acknowledging genuinely if the challenge reveals something that was actually missed, and holding the decision if it was actually right and the reasoning still holds under pressure. This is the same three-way check discipline from module 7, turned on your own judgement instead of an AI tool's output.</p>
+
+      <div class="aside">
+        <span>Being challenged is not a sign something went wrong</span>
+        <p>Every capstone gets challenged, including strong ones — it's built into the format deliberately, not triggered by a weak submission. Treat a hard question as a normal part of the format, not a signal you're about to be told you failed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="drill-sec" id="rubric">
+  <div class="col">
+    <div class="lesson-head">
+      <div class="lesson-num"><b>The standard</b><span class="label">how it's actually marked</span></div>
+      <h2>How it is marked</h2>
+    </div>
+
+    <div class="flow">
+      <p>Not on whether all ninety emails got answered, whether the drive is perfectly organised, or whether every deliverable is fully polished. On whether the judgement behind an unreasonable week's worth of decisions was sound, defensible, and honestly reported.</p>
+
+      <ul class="list">
+        <li><strong>Did you find the load-bearing item in each input?</strong> The cancelling-client email hiding among routine messages, the double-booking hiding in the calendar, the buried duplicate contract with different terms — every input in this capstone has one item that matters far more than it first appears to. Missing all of them in one input is a stronger signal than any amount of polish elsewhere.</li>
+        <li><strong>Is every judgement call written down and defensible?</strong> Not necessarily the choice a marker would have made themselves — but argued clearly enough that the reasoning can be followed and checked, the same standard module 2's triage log set from the very start of this course.</li>
+        <li><strong>Is what you left undone a genuine, defensible choice — not just what ran out of time?</strong> The honest answer to "what didn't you finish" is almost always something. What matters is whether it was the least costly thing to leave, chosen deliberately, rather than whatever happened to be last in your queue.</li>
+        <li><strong>Did confidence labels, escalations, and disclosures stay honest under time pressure?</strong> It's tempting, when rushed, to mark something "verified" that wasn't quite checked, or to quietly decide something wasn't worth escalating because there wasn't time to ask. This is exactly the pressure module 6 and module 8's disciplines were built to survive.</li>
+        <li><strong>Did the walkthrough hold up under a real challenge?</strong> A submission that reads well on paper but can't be defended out loud, under a direct question, has not actually demonstrated the judgement this whole course has been building toward.</li>
+      </ul>
+
+      <div class="aside">
+        <span>What this capstone is really testing</span>
+        <p>Every module's drill tested one discipline under one kind of mess. This tests whether all ten disciplines survive contact with each other, at once, under real pressure, for a client you've never met — which is the actual job, on the actual first week of any real engagement. That is the entire promise of this course's title: an assistant who can be trusted with genuine mess, not just a tidy simulation of it.</p>
+      </div>
+
+      <div class="doit">
+        <span>After the capstone</span>
+        <p>You now have a complete, honestly-labelled portfolio piece spanning every module in this course — exactly the kind of proof of work module 10.3 described, built under real assessed pressure rather than a practice exercise. Use it. It is, quite literally, the proof that the assistant you've become is not easily replaced.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="col">
+    <div class="colophon">
+      <span>Capstone · The Assistant They Can't Replace · Course 01 of 40</span>
+      <span>Draft · September 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const FILE = { filename: 'VA-Course-Capstone-Pack.docx', b64: "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" };
+
+  function saveBlob(filename, bytes) {
+    const blob = new Blob([bytes], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+
+  (async function wire() {
+    const btn = document.getElementById('dl-cap');
+    const status = document.getElementById('dl-cap-status');
+    if (!btn) return;
+
+        btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Saving\u2026';
+      if (status) { status.textContent = ''; status.classList.remove('ok'); }
+      try {
+        const bytes = b64ToBytes(FILE.b64);
+        saveBlob(FILE.filename, bytes);
+        if (status) { status.textContent = 'Saved.'; status.classList.add('ok'); }
+      } catch (err) {
+        const code = err && err.code ? err.code : 'unavailable';
+        if (status) status.textContent = code === 'declined' ? 'Cancelled.' : 'Could not save (' + code + ').';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+  })();
+})();
+</script>
+
+</body>
+</html>
