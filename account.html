@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My courses | The Data Diaries With Dee</title><meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>:root{--paper:#F2EDF0;--surface:#FBF8FA;--ink:#191420;--body:#2E2733;--muted:#6B6273;--ember:#B0522F;--line:rgba(25,20,32,.15);
+--display:"Fraunces",Georgia,serif;--sans:"Inter",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root{--paper:#100C13;--surface:#1A1421;--ink:#F6F0F3;--body:#E2D9E1;--muted:#A79CB0;--ember:#E4906F;--line:rgba(246,240,243,.16)}}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--body);font:17px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+.strip{background:#12100E;padding:11px 24px;font:12px var(--mono);letter-spacing:.06em}.strip a{color:#E8734A;text-decoration:none}.strip .s{color:rgba(255,255,255,.25);margin:0 10px}.strip .r{color:rgba(255,255,255,.55)}
+main{max-width:560px;margin:0 auto;padding:clamp(28px,6vw,64px) 20px}
+h1{font:400 clamp(1.9rem,5vw,2.6rem)/1.15 var(--display);color:var(--ink);margin:0 0 10px}h2{font:400 1.35rem var(--display);color:var(--ink);margin:0 0 8px}
+.lead{color:var(--muted);margin:0 0 26px}.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px}
+label{display:block;font:500 14px var(--sans);color:var(--ink);margin:14px 0 5px}
+input[type=email],input[type=password]{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);font:16px var(--sans)}
+button,.btn{display:inline-block;border:0;border-radius:8px;background:var(--ember);color:#fff;padding:12px 20px;font:600 15px var(--sans);cursor:pointer;text-decoration:none}
+button.alt,.btn.alt{background:transparent;color:var(--ember);border:1px solid var(--ember)}button:disabled{opacity:.6}
+.tabs{display:flex;gap:6px;margin-bottom:18px}.tabs button{flex:1;background:transparent;color:var(--muted);border:1px solid var(--line)}.tabs button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.msg{margin-top:14px;font-size:15px;min-height:1.4em}.msg.err{color:#B3261E}.msg.ok{color:#1B6B3A}
+.link{background:none;color:var(--ember);padding:0;font:inherit;text-decoration:underline}
+.course{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--surface);margin-bottom:12px}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin:10px 0 6px}.bar i{display:block;height:100%;background:var(--ember)}
+.small{font-size:14px;color:var(--muted)}pre.sub{white-space:pre-wrap;font:14px/1.5 var(--sans);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px;margin:6px 0 0;max-height:160px;overflow:auto}
+[hidden]{display:none!important}</style></head><body>
+<div class="strip"><a href="/emberlern">&larr; Emberlern</a><span class="s">/</span><a class="r" href="/">The Data Diaries With Dee</a></div>
+<main>
+<h1>My courses</h1>
+<p class="lead" id="who">Loading...</p>
+<div id="setup" class="msg err" style="display:none">Accounts are not switched on yet. The site owner still needs to add the Supabase keys in auth.js.</div>
+<div id="courses"></div>
+<h2 style="margin-top:34px" id="sh" hidden>My submissions</h2>
+<div id="subs"></div>
+<p style="margin-top:28px"><button class="alt" id="out" hidden>Sign out</button></p>
+</main>
+<script src="/auth.js" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+var $=function(i){return document.getElementById(i)};
+function E(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+if(!DD.configured){$('who').textContent='';$('setup').style.display='block';return}
+DD.ready.then(function(){
+ if(!DD.client){$('who').textContent='Could not load the sign-in service. Refresh and try again.';return}
+ if(!DD.user){location.replace('/login?next=/account');return}
+ $('who').textContent='Signed in as '+DD.user.email;$('out').hidden=false;
+ $('out').onclick=function(){DD.signOut().then(function(){location.replace('/')})};
+ Promise.all([DD.myProgress(),DD.mySubmissions()]).then(function(rs){
+  var prog=rs[0].data||[],subs=rs[1].data||[],C=DD.config.COURSES;
+  Object.keys(C).forEach(function(k){
+   var c=C[k],done=prog.filter(function(p){return p.course==k}).length,total=c.modules+1,pct=Math.min(100,Math.round(done/total*100));
+   var d=E('div','course');d.appendChild(E('h2','',c.title));
+   var b=E('div','bar');var i=E('i');i.style.width=pct+'%';b.appendChild(i);d.appendChild(b);
+   d.appendChild(E('div','small',done+' of '+total+' steps complete (modules + capstone)'));
+   var a=E('a','btn alt',done?'Continue':'Start');a.href=c.url;a.style.marginTop='10px';d.appendChild(a);$('courses').appendChild(d)});
+  if(subs.length){$('sh').hidden=false;subs.forEach(function(s){
+   var c=DD.config.COURSES[s.course],d=E('div','course');
+   d.appendChild(E('div','small',(c?c.title:s.course)+' \u00b7 '+s.unit.replace('-',' ')+' \u00b7 '+new Date(s.updated_at).toLocaleDateString()));
+   d.appendChild(E('pre','sub',s.content));$('subs').appendChild(d)})}
+ });});});
+</script></body></html>

@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Capstone: the backlog | The Ticket That Doesn't Come Back</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --paper:#F2EDF0;
+    --surface:#FBF8FA;
+    --sunk:#EAE3E8;
+    --ink:#191420;
+    --body:#2E2733;
+    --muted:#6B6273;
+    --faint:#8F869A;
+    --ember:#B0522F;
+    --ember-wash:rgba(176,82,47,.08);
+    --ember-edge:rgba(176,82,47,.26);
+    --dusk:#635070;
+    --dusk-wash:rgba(99,80,112,.09);
+    --line:rgba(25,20,32,.13);
+    --line-soft:rgba(25,20,32,.07);
+
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --read:70ch;
+    --pad:clamp(20px,5vw,44px);
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#100C13;
+      --surface:#1A1421;
+      --sunk:#080609;
+      --ink:#F6F0F3;
+      --body:#E2D9E1;
+      --muted:#A79CB0;
+      --faint:#847A8D;
+      --ember:#E4906F;
+      --ember-wash:rgba(228,144,111,.10);
+      --ember-edge:rgba(228,144,111,.28);
+      --dusk:#B197BC;
+      --dusk-wash:rgba(177,151,188,.11);
+      --line:rgba(246,240,243,.16);
+      --line-soft:rgba(246,240,243,.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#100C13;
+    --surface:#1A1421;
+    --sunk:#080609;
+    --ink:#F6F0F3;
+    --body:#E2D9E1;
+    --muted:#A79CB0;
+    --faint:#847A8D;
+    --ember:#E4906F;
+    --ember-wash:rgba(228,144,111,.10);
+    --ember-edge:rgba(228,144,111,.28);
+    --dusk:#B197BC;
+    --dusk-wash:rgba(177,151,188,.11);
+    --line:rgba(246,240,243,.16);
+    --line-soft:rgba(246,240,243,.08);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--paper)}
+  :focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:4px}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;color:var(--ink);text-wrap:balance}
+  p{margin:0}
+
+  .col{width:100%;max-width:var(--read);margin-inline:auto;padding-inline:var(--pad)}
+  .wide{width:100%;max-width:calc(var(--read) + 200px);margin-inline:auto;padding-inline:var(--pad)}
+
+  .label{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.17em;
+    text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- head ---------- */
+
+  .head{
+    border-bottom:1px solid var(--line);
+    padding-block:clamp(34px,6vw,64px) clamp(26px,4vw,40px);
+    background:
+      radial-gradient(100% 90% at 88% 0%,var(--dusk-wash),transparent 60%),
+      radial-gradient(85% 85% at 2% 12%,var(--ember-wash),transparent 58%);
+  }
+  .crumbs{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:baseline;padding-bottom:clamp(18px,3vw,28px)}
+  .crumbs .sep{color:var(--line)}
+
+  h1{
+    font-size:clamp(2.1rem,5.6vw,3.5rem);
+    line-height:1.04;letter-spacing:-.03em;
+    font-variation-settings:"SOFT" 20,"WONK" 1;
+    max-width:16ch;
+  }
+  .standfirst{margin-top:18px;color:var(--muted);font-size:1.05rem;max-width:60ch}
+
+  .toc{
+    margin-top:clamp(24px,4vw,34px);padding-top:20px;
+    border-top:1px solid var(--line-soft);
+    display:flex;flex-direction:column;gap:0;
+  }
+  .toc a{
+    display:grid;grid-template-columns:46px minmax(0,1fr) auto;
+    gap:0 16px;align-items:baseline;
+    padding:9px 4px;border-bottom:1px solid var(--line-soft);
+    color:var(--body);text-decoration:none;font-size:.95rem;
+  }
+  .toc a:last-child{border-bottom:0}
+  .toc a:hover{color:var(--ember)}
+  .toc a i{font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums}
+  .toc a u{
+    text-decoration:none;font-family:var(--mono);font-size:.68rem;
+    color:var(--faint);letter-spacing:.06em;
+  }
+
+  /* ---------- lesson ---------- */
+
+  .lesson{padding-block:clamp(40px,6vw,68px);border-bottom:1px solid var(--line)}
+
+  .lesson-head{display:flex;flex-direction:column;gap:12px;padding-bottom:clamp(20px,3vw,28px)}
+  .lesson-num{
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .lesson-num b{
+    font-family:var(--mono);font-weight:500;font-size:.92rem;color:var(--ember);
+    font-variant-numeric:tabular-nums;letter-spacing:.04em;
+  }
+  .lesson h2{
+    font-size:clamp(1.55rem,3.4vw,2.25rem);
+    line-height:1.14;letter-spacing:-.025em;
+    font-variation-settings:"SOFT" 16;
+    max-width:24ch;
+  }
+
+  .flow{display:flex;flex-direction:column;gap:18px}
+  .flow p{color:var(--body)}
+  .flow strong{font-weight:600;color:var(--ink)}
+  .flow em{font-style:italic}
+
+  .flow h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    color:var(--ink);letter-spacing:-.005em;margin-top:10px;
+  }
+
+  /* ---------- example blocks ---------- */
+
+  .ex{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    padding:0;
+    overflow:hidden;
+  }
+  .ex > .ex-h{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--faint);
+    padding:11px 18px;border-bottom:1px solid var(--line-soft);
+    background:var(--sunk);
+  }
+  .ex > .ex-b{padding:16px 18px;display:flex;flex-direction:column;gap:11px;font-size:.96rem}
+  .ex .who{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ember);
+  }
+  .ex .bad .who{color:var(--dusk)}
+  .ex .quote{color:var(--body)}
+  .ex .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .ex .split > div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+
+  .post{
+    font-family:var(--mono);font-size:.88rem;line-height:1.6;
+    color:var(--body);white-space:pre-wrap;
+  }
+
+  .list{
+    display:flex;flex-direction:column;gap:11px;
+    margin:0;padding:0;list-style:none;
+  }
+  .list li{position:relative;padding-left:20px}
+  .list li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ember)}
+
+  .numlist{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:n}
+  .numlist li{position:relative;padding-left:42px;counter-increment:n}
+  .numlist li::before{
+    content:counter(n,decimal-leading-zero);
+    position:absolute;left:0;top:.22em;
+    font-family:var(--mono);font-size:.72rem;color:var(--ember);font-variant-numeric:tabular-nums;
+  }
+
+  .rungs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .rung{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    gap:6px;padding:16px 0;border-bottom:1px solid var(--line-soft);
+  }
+  .rung .r-top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+  .rung .r-n{font-family:var(--mono);font-size:.7rem;color:var(--ember);letter-spacing:.1em;text-transform:uppercase}
+  .rung .r-t{font-family:var(--display);font-size:1.1rem;color:var(--ink);letter-spacing:-.015em}
+  .rung .r-w{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .rung .r-test{font-size:.95rem;color:var(--muted)}
+  .rung .r-test b{color:var(--ink);font-weight:600}
+
+  .pull{
+    font-family:var(--display);
+    font-size:clamp(1.18rem,2.2vw,1.5rem);
+    line-height:1.3;letter-spacing:-.018em;color:var(--ink);
+    font-variation-settings:"SOFT" 14;
+    padding-left:20px;border-left:2px solid var(--ember);
+    max-width:32ch;
+  }
+
+  .aside{
+    background:var(--dusk-wash);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+    font-size:.96rem;
+  }
+  .aside span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dusk);
+  }
+  .aside p{color:var(--body)}
+
+  .doit{
+    margin-top:8px;
+    border:1px solid var(--ember-edge);
+    background:var(--ember-wash);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .doit span{
+    font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ember);
+  }
+  .doit p{font-size:.97rem;color:var(--body)}
+
+  .keep{
+    display:flex;flex-direction:column;gap:10px;
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .keep .k-h{font-family:var(--mono);font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint)}
+  .keep ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+  .keep li{position:relative;padding-left:26px}
+  .keep li::before{content:"";position:absolute;left:0;top:.72em;width:14px;height:1px;background:var(--ember)}
+
+  /* ---------- drill ---------- */
+
+  .drill-sec{padding-block:clamp(40px,6vw,68px);background:var(--sunk);border-bottom:1px solid var(--line)}
+  .posts{display:flex;flex-direction:column;gap:14px}
+  .job{
+    border:1px solid var(--line);border-radius:12px;background:var(--paper);
+    overflow:hidden;
+  }
+  .job .j-h{
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+    padding:11px 16px;border-bottom:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  }
+  .job .j-h b{color:var(--ember);font-weight:500}
+  .job .j-b{padding:14px 16px;font-size:.95rem;color:var(--body)}
+  .job .j-b .rate{
+    display:block;margin-top:8px;font-family:var(--mono);font-size:.76rem;color:var(--muted);letter-spacing:.03em;
+  }
+
+  footer{padding-block:clamp(34px,5vw,52px)}
+  .colophon{
+    padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:var(--faint);
+    text-transform:uppercase;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
+  }
+
+  @media (max-width:640px){
+    body{font-size:16.5px}
+    .toc a{grid-template-columns:38px minmax(0,1fr);gap:0 12px}
+    .toc a u{grid-column:2;padding-top:2px}
+    .rung .r-w{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="head"><div class="wide"><div class="crumbs"><span class="label">The Ticket That Doesn't Come Back</span><span class="sep">/</span><span class="label">Capstone</span></div>
+<h1>Capstone: the backlog</h1>
+<p class="standfirst">You are dropped into one fictional new brand's genuinely bad week. Time: about two weeks, part time. Marked on judgement and on what you chose to leave undone &mdash; not on tidiness.</p></div></header>
+<section class="drill-sec"><div class="col"><div class="flow">
+<p>All at once, with more arriving than you can finish:</p>
+<ol class="numlist"><li>Clear a stacked sixty-ticket backlog across three channels (email, live chat, WhatsApp), keeping a written judgement log of every call you made.</li><li>De-escalate a public complaint thread that is gaining replies, and keep the customer.</li><li>Resolve a policy grey area: the correct-by-the-letter answer and the fair answer are not the same thing. Decide, and write down why.</li><li>Catch a chatbot that has been quietly promising a discount which does not exist, fix the ten AI-drafted replies affected, and explain the business risk of each.</li><li>Rewrite three knowledge-base articles that caused confusion this week, and flag the underlying pattern upward to the founder.</li><li>Write one honest weekly metrics report: the real numbers, and the reasons behind a bad one &mdash; not just the numbers.</li></ol>
+<p>Finish with a five-minute walkthrough of your week, recorded or written, marked on how you handle being challenged on a decision &mdash; not on how polished it sounds.</p>
+<p>Do not include any real customer data, names or account details. Use made-up names throughout.</p>
+<p>Use the "Submit capstone" bar at the bottom to save your work, or paste a link to a document.</p></div></div></section><footer><div class="col"><div class="colophon"><span>The Ticket That Doesn't Come Back &middot; Capstone</span><span>DRAFT - for review</span></div></div></footer>
+<script src="/auth.js" defer></script>
+</body>
+</html>
